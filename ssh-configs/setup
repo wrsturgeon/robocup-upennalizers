@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [[ $1 == "ac" ]]
+then
+	echo "Allowing group access"
+	sudo find UPennDev/* -exec chmod g+w {} \;
+fi
+
+if [[ $1 == "new" ]]
+then
+	echo "creating new user"
+	sudo useradd -m -G nao $2
+	sudo passwd $2 "nao"
+	echo "New user $2 created"
+fi
+if [[ $1 == "nao" ]]
+then
+	cp * "$HOME/.ssh/"
+else
+	cp "$1" "$HOME/.ssh/id_rsa"
+	cp "$1.pub" "$HOME/.ssh/id_rsa.pub"
+	#echo "Do nothing"
+fi

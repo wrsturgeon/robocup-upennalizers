@@ -1,0 +1,112 @@
+# Python compiled files and saved data files
+*.pyc
+*.npy
+*.pkl
+
+# MATLAB compiled files and saved data files
+*.mexglx
+*.mexa64
+*.mexmaci
+*.mexmaci64
+
+# compiled sources
+*.o
+*.so
+*.dylib
+*.hex
+*.bin
+*.elf
+*.d
+*.signature
+WebotsProj/controllers/ballGPS/ballGPS
+
+# generic log files
+*.log
+
+# Player copy of the compiled libraries
+Player/Lib/*
+Player/Lib/NaoGameControl.lua
+Player/Lib/NaoBody.lua
+Player/soundLog.txt
+Player/paramsLog.txt
+#player.lua link in Player
+Player/player.lua
+Player/Player
+Player/Logs
+# Config link file
+Config.lua
+Player/Config/Config.lua
+
+# auto-generated webots controller wrapper
+WebotsController/
+WebotsController/controller_wrap.c
+
+#controller links
+WebotsProj/controllers/nao_soccer_supervisor/
+WebotsProj/controllers/nsl_soccer_supervisor/
+WebotsProj/controllers/nao_team_0
+WebotsProj/controllers/nao_team_1
+
+#auto-generated webots file
+*.wrl
+*.wbproj
+
+# Temp and Swap files
+*~
+*.swp
+.DS_Store
+
+# Build file with CMAKE
+build
+
+# Webot World File temp
+*.project
+
+# svn 
+.svn
+
+# for files in nao bu default
+.bash_history
+.bash_profile
+.gitconfig
+.config/
+.ssh/
+.vim/
+.viminfo
+naoqi/
+remotes/
+
+# ball logs
+Player/Data/*.txt
+
+# game controller log
+Tools/GameController2017-GO/logs/*.txt
+Tools/GameController2017-GO/*.txt
+Tools/GameController2017-GO/config/TCM.cfg
+
+# screen log
+*screenlog*
+
+# Generated new lut
+*_new.raw
+*_auto.*
+Tools/Matlab/*.raw
+
+Lib/Modules/Webots/Controller/lua_controller.c
+Lib/Modules/Webots/Controller/controller_wrap.c
+
+
+#exclude build path
+build/
+Tools/Matlab/logs/
+Tools/Matlab/colortableFiles/
+
+#exclude matlab data --DP
+*.raw
+*.mat
+
+#exclude network weights from torch --DP
+*.net
+
+# IDE settings
+.vscode/
