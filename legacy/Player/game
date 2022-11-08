@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eux
+
 KERNEL=`uname -r`
 
 init(){

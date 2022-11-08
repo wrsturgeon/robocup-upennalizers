@@ -24,28 +24,28 @@ WebotsProj/controllers/ballGPS/ballGPS
 *.log
 
 # Player copy of the compiled libraries
-Player/Lib/*
-Player/Lib/NaoGameControl.lua
-Player/Lib/NaoBody.lua
-Player/soundLog.txt
-Player/paramsLog.txt
-#player.lua link in Player
-Player/player.lua
-Player/Player
-Player/Logs
+legacy/Player/Lib/*
+legacy/Player/Lib/NaoGameControl.lua
+legacy/Player/Lib/NaoBody.lua
+legacy/Player/soundLog.txt
+legacy/Player/paramsLog.txt
+# player.lua link in Player
+legacy/Player/player.lua
+legacy/Player/Player
+legacy/Player/Logs
 # Config link file
-Config.lua
-Player/Config/Config.lua
+legacy/Config.lua
+legacy/Player/Config/Config.lua
 
 # auto-generated webots controller wrapper
-WebotsController/
-WebotsController/controller_wrap.c
+legacy/WebotsController/
+legacy/WebotsController/controller_wrap.c
 
 #controller links
-WebotsProj/controllers/nao_soccer_supervisor/
-WebotsProj/controllers/nsl_soccer_supervisor/
-WebotsProj/controllers/nao_team_0
-WebotsProj/controllers/nao_team_1
+legacy/WebotsProj/controllers/nao_soccer_supervisor/
+legacy/WebotsProj/controllers/nsl_soccer_supervisor/
+legacy/WebotsProj/controllers/nao_team_0
+legacy/WebotsProj/controllers/nao_team_1
 
 #auto-generated webots file
 *.wrl
@@ -57,13 +57,14 @@ WebotsProj/controllers/nao_team_1
 .DS_Store
 
 # Build file with CMAKE
+legacy/build
 build
 
 # Webot World File temp
 *.project
 
 # svn 
-.svn
+legacy/.svn
 
 # for files in nao bu default
 .bash_history
@@ -77,12 +78,12 @@ naoqi/
 remotes/
 
 # ball logs
-Player/Data/*.txt
+legacy/Player/Data/*.txt
 
 # game controller log
-Tools/GameController2017-GO/logs/*.txt
-Tools/GameController2017-GO/*.txt
-Tools/GameController2017-GO/config/TCM.cfg
+legacy/Tools/GameController2017-GO/logs/*.txt
+legacy/Tools/GameController2017-GO/*.txt
+legacy/Tools/GameController2017-GO/config/TCM.cfg
 
 # screen log
 *screenlog*
@@ -90,16 +91,15 @@ Tools/GameController2017-GO/config/TCM.cfg
 # Generated new lut
 *_new.raw
 *_auto.*
-Tools/Matlab/*.raw
+legacy/Tools/Matlab/*.raw
 
-Lib/Modules/Webots/Controller/lua_controller.c
-Lib/Modules/Webots/Controller/controller_wrap.c
+legacy/Lib/Modules/Webots/Controller/lua_controller.c
+legacy/Lib/Modules/Webots/Controller/controller_wrap.c
 
 
-#exclude build path
-build/
-Tools/Matlab/logs/
-Tools/Matlab/colortableFiles/
+# exclude build path
+legacy/Tools/Matlab/logs/
+legacy/Tools/Matlab/colortableFiles/
 
 #exclude matlab data --DP
 *.raw
