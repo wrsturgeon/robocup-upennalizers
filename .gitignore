@@ -109,4 +109,4 @@ legacy/Tools/Matlab/colortableFiles/
 *.net
 
 # IDE settings
-.vscode/
+# .vscode/ # actually this could be useful

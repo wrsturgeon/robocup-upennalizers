@@ -1,0 +1,33 @@
+#!/bin/sh
+
+set -eu
+
+if [ ${#} -ne 2 ]; then
+    echo "Usage: ${0} <source file> [--release or --debug]"
+    exit 1
+fi
+
+# make sure we're in robocup-legacy/src
+if [ $(pwd | rev | cut -d '/' -f-2 | rev) != "robocup-legacy/src" ]; then
+    echo "Please run this script from robocup-legacy/src"
+    exit 1
+fi
+
+if [ ${2} = "--release" ]; then
+    DEBUG=0
+elif [ ${2} = "--debug" ]; then
+    DEBUG=1
+else
+    echo "Unrecognized second argument"
+    echo "Usage: ${0} <source file> [--release or --debug]"
+    exit 1
+fi
+
+cd .. # .../robocup-legacy/
+mkdir -p bin
+EXECNAME=$(basename ${1} | cut -d. -f1)
+COMMON="-o ./bin/${EXECNAME} ./src/${1} -std=c++2b -include ./src/prologue.hpp -I. -DSYSTEM_BITS=32 -DDEBUG=${DEBUG}"
+# TODO: release & debug options (pull from other repo)
+
+set -x
+clang++ ${COMMON}

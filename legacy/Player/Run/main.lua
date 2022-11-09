@@ -1,6 +1,6 @@
 cwd = cwd or os.getenv('PWD')
 package.path = cwd.."/?.lua;"..package.path;
-require('init')
+require('init') -- Player/init.lua
 
 --cwd = os.getenv('PWD')
 --require('init')
@@ -8,15 +8,15 @@ require('init')
 require('unix')
 require('Config')
 require('shm')
-require('vector')
-require('vcm')
-require('gcm')
-require('wcm')
-require('mcm')
-require('Speak')
+require('vector') -- Player/Util/vector.lua
+require('vcm') -- Player/Vision/vcm.lua
+require('gcm') -- Player/World/gcm.lua
+require('wcm') -- Player/World/wcm.lua
+require('mcm') -- Player/Motion/mcm.lua
+require('Speak') -- Player/Util/Speak.lua
 require('getch')
-require('Body')
-require('Motion')
+require('Body') -- Lib/Platform/{NaoV4/WebotsNao}/Body/Nao{Webots}Body.lua
+require('Motion') -- Player/Motion/Motion.lua
 
 gcm.say_id();
 
@@ -94,13 +94,8 @@ function update()
       init = true;
     else
       if (count % 20 == 0) then
---      if (Body.get_change_state() == 1) then
-	  if true then
-          Speak.talk('Calibrating');
-          calibrating = true;
-        elseif (Body.get_change_role() == 1) then
-          smindex = (smindex + 1) % #Config.fsm.body;
-        end
+        Speak.talk('Calibrating');
+        calibrating = true;
       end
 
       -- toggle state indicator

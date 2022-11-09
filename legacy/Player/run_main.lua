@@ -1,9 +1,9 @@
 cwd = os.getenv('PWD')
-require('init')
+require('init') -- Player/init.lua
 
 require('unix');
-require('main');
-require('Body')
+require('main'); -- Player/Run/main.lua (probably?)
+require('Body') -- Player/Dev/Body.lua
 
 local t_last = Body.get_time()
 while 1 do 
@@ -16,4 +16,3 @@ while 1 do
   tDelay = 0.005*1E6;	
   unix.usleep(tDelay);
 end
-
