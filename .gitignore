@@ -57,8 +57,9 @@ legacy/WebotsProj/controllers/nao_team_1
 .DS_Store
 
 # Build file with CMAKE
-legacy/build
-build
+legacy/build/
+build/
+bin/
 
 # Webot World File temp
 *.project

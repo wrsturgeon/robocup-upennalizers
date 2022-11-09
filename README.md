@@ -1,6 +1,6 @@
 UPennalizers
 
-Forked from the original (c. 2019, GitLab)
+Forked from the original (c. 2019, GitLab); iterative improvements.
 
 The project began with the University of Pennsylvania RoboCup code base from
 the 2011 RoboCup season and is continuing to evolve into an ever more
