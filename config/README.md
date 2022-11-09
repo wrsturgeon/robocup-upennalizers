@@ -1,5 +1,7 @@
 # Calibrated parameters
 
+Some of these are manual and require a few seconds of work per year (when rules change).
+
 Apart from the main game executable,
 there will also be executables that
 run a game-like exploration environment

@@ -48,7 +48,7 @@ using ufull_t = uintb<SYSTEM_BITS>;
 namespace config {
 
 namespace system {
-inline constexpr unsigned char bits = SYSTEM_BITS;
+inline constexpr u8 bits = SYSTEM_BITS;
 #undef SYSTEM_BITS
 } // namespace system
 
