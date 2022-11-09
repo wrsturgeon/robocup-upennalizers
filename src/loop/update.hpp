@@ -11,8 +11,10 @@
 
 namespace loop {
 
+template <config::protocol::gc::competition::phase::t CompetitionPhase,
+          config::protocol::gc::competition::type ::t CompetitionType>
 pure static auto
-update(body::FSM& body_fsm, head::FSM& head_fsm, game::FSM& game_fsm) noexcept
+update(body::FSM& body_fsm, head::FSM& head_fsm, game::FSM<CompetitionPhase, CompetitionType>& game_fsm) noexcept
 -> bool {
   return ( // Update FSMs then act
     body_fsm.update() and
@@ -23,8 +25,10 @@ update(body::FSM& body_fsm, head::FSM& head_fsm, game::FSM& game_fsm) noexcept
     game::update(game_fsm));
 }
 
+template <config::protocol::gc::competition::phase::t CompetitionPhase,
+          config::protocol::gc::competition::type ::t CompetitionType>
 pure static auto
-start(body::FSM& body_fsm, head::FSM& head_fsm, game::FSM& game_fsm) noexcept
+start(body::FSM& body_fsm, head::FSM& head_fsm, game::FSM<CompetitionPhase, CompetitionType>& game_fsm) noexcept
 -> bool {
   return update(body_fsm, head_fsm, game_fsm); // for now
 }

@@ -46,17 +46,33 @@ using ufull_t = uintb<SYSTEM_BITS>;
 
 //%%%%%%%%%%%%%%%% Configuration
 namespace config {
+
 namespace system {
 inline constexpr unsigned char bits = SYSTEM_BITS;
 #undef SYSTEM_BITS
 } // namespace system
+
 namespace build {
 inline constexpr bool debug = DEBUG;
+#if DEBUG
+#ifdef NDEBUG
+#error "DEBUG=1 but NDEBUG is defined (assertions are bypassed)"
+#endif // NDEBUG
+#else // DEBUG
+#ifndef NDEBUG
+#error "DEBUG=0 but NDEBUG is not defined (assertions are checked at runtime)"
+#endif // NDEBUG
+#if NDEBUG != 1
+#error "NDEBUG is defined, but not to 1"
+#endif // NDEBUG != 1
+#endif // DEBUG
 #undef DEBUG
 } // namespace build
+
 namespace logic {
 inline constexpr u16 update_freq_ms = 50;
 } // namespace logic
+
 } // namespace config
 
 //%%%%%%%%%%%%%%%% Useful macros
