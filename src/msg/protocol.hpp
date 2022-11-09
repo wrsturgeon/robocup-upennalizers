@@ -13,14 +13,13 @@ namespace gc {
 } // namespace msg
 
 namespace config {
-namespace protocol {
+
+namespace gc {
 
 //%%%%%%%%%%%%%%%% THE MOST IMPORTANT NUMBER
 inline constexpr u16 max_packets = 1200; // Managed automatically in config::protocol::spl::TeamInfo::messageBudget (f@%$ing Java case)
 inline constexpr u16 max_packets_per_extra_minute = 60; // This...should be also? ^^^
 //%%%%%%%%%%%%%%%%
-
-namespace gc {
 
 inline constexpr u8 max_players = MAX_NUM_PLAYERS;
 #undef MAX_NUM_PLAYERS
@@ -173,5 +172,4 @@ inline constexpr u16 data_size = SPL_STANDARD_MESSAGE_DATA_SIZE;
 #undef SPL_STANDARD_MESSAGE_DATA_SIZE
 } // namespace spl
 
-} // namespace protocol
 } // namespace config
