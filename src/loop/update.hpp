@@ -11,8 +11,8 @@
 
 namespace loop {
 
-template <config::gc::competition::phase::t CompetitionPhase,
-          config::gc::competition::type ::t CompetitionType>
+template <config::gamecontroller::competition::phase::t CompetitionPhase,
+          config::gamecontroller::competition::type ::t CompetitionType>
 pure static auto
 update(body::FSM& body_fsm, head::FSM& head_fsm, game::FSM<CompetitionPhase, CompetitionType>& game_fsm) noexcept
 -> bool {
@@ -25,8 +25,8 @@ update(body::FSM& body_fsm, head::FSM& head_fsm, game::FSM<CompetitionPhase, Com
     game::update(game_fsm));
 }
 
-template <config::gc::competition::phase::t CompetitionPhase,
-          config::gc::competition::type ::t CompetitionType>
+template <config::gamecontroller::competition::phase::t CompetitionPhase,
+          config::gamecontroller::competition::type ::t CompetitionType>
 pure static auto
 start(body::FSM& body_fsm, head::FSM& head_fsm, game::FSM<CompetitionPhase, CompetitionType>& game_fsm) noexcept
 -> bool {

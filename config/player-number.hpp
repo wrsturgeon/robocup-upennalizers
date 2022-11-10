@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CONFIG_PLAYER_NUMBER_INCLUDED // instead of #pragma once (for wireless.hpp--see its first few lines)
+#define CONFIG_PLAYER_NUMBER_INCLUDED
 
 #include "src/util/stringify.hpp"
 
@@ -16,3 +17,5 @@ inline constexpr bool goalie = (number == 1);
 inline constexpr bool alternate = (number == 6);
 } // namespace player
 } // namespace config
+
+#endif // CONFIG_PLAYER_NUMBER_INCLUDED

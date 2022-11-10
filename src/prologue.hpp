@@ -93,3 +93,12 @@ inline constexpr u16 update_freq_ms = 50;
 #endif  // NDEBUG
 #define PURE_NOATTR INLINE_NOATTR
 #define pure [[nodiscard]] PURE_NOATTR
+
+//%%%%%%%%%%%%%%%% Stack-allocation without initialization
+
+template <typename T>
+pure auto
+uninitialized() -> std::decay_t<T> {
+  std::byte bytes[sizeof(T)];
+  return *reinterpret_cast<T*>(bytes);
+}

@@ -26,7 +26,7 @@ fi
 cd .. # .../robocup-legacy/
 mkdir -p bin
 EXECNAME=$(basename ${1} | cut -d. -f1)
-COMMON="-DSYSTEM_BITS=32 -DDEBUG=${DEBUG} -o ./bin/${EXECNAME} ./src/${1} -std=c++2b -include./src/prologue.hpp -I. -I./ext/libzmq/include -Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat -Wno-c++98-compat-pedantic -ftemplate-backtrace-limit=0 -DZMQ_BUILD_DRAFT_API"
+COMMON="-DSYSTEM_BITS=32 -DDEBUG=${DEBUG} -o ./bin/${EXECNAME} ./src/${1} -std=c++2b -include./src/prologue.hpp -I. -Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat -Wno-c++98-compat-pedantic -ftemplate-backtrace-limit=0 -DZMQ_BUILD_DRAFT_API"
 # TODO: release & debug options (pull from other repo)
 
 DEBUG_FLAGS="-O0 -fno-omit-frame-pointer -g -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"

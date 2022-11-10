@@ -1,21 +1,21 @@
 #pragma once
 
-#include "src/msg/protocol.hpp" // config::protocol stuff
+#include "config/gamecontroller.hpp"
 
 namespace game {
 
-template <config::gc::competition::phase::t CompetitionPhase,
-          config::gc::competition::type ::t CompetitionType>
+template <config::gamecontroller::competition::phase::t CompetitionPhase,
+          config::gamecontroller::competition::type ::t CompetitionType>
 struct FSM {
-  config::gc::game::phase::t  game_phase  = config::gc::game::phase::normal;
-  config::gc::penalty::t      penalty     = config::gc::penalty::none;
-  config::gc::set_play::t     set_play    = config::gc::set_play::none;
-  config::gc::state::t        state       = config::gc::state::initial;
+  config::gamecontroller::game::phase::t  game_phase  = config::gamecontroller::game::phase::normal;
+  config::gamecontroller::penalty::t      penalty     = config::gamecontroller::penalty::none;
+  config::gamecontroller::set_play::t     set_play    = config::gamecontroller::set_play::none;
+  config::gamecontroller::state::t        state       = config::gamecontroller::state::initial;
   pure auto update() noexcept -> bool;
 };
 
-template <config::gc::competition::phase::t CompetitionPhase,
-          config::gc::competition::type ::t CompetitionType>
+template <config::gamecontroller::competition::phase::t CompetitionPhase,
+          config::gamecontroller::competition::type ::t CompetitionType>
 pure auto
 FSM<CompetitionPhase, CompetitionType>::update() noexcept
 -> bool {

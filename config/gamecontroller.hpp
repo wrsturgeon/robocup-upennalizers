@@ -1,46 +1,17 @@
 #pragma once
 
-namespace msg {
-
 namespace spl {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Weverything" // Ignore any errors from SPL code
-#include "ext/GameController/examples/c/SPLStandardMessage.h"
-#pragma clang diagnostic pop
-} // namespace spl
-
-namespace gc {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Ignore any errors from SPL code
 #include "ext/GameController/examples/c/RoboCupGameControlData.h"
 #pragma clang diagnostic pop
-} // namespace gc
-
-} // namespace msg
+} // namespace spl
 
 namespace config {
-
-namespace gc {
+namespace gamecontroller {
 
 inline constexpr u8 max_players = MAX_NUM_PLAYERS;
 #undef MAX_NUM_PLAYERS
-
-namespace send {
-inline constexpr u16 port = GAMECONTROLLER_DATA_PORT;
-#undef GAMECONTROLLER_DATA_PORT
-inline constexpr char const* header = GAMECONTROLLER_STRUCT_HEADER;
-#undef GAMECONTROLLER_STRUCT_HEADER
-inline constexpr u8 version = GAMECONTROLLER_STRUCT_VERSION;
-} // namespace send
-
-namespace recv {
-inline constexpr u16 port = GAMECONTROLLER_RETURN_PORT;
-#undef GAMECONTROLLER_RETURN_PORT
-inline constexpr char const* header = GAMECONTROLLER_RETURN_STRUCT_HEADER;
-#undef GAMECONTROLLER_RETURN_STRUCT_HEADER
-inline constexpr u8 version = GAMECONTROLLER_RETURN_STRUCT_VERSION;
-#undef GAMECONTROLLER_RETURN_STRUCT_VERSION
-} // namespace recv
 
 namespace team {
 using t = u8;
@@ -162,15 +133,5 @@ inline constexpr t manual = PENALTY_MANUAL;
 #undef PENALTY_MANUAL
 } // namespace penalty
 
-} // namespace gc
-
-namespace spl {
-inline constexpr char const* header = SPL_STANDARD_MESSAGE_STRUCT_HEADER;
-#undef SPL_STANDARD_MESSAGE_STRUCT_HEADER
-inline constexpr u8 version = SPL_STANDARD_MESSAGE_STRUCT_VERSION;
-#undef SPL_STANDARD_MESSAGE_STRUCT_VERSION
-inline constexpr u16 data_size = SPL_STANDARD_MESSAGE_DATA_SIZE;
-#undef SPL_STANDARD_MESSAGE_DATA_SIZE
-} // namespace spl
-
+} // namespace gamecontroller
 } // namespace config

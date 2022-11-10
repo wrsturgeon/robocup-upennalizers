@@ -1,6 +1,11 @@
 {
   "files.associations": {
     "__threading_support": "cpp",
-    "thread": "cpp"
+    "thread": "cpp",
+    "optional": "cpp",
+    "ostream": "cpp",
+    "*.ipp": "cpp",
+    "cstddef": "cpp",
+    "iostream": "cpp"
   }
 }
