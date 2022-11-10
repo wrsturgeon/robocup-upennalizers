@@ -1,12 +1,9 @@
-[submodule "ext/lua"]
+[submodule "asio"]
+	path = ext/asio
+	url = https://github.com/chriskohlhoff/asio.git
+[submodule "lua"]
 	path = ext/lua
 	url = https://github.com/lua/lua.git
-[submodule "ext/GameController"]
+[submodule "GameController"]
 	path = ext/GameController
 	url = https://github.com/RoboCup-SPL/GameController.git
-[submodule "ext/cppzmq"]
-	path = ext/cppzmq
-	url = https://github.com/zeromq/cppzmq.git
-[submodule "ext/libzmq"]
-	path = ext/libzmq
-	url = https://github.com/zeromq/libzmq.git
