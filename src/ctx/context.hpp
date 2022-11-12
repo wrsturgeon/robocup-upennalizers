@@ -20,7 +20,7 @@ std::atomic<bool> Context<CompetitionPhase, CompetitionType>::first_context = tr
 
 template <config::gamecontroller::competition::phase::t CompetitionPhase,
           config::gamecontroller::competition::type ::t CompetitionType>
-INLINE Context<CompetitionPhase, CompetitionType>::Context() noexcept
+Context<CompetitionPhase, CompetitionType>::Context() noexcept
     : loop{*this}
 {
 #if DEBUG

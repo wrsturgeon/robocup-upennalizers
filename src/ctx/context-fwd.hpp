@@ -17,16 +17,20 @@ namespace ctx {
 template <config::gamecontroller::competition::phase::t CompetitionPhase,
           config::gamecontroller::competition::type ::t CompetitionType>
 class Context {
+  ctx::Loop<CompetitionPhase, CompetitionType> loop;
   std::atomic<config::gamecontroller::game::phase::t> _atomic_game_phase = config::gamecontroller::game::phase::normal;
   std::atomic<config::gamecontroller::penalty::t> _atomic_penalty = config::gamecontroller::penalty::none;
   std::atomic<config::gamecontroller::set_play::t> _atomic_set_play = config::gamecontroller::set_play::none;
   std::atomic<config::gamecontroller::state::t> _atomic_state = config::gamecontroller::state::initial;
-  ctx::Loop<CompetitionPhase, CompetitionType> loop;
 #if DEBUG
   static std::atomic<bool> first_context;
 #endif
  public:
-  INLINE Context() noexcept;
+  Context() noexcept;
+  Context(Context const&) = delete;
+  Context(Context&&) = delete;
+  auto operator=(Context const&) -> Context& = delete;
+  auto operator=(Context&&) -> Context& = delete;
   pure auto game_phase() const noexcept -> config::gamecontroller::game::phase::t { return _atomic_game_phase.load(); }
   pure auto    penalty() const noexcept -> config::gamecontroller::penalty::t     { return _atomic_penalty   .load(); }
   pure auto   set_play() const noexcept -> config::gamecontroller::set_play::t    { return _atomic_set_play  .load(); }
