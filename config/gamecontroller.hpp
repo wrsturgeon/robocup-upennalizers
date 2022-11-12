@@ -1,10 +1,14 @@
 #pragma once
 
 namespace spl {
+#define RoboCupGameControlData GameControlData
+#define RoboCupGameControlReturnData GameControlReturnData
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Ignore any errors from SPL code
 #include "ext/GameController/examples/c/RoboCupGameControlData.h"
 #pragma clang diagnostic pop
+#undef RoboCupGameControlReturnData
+#undef RoboCupGameControlData
 } // namespace spl
 
 namespace config {

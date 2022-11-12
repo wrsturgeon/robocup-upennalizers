@@ -1,6 +1,6 @@
 #pragma once
 
-namespace game {
+namespace context {
 
 template <config::gamecontroller::competition::phase::t CompetitionPhase,
           config::gamecontroller::competition::type ::t CompetitionType>
@@ -11,4 +11,4 @@ update(FSM<CompetitionPhase, CompetitionType> const& /*fsm*/) noexcept
   return true; // continue
 }
 
-} // namespace game
+} // namespace context

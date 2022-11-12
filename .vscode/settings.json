@@ -6,6 +6,8 @@
     "ostream": "cpp",
     "*.ipp": "cpp",
     "cstddef": "cpp",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "atomic": "cpp",
+    "utility": "cpp"
   }
 }

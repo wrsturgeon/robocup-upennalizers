@@ -9,14 +9,8 @@
 
 #include "config/gamecontroller.hpp"
 #include "config/player-number.hpp"
+#include "config/spl-message.hpp"
 #include "config/team-number.hpp"
-
-namespace spl {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Weverything" // Ignore any errors from SPL code
-#include "ext/GameController/examples/c/SPLStandardMessage.h"
-#pragma clang diagnostic pop
-} // namespace spl
 
 //%%%%%%%%%%%%%%%% Feel free to change
 #define GAMECONTROLLER_IP "192.168.1.187"

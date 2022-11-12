@@ -66,11 +66,10 @@ inline constexpr bool debug = DEBUG;
 #error "NDEBUG is defined, but not to 1"
 #endif // NDEBUG != 1
 #endif // DEBUG
-#undef DEBUG
 } // namespace build
 
 namespace logic {
-inline constexpr u16 update_freq_ms = 50;
+inline constexpr u16 update_period_ms = 500;
 } // namespace logic
 
 } // namespace config
