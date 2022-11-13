@@ -7,8 +7,11 @@ TODO: see https://www.cppstories.com/2019/12/threading-loopers-cpp17/
 #include "src/ctx/context.hpp"
 
 #include <chrono>   // std::chrono::seconds
-#include <iostream> // std::cout
 #include <thread>   // std::this_thread::sleep_for
+
+#if DEBUG
+#include <iostream> // std::cout
+#endif
 
 auto
 main()
@@ -21,11 +24,6 @@ main()
   //   - the one we're on now, and
   //   - the communication thread (opened in parallel above)
   //       - ctx::Context{} -> ctx::Loop{} -> std::thread{}
-
-  // Sleep
-  std::cout << "Sleeping...\n";
-  std::this_thread::sleep_for(std::chrono::seconds{10});
-  std::cout << "Burning the circular ruins...\n";
 
   // Exit
   return 0;

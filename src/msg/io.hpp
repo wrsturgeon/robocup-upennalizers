@@ -24,7 +24,7 @@ extern "C" {
 #include <stdexcept> // std::runtime_error
 #include <string>    // std::to_string
 
-#if DEBUG
+#if DEBUG || VERBOSE
 #include <iostream> // std::cout
 #endif
 
@@ -35,10 +35,11 @@ namespace internal {
 pure static auto
 address_from_ip(char const *ip_str)
 -> in_addr_t {
-  // using inet_pton
-  auto ip = uninitialized<in_addr_t>();
-  if (inet_pton(AF_INET, ip_str, &ip) != 1) { throw std::runtime_error{"Invalid IP address (" + std::string{ip_str} + "): " + strerror(errno) + " (errno " + std::to_string(errno) + ')'}; }
-  return ip;
+  auto sin = uninitialized<sockaddr_in>();
+  if (inet_pton(AF_INET, ip_str, &sin.sin_addr) != 1) {
+    throw std::runtime_error{"Invalid IP address (" + std::string{ip_str} + "): " + strerror(errno) + " (errno " + std::to_string(errno) + ')'};
+  }
+  return sin.sin_addr.s_addr;
 }
 
 impure static auto
@@ -47,7 +48,7 @@ make_sockaddr_in(in_addr_t address, u16 port) noexcept
   auto addr = uninitialized<sockaddr_in>();
   std::fill_n(reinterpret_cast<char*>(&addr), sizeof addr, '\0');
   addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = htonl(address);
+  addr.sin_addr.s_addr = address; // htonl(address);
   addr.sin_port = htons(port);
   return addr;
 }
@@ -63,7 +64,10 @@ struct SocketFromGC {
   SocketFromGC(SocketFromGC&&) = delete;
   auto operator=(SocketFromGC const&) -> SocketFromGC& = delete;
   auto operator=(SocketFromGC&&) -> SocketFromGC& = delete;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable" // from the assert statement below
   ~SocketFromGC() noexcept { auto const r = close(socket_fd); assert(!r); }
+#pragma clang diagnostic pop
 };
 
 struct SocketToGC {
@@ -78,7 +82,10 @@ struct SocketToGC {
   SocketToGC(SocketToGC&&) = delete;
   auto operator=(SocketToGC const&) -> SocketToGC& = delete;
   auto operator=(SocketToGC&&) -> SocketToGC& = delete;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable" // from the assert statement below
   ~SocketToGC() noexcept { auto const r = close(socket_fd); assert(!r); }
+#pragma clang diagnostic pop
 };
 
 #if DEBUG
@@ -97,9 +104,6 @@ SocketFromGC::SocketFromGC() {
   if (r < 0) {
     throw std::runtime_error{"bind(socket_fd = " + std::to_string(socket_fd) + ", &local = &(" + inet_ntoa(local.sin_addr) + ':' + std::to_string(ntohs(local.sin_port)) + "), sizeof local = " + std::to_string(sizeof local) + "B) returned " + std::to_string(r) + ": " + strerror(errno) + " (errno " + std::to_string(errno) + ')'};
   }
-  auto flags = fcntl(socket_fd, F_GETFL, 0);
-  if (flags == -1) { flags = 0; }
-  if (fcntl(socket_fd, F_SETFL, flags | O_NONBLOCK) < 0) { throw std::runtime_error{"fcntl(socket_fd = " + std::to_string(socket_fd) + ", F_SETFL, flags | O_NONBLOCK) returned " + std::to_string(r) + ": " + strerror(errno) + " (errno " + std::to_string(errno) + ')'}; }
 }
 
 SocketToGC::SocketToGC() {
@@ -125,19 +129,14 @@ recv_from_gc()
   auto src = uninitialized<sockaddr_in>();
   auto src_len = uninitialized<socklen_t>();
   auto msg = uninitialized<spl::GameControlData>();
-#if DEBUG
-  std::cout << "Receiving from GameController...\n";
-#endif
   auto const n = recvfrom(s.socket_fd, &msg, sizeof msg, 0, reinterpret_cast<sockaddr*>(&src), &src_len);
-#if DEBUG
+#if VERBOSE
   if (n >= 0) {
-    std::cout << "  Received " << n << " bytes from " << inet_ntoa(src.sin_addr) << ':' << ntohs(src.sin_port) << std::endl;
-  } else {
-    std::cout << "  unsuccessful\n";
+    std::cout << "Received " << n << "B from " << inet_ntoa(src.sin_addr) << ':' << ntohs(src.sin_port) << std::endl;
   }
 #endif
   if (n == sizeof msg) { return {msg}; }
-  if ((!n) || (errno == 35 /* "Resource temporarily unavailable" (i.e. no message yet) */)) { return {}; }
+  if (!n) { return {}; }
   throw std::runtime_error{"recvfrom(s.socket_fd = " + std::to_string(s.socket_fd) + ", &msg = ..., sizeof msg = " + std::to_string(sizeof msg) + "B, 0, &src, &src_len) returned " + std::to_string(n) + ": " + strerror(errno) + " (errno " + std::to_string(errno) + ')'};
 }
 
@@ -148,15 +147,18 @@ send_to_gc(spl::GameControlReturnData const& data)
 #pragma clang diagnostic ignored "-Wexit-time-destructors" // Perfectly fine that we close the socket at program exit
   static auto s = internal::SocketToGC{};
 #pragma clang diagnostic pop
-#if DEBUG
+#if VERBOSE
   std::cout << "Sending to GameController...\n";
 #endif
   auto const n = send(s.socket_fd, &data, sizeof data, 0);
-#if DEBUG
+#if VERBOSE
   if (n >= 0) {
-    std::cout << "  Sent " << n << " bytes to " << inet_ntoa(s.remote.sin_addr) << ':' << ntohs(s.remote.sin_port) << std::endl;
-  } else {
-    std::cout << "  unsuccessful\n";
+    std::cout << "  Sent " << data << " (" << n << "B) to " << inet_ntoa(s.remote.sin_addr) << ':' << ntohs(s.remote.sin_port) << std::endl;
+  }
+#endif
+#if DEBUG || VERBOSE
+  if (n != sizeof data) {
+    std::cout << "  Unsuccessful attempt to send to " << inet_ntoa(s.remote.sin_addr) << ':' << ntohs(s.remote.sin_port) << " (" << n << "B actually sent instead of " << sizeof data << ")\n";
   }
 #endif
   if (n == sizeof data) { return; }

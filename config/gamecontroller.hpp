@@ -1,5 +1,12 @@
 #pragma once
 
+#include <algorithm>
+
+#if DEBUG
+#include <bitset>
+#include <iostream>
+#endif
+
 namespace spl {
 #define RoboCupGameControlData GameControlData
 #define RoboCupGameControlReturnData GameControlReturnData
@@ -39,12 +46,31 @@ inline constexpr t brown = TEAM_BROWN;
 #undef TEAM_BROWN
 inline constexpr t gray = TEAM_GRAY;
 #undef TEAM_GRAY
+#if DEBUG
+pure auto
+print_color(t x) noexcept
+-> std::string {
+  switch (x) {
+    case blue: return "Blue";
+    case red: return "Red";
+    case yellow: return "Yellow";
+    case black: return "Black";
+    case white: return "White";
+    case green: return "Green";
+    case orange: return "Orange";
+    case purple: return "Purple";
+    case brown: return "Brown";
+    case gray: return "Gray";
+    default: return "unrecognized color";
+  }
+}
+#endif
 } // namespace team
 
 namespace competition {
 
 namespace phase {
-using t = bool;
+using t = u8;
 inline constexpr t round_robin = COMPETITION_PHASE_ROUNDROBIN;
 #undef COMPETITION_PHASE_ROUNDROBIN
 inline constexpr t playoff = COMPETITION_PHASE_PLAYOFF;
@@ -139,3 +165,72 @@ inline constexpr t manual = PENALTY_MANUAL;
 
 } // namespace gamecontroller
 } // namespace config
+
+namespace spl {
+
+pure auto
+operator==(RobotInfo const& lhs, RobotInfo const& rhs) noexcept -> bool {
+  return (
+    (lhs.penalty == rhs.penalty) and
+    (lhs.secsTillUnpenalised == rhs.secsTillUnpenalised));
+}
+
+pure auto
+operator==(TeamInfo const& lhs, TeamInfo const& rhs) noexcept
+-> bool {
+  return (
+    (lhs.messageBudget == rhs.messageBudget) and
+    (lhs.penaltyShot == rhs.penaltyShot) and
+    std::equal(std::begin(lhs.players), std::end(lhs.players), std::begin(rhs.players), std::end(rhs.players)) and
+    (lhs.score == rhs.score) and
+    (lhs.singleShots == rhs.singleShots) and
+    (lhs.teamColour == rhs.teamColour) and
+    (lhs.teamNumber == rhs.teamNumber));
+}
+
+#if DEBUG
+
+INLINE auto
+operator<<(std::ostream& os, RobotInfo const& robot) noexcept
+-> std::ostream& {
+  if (robot.penalty) { return os << 'P' << +robot.penalty << " for " << +robot.secsTillUnpenalised << 's'; }
+  return os << "in";
+}
+
+template <u8 N>
+INLINE auto
+operator<<(std::ostream& os, RobotInfo const (&robots)[N]) noexcept
+-> std::ostream& {
+  os << '{' << robots[0];
+  for (u8 i = 1; i < N; ++i) { os << ", " << robots[i]; }
+  return os << '}';
+}
+
+INLINE auto
+operator<<(std::ostream& os, TeamInfo const& team) noexcept
+-> std::ostream& {
+  return os << "[Team #" << +team.teamNumber << " (" << ::config::gamecontroller::team::print_color(team.teamColour) << ") with " << +team.score << " point(s), " << +team.messageBudget << " messages left, " << std::bitset<16>{team.singleShots} << " on penalty shots, players " << team.players << ']';
+}
+
+pure auto
+operator+(TeamInfo const& x) noexcept
+-> TeamInfo {
+  return x;
+}
+
+INLINE auto
+operator<<(std::ostream& os, GameControlReturnData const& msg) noexcept
+-> std::ostream& {
+  os << "[Team " << +msg.teamNum << " Player #" << +msg.playerNum;
+  if (msg.fallen) { os << ", FALLEN,"; }
+  os << " at (" << msg.pose[0] << ' ' << msg.pose[1] << ' ' << msg.pose[2] << "), ball (" << msg.ball[0] << ' ' << msg.ball[1] << ") (";
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wfloat-equal"
+  if (msg.ballAge != -1.F) { return os << "last seen " << msg.ballAge << "s ago)]"; }
+#pragma clang diagnostic pop
+  return os << "never seen)]";
+}
+
+#endif // DEBUG
+
+} // namespace spl

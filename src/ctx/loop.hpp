@@ -24,25 +24,32 @@ template <config::gamecontroller::competition::phase::t CompetitionPhase,
 auto
 Loop<CompetitionPhase, CompetitionType>::operator()() noexcept
 -> void {
+#if DEBUG
+  std::cout << "Waiting for a GameController to open communication...\n";
+#endif
+  parse(msg::recv_from_gc()); // blocking
   do {
-    parse(msg::recv_from_gc());
     msg::send_to_gc(static_cast<spl::GameControlReturnData>(context));
     // msg::send_to_team(static_cast<spl::Message>(context));
-    std::this_thread::sleep_until(wait_until += update_period);
-  } while (context and continue_looping);
+    parse(msg::recv_from_gc()); // blocking
+  } while (context); // if the above line tells us game over, don't send anything more (hence parse at the end of the loop)
 }
 
 template <config::gamecontroller::competition::phase::t CompetitionPhase,
           config::gamecontroller::competition::type ::t CompetitionType>
 INLINE auto
-Loop<CompetitionPhase, CompetitionType>::parse(std::optional<spl::GameControlData> const& from_gc) noexcept
+Loop<CompetitionPhase, CompetitionType>::parse(std::optional<spl::GameControlData>&& from_gc) noexcept
 -> void {
   if (from_gc and (from_gc->version == config::udp::gamecontroller::send::version) and !strncmp(from_gc->header, config::udp::gamecontroller::send::header, sizeof from_gc->header)) {
-    context.parse(*from_gc);
+    context.parse(std::move(*from_gc));
 #if DEBUG
   } else {
     if (from_gc) {
-      std::cout << "Invalid packet ostensibly from GameController (probably nonsense: version " << from_gc->version << ", header " << from_gc->header << ")\n";
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warray-bounds"
+      from_gc->header[4] = '\0'; // writing out of bounds into another struct member, but it's fine--nonsense anyway
+#pragma clang diagnostic pop
+      std::cout << "Invalid packet received (probably nonsense: version " << +from_gc->version << " (should be " << +config::udp::gamecontroller::send::version << "), header \"" << from_gc->header << "\" (should be \"" << config::udp::gamecontroller::send::header << "\"))\n";
     }
 #endif
   }

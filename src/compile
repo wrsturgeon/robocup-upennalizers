@@ -3,7 +3,7 @@
 set -eu
 
 if [ ${#} -lt 2 ]; then
-    echo "Usage: ${0} <source file> {--release or --debug} [optional: compiler arguments . . . ]"
+    echo "Usage: ${0} <source file> [required: --release or --debug] [optional: --verbose]"
     exit 1
 fi
 
@@ -19,8 +19,20 @@ elif [ ${2} = "--debug" ]; then
     DEBUG=1
 else
     echo "Unrecognized second argument"
-    echo "Usage: ${0} <source file> [--release or --debug]"
+    echo "Usage: ${0} <source file> [required: --release or --debug] [optional: --verbose]"
     exit 1
+fi
+
+if [ ${#} -eq 3 ]; then
+    if [ ${3} = "--verbose" ]; then
+        VERBOSE=1
+    else
+        echo "Unrecognized third argument"
+        echo "Usage: ${0} <source file> [required: --release or --debug] [optional: --verbose]"
+        exit 1
+    fi
+else
+    VERBOSE=0
 fi
 
 # Kill processes on competing ports
@@ -29,7 +41,7 @@ lsof -t -i :3838 | xargs kill
 cd .. # .../robocup-legacy/
 mkdir -p bin
 EXECNAME=$(basename ${1} | cut -d. -f1)
-COMMON="-DSYSTEM_BITS=32 -DDEBUG=${DEBUG} -o ./bin/${EXECNAME} ./src/${1} -std=c++2b -include./src/prologue.hpp -I. -Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat -Wno-c++98-compat-pedantic -ftemplate-backtrace-limit=0 -DZMQ_BUILD_DRAFT_API"
+COMMON="-DSYSTEM_BITS=32 -DDEBUG=${DEBUG} -DVERBOSE=${VERBOSE} -o ./bin/${EXECNAME} ./src/${1} -std=c++2b -include./src/prologue.hpp -I. -Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat -Wno-c++98-compat-pedantic -ftemplate-backtrace-limit=0 -DZMQ_BUILD_DRAFT_API"
 # TODO: release & debug options (pull from other repo)
 
   DEBUG_FLAGS="-O0 -ffast-math -fno-omit-frame-pointer -g -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"
@@ -41,4 +53,4 @@ else
 fi
 
 # set -x
-clang++ ${@:3} ${COMMON} ${FLAGS}
+clang++ ${COMMON} ${FLAGS}
