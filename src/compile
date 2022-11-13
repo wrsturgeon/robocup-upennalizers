@@ -23,17 +23,17 @@ else
     exit 1
 fi
 
+# Kill processes on competing ports
+lsof -t -i :3838 | xargs kill
+
 cd .. # .../robocup-legacy/
 mkdir -p bin
 EXECNAME=$(basename ${1} | cut -d. -f1)
 COMMON="-DSYSTEM_BITS=32 -DDEBUG=${DEBUG} -o ./bin/${EXECNAME} ./src/${1} -std=c++2b -include./src/prologue.hpp -I. -Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat -Wno-c++98-compat-pedantic -ftemplate-backtrace-limit=0 -DZMQ_BUILD_DRAFT_API"
 # TODO: release & debug options (pull from other repo)
 
-# an insanely long list of folders that Boost internally needs (since we're using it as an onboard header-only library)
-BOOST_INCLUDES=$(find ./ext/boost/libs -type d -name include -mindepth 2 | while read line; do echo "-I${line}"; done | tr '\n' ' ')
-
-DEBUG_FLAGS="-O0 -fno-omit-frame-pointer -g -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"
-RELEASE_FLAGS="-Ofast -fomit-frame-pointer -fno-exceptions -fshort-enums -march=native -mtune=native -mllvm -polly -mllvm -polly-vectorizer=stripmine -DNDEBUG"
+  DEBUG_FLAGS="-O0 -ffast-math -fno-omit-frame-pointer -g -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"
+RELEASE_FLAGS="-O3 -ffast-math    -fomit-frame-pointer -fshort-enums -march=native -mtune=native -mllvm -polly -mllvm -polly-vectorizer=stripmine -DNDEBUG"
 if [ ${DEBUG} -eq 1 ]; then
     FLAGS=${DEBUG_FLAGS}
 else
@@ -41,4 +41,4 @@ else
 fi
 
 # set -x
-clang++ ${@:3} ${COMMON} ${BOOST_INCLUDES} ${FLAGS}
+clang++ ${@:3} ${COMMON} ${FLAGS}

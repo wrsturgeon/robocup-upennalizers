@@ -8,6 +8,9 @@
     "cstddef": "cpp",
     "iostream": "cpp",
     "atomic": "cpp",
-    "utility": "cpp"
+    "utility": "cpp",
+    "stdexcept": "cpp",
+    "string": "cpp",
+    "iosfwd": "cpp"
   }
 }

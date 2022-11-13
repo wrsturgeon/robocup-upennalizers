@@ -4,6 +4,3 @@
 [submodule "GameController"]
 	path = ext/GameController
 	url = https://github.com/RoboCup-SPL/GameController.git
-[submodule "ext/boost"]
-	path = ext/boost
-	url = https://github.com/boostorg/boost.git

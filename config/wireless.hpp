@@ -20,10 +20,6 @@
 
 namespace config {
 
-namespace gamecontroller {
-inline constexpr char const* ip = GAMECONTROLLER_IP;
-} // namespace gamecontroller
-
 namespace player {
 inline constexpr char const* ip = PLAYER_IP;
 } // namespace player
@@ -32,13 +28,11 @@ namespace udp {
 
 inline constexpr u16 team_port = TEAM_PORT;
 inline constexpr char const* team_port_str = TEAM_PORT_STR;
-inline constexpr char const* to_players = "udp://" PLAYER_IP ":" TEAM_PORT_STR;
-inline constexpr char const* to_gamecontroller = "udp://" PLAYER_IP ":" STRINGIFY(GAMECONTROLLER_RETURN_PORT);
-inline constexpr char const* from_players = "udp://*:" TEAM_PORT_STR;
-inline constexpr char const* from_gamecontroller = "udp://" GAMECONTROLLER_IP ":" STRINGIFY(GAMECONTROLLER_DATA_PORT);
 
 // From ext/GameController/examples/c/RoboCupGameControlData.h (included via config/protocol.hpp):
 namespace gamecontroller {
+
+inline constexpr char const* ip = GAMECONTROLLER_IP;
 
 namespace send {
 inline constexpr u16 port = GAMECONTROLLER_DATA_PORT;
@@ -46,6 +40,7 @@ inline constexpr u16 port = GAMECONTROLLER_DATA_PORT;
 inline constexpr char const* header = GAMECONTROLLER_STRUCT_HEADER;
 #undef GAMECONTROLLER_STRUCT_HEADER
 inline constexpr u8 version = GAMECONTROLLER_STRUCT_VERSION;
+static_assert(version == 14, "Updated SPL message version: please MANUALLY make sure we have a 1:1 correspondence (all fields accounted for), then hard-code this year's new version for next year's team. Thanks!");
 } // namespace send
 
 namespace recv {
@@ -55,6 +50,7 @@ inline constexpr char const* header = GAMECONTROLLER_RETURN_STRUCT_HEADER;
 #undef GAMECONTROLLER_RETURN_STRUCT_HEADER
 inline constexpr u8 version = GAMECONTROLLER_RETURN_STRUCT_VERSION;
 #undef GAMECONTROLLER_RETURN_STRUCT_VERSION
+static_assert(version == 4, "Updated SPL message version: please MANUALLY make sure we have a 1:1 correspondence (all fields accounted for), then hard-code this year's new version for next year's team. Thanks!");
 } // namespace recv
 
 } // namespace gamecontroller
@@ -67,6 +63,7 @@ inline constexpr u8 version = SPL_STANDARD_MESSAGE_STRUCT_VERSION;
 #undef SPL_STANDARD_MESSAGE_STRUCT_VERSION
 inline constexpr u16 data_size = SPL_STANDARD_MESSAGE_DATA_SIZE;
 #undef SPL_STANDARD_MESSAGE_DATA_SIZE
+static_assert(version == 7, "Updated SPL message version: please MANUALLY make sure we have a 1:1 correspondence (all fields accounted for), then hard-code this year's new version for next year's team. Thanks!");
 } // namespace msg
 
 } // namespace udp

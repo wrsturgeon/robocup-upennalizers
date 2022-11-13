@@ -36,6 +36,9 @@ class Context {
   pure auto   set_play() const noexcept -> config::gamecontroller::set_play::t    { return _atomic_set_play  .load(); }
   pure auto      state() const noexcept -> config::gamecontroller::state::t       { return _atomic_state     .load(); }
   impure explicit operator spl::Message() const noexcept;
+  impure explicit operator spl::GameControlReturnData() const noexcept;
+  auto parse(spl::GameControlData const& from_gc) noexcept -> void;
+  pure operator bool() const noexcept { return state() != config::gamecontroller::state::finished; }
 };
 #pragma clang diagnostic pop
 
