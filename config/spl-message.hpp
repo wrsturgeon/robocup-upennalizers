@@ -1,6 +1,6 @@
 #pragma once
 
-#include "config/gamecontroller.hpp" // print_color
+#include "config/gamecontroller.hpp"
 
 #if DEBUG
 #include <iostream>
@@ -19,7 +19,7 @@ namespace spl {
 INLINE auto
 operator<<(std::ostream& os, Message const& msg) noexcept
 -> std::ostream& {
-  os << "[Team " << +msg.teamNum << " Player #" << +msg.playerNum;
+  os << '[' << config::gamecontroller::team::number(msg.teamNum) << " Player #" << +msg.playerNum;
   if (msg.fallen) { os << ", FALLEN,"; }
   os << " at (" << msg.pose[0] << ' ' << msg.pose[1] << ' ' << msg.pose[2] << "), ball (" << msg.ball[0] << ' ' << msg.ball[1] << ") (";
 #pragma clang diagnostic push

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "config/teams.hpp"
+
 #include <algorithm>
 
 #if DEBUG
@@ -24,7 +26,7 @@ namespace gamecontroller {
 inline constexpr u8 max_players = MAX_NUM_PLAYERS;
 #undef MAX_NUM_PLAYERS
 
-namespace team {
+namespace color {
 using t = u8;
 inline constexpr t blue = TEAM_BLUE;
 #undef TEAM_BLUE
@@ -48,7 +50,7 @@ inline constexpr t gray = TEAM_GRAY;
 #undef TEAM_GRAY
 #if DEBUG
 pure auto
-print_color(t x) noexcept
+print(t x) noexcept
 -> std::string {
   switch (x) {
     case blue: return "Blue";
@@ -61,11 +63,11 @@ print_color(t x) noexcept
     case purple: return "Purple";
     case brown: return "Brown";
     case gray: return "Gray";
-    default: return "unrecognized color";
+    default: return "[unrecognized team color " + std::to_string(x) + "]";
   }
 }
 #endif
-} // namespace team
+} // namespace color
 
 namespace competition {
 
@@ -75,6 +77,17 @@ inline constexpr t round_robin = COMPETITION_PHASE_ROUNDROBIN;
 #undef COMPETITION_PHASE_ROUNDROBIN
 inline constexpr t playoff = COMPETITION_PHASE_PLAYOFF;
 #undef COMPETITION_PHASE_PLAYOFF
+#if DEBUG
+pure auto
+print(t x) noexcept
+-> std::string {
+  switch (x) {
+    case round_robin: return "Round-Robin";
+    case playoff: return "Playoff";
+    default: return "[unrecognized competition phase " + std::to_string(x) + "]";
+  }
+}
+#endif
 } // namespace phase
 
 namespace type {
@@ -87,6 +100,19 @@ inline constexpr t seven_on_seven = COMPETITION_TYPE_7V7;
 #undef COMPETITION_TYPE_7V7
 inline constexpr t dynamic_ball_handling = COMPETITION_TYPE_DYNAMIC_BALL_HANDLING;
 #undef COMPETITION_TYPE_DYNAMIC_BALL_HANDLING
+#if DEBUG
+pure auto
+print(t x) noexcept
+-> std::string {
+  switch (x) {
+    case normal: return "Normal";
+    case challenge_shield: return "Challenge Shield";
+    case seven_on_seven: return "7v7";
+    case dynamic_ball_handling: return "Dynamic Ball Handling";
+    default: return "[unrecognized competition type " + std::to_string(x) + "]";
+  }
+}
+#endif
 } // namespace type
 
 } // namespace competition
@@ -102,6 +128,19 @@ inline constexpr t overtime = GAME_PHASE_OVERTIME;
 #undef GAME_PHASE_OVERTIME
 inline constexpr t timeout = GAME_PHASE_TIMEOUT;
 #undef GAME_PHASE_TIMEOUT
+#if DEBUG
+pure auto
+print(t x) noexcept
+-> std::string {
+  switch (x) {
+    case normal: return "Normal";
+    case penalty: return "Penalty";
+    case overtime: return "Overtime";
+    case timeout: return "Timeout";
+    default: return "[unrecognized game phase " + std::to_string(x) + "]";
+  }
+}
+#endif
 } // namespace phase
 } // namespace game
 
@@ -117,6 +156,20 @@ inline constexpr t playing = STATE_PLAYING;
 #undef STATE_PLAYING
 inline constexpr t finished = STATE_FINISHED;
 #undef STATE_FINISHED
+#if DEBUG
+pure auto
+print(t x) noexcept
+-> std::string {
+  switch (x) {
+    case initial: return "Initial";
+    case ready: return "Ready";
+    case set: return "Set";
+    case playing: return "Playing";
+    case finished: return "Finished";
+    default: return "[unrecognized state " + std::to_string(x) + "]";
+  }
+}
+#endif
 } // namespace state
 
 namespace set_play {
@@ -133,6 +186,21 @@ inline constexpr t kick_in = SET_PLAY_KICK_IN;
 #undef SET_PLAY_KICK_IN
 inline constexpr t penalty_kick = SET_PLAY_PENALTY_KICK;
 #undef SET_PLAY_PENALTY_KICK
+#if DEBUG
+pure auto
+print(t x) noexcept
+-> std::string {
+  switch (x) {
+    case none: return "None";
+    case goal_kick: return "Goal Kick";
+    case pushing_free_kick: return "Pushing Free Kick";
+    case corner_kick: return "Corner Kick";
+    case kick_in: return "Kick In";
+    case penalty_kick: return "Penalty Kick";
+    default: return "[unrecognized set-play " + std::to_string(x) + "]";
+  }
+}
+#endif
 } // namespace set_play
 
 namespace penalty {
@@ -161,6 +229,27 @@ inline constexpr t substitute = PENALTY_SUBSTITUTE;
 #undef PENALTY_SUBSTITUTE
 inline constexpr t manual = PENALTY_MANUAL;
 #undef PENALTY_MANUAL
+#if DEBUG
+pure auto
+print(t x) noexcept
+-> std::string {
+  switch (x) {
+    case none: return "None";
+    case illegal_ball_contact: return "Illegal Ball Contact";
+    case player_pushing: return "Pushing";
+    case illegal_motion_in_set: return "Illegal Motion in Set";
+    case inactive_player: return "Inactive Player";
+    case illegal_position: return "Illegal Position";
+    case leaving_field: return "Leaving the Field";
+    case request_pickup: return "Request Pickup";
+    case game_stuck: return "Game Stuck";
+    case illegal_position_in_set: return "Illegal Position in Set";
+    case substitute: return "Substitute";
+    case manual: return "Manual Penalty";
+    default: return "[unrecognized penalty " + std::to_string(x) + "]";
+  }
+}
+#endif
 } // namespace penalty
 
 } // namespace gamecontroller
@@ -193,8 +282,11 @@ operator==(TeamInfo const& lhs, TeamInfo const& rhs) noexcept
 INLINE auto
 operator<<(std::ostream& os, RobotInfo const& robot) noexcept
 -> std::ostream& {
-  if (robot.penalty) { return os << 'P' << +robot.penalty << " for " << +robot.secsTillUnpenalised << 's'; }
-  return os << "in";
+  switch (robot.penalty) {
+    case config::gamecontroller::penalty::none: return os << "in";
+    case config::gamecontroller::penalty::substitute: return os << "sub";
+    default: return os << config::gamecontroller::penalty::print(robot.penalty) << " for " << +robot.secsTillUnpenalised << 's';
+  }
 }
 
 template <u8 N>
@@ -209,19 +301,13 @@ operator<<(std::ostream& os, RobotInfo const (&robots)[N]) noexcept
 INLINE auto
 operator<<(std::ostream& os, TeamInfo const& team) noexcept
 -> std::ostream& {
-  return os << "[Team #" << +team.teamNumber << " (" << ::config::gamecontroller::team::print_color(team.teamColour) << ") with " << +team.score << " point(s), " << +team.messageBudget << " messages left, " << std::bitset<16>{team.singleShots} << " on penalty shots, players " << team.players << ']';
-}
-
-pure auto
-operator+(TeamInfo const& x) noexcept
--> TeamInfo {
-  return x;
+  return os << '[' << config::gamecontroller::team::number(team.teamNumber) << " (" << ::config::gamecontroller::color::print(team.teamColour) << ") with " << +team.score << " point(s), " << +team.messageBudget << " messages left, " << std::bitset<16>{team.singleShots} << " on penalty shots, players " << team.players << ']';
 }
 
 INLINE auto
 operator<<(std::ostream& os, GameControlReturnData const& msg) noexcept
 -> std::ostream& {
-  os << "[Team " << +msg.teamNum << " Player #" << +msg.playerNum;
+  os << '[' << config::gamecontroller::team::number(msg.teamNum) << " Player #" << +msg.playerNum;
   if (msg.fallen) { os << ", FALLEN,"; }
   os << " at (" << msg.pose[0] << ' ' << msg.pose[1] << ' ' << msg.pose[2] << "), ball (" << msg.ball[0] << ' ' << msg.ball[1] << ") (";
 #pragma clang diagnostic push

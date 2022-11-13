@@ -4,8 +4,8 @@
 
 #include "src/ctx/context-fwd.hpp"
 
-#include <cstddef>   // std::size_t
-#include <stdexcept> // std::runtime_error
+#include <cstddef>     // std::size_t
+#include <stdexcept>   // std::runtime_error
 
 #if DEBUG
 #include <iostream> // std::cout
@@ -21,6 +21,14 @@ std::atomic<bool> Loop<CompetitionPhase, CompetitionType>::any_loop_started = fa
 
 template <config::gamecontroller::competition::phase::t CompetitionPhase,
           config::gamecontroller::competition::type ::t CompetitionType>
+Loop<CompetitionPhase, CompetitionType>::Loop(Context<CompetitionPhase, CompetitionType>& context_ref) noexcept
+  : context{context_ref}
+{
+  assert(!any_loop_started.exchange(true)); // assert macro disappears in release mode; no #if necessary
+}
+
+template <config::gamecontroller::competition::phase::t CompetitionPhase,
+          config::gamecontroller::competition::type ::t CompetitionType>
 auto
 Loop<CompetitionPhase, CompetitionType>::operator()() noexcept
 -> void {
@@ -32,7 +40,7 @@ Loop<CompetitionPhase, CompetitionType>::operator()() noexcept
     msg::send_to_gc(static_cast<spl::GameControlReturnData>(context));
     // msg::send_to_team(static_cast<spl::Message>(context));
     parse(msg::recv_from_gc()); // blocking
-  } while (context); // if the above line tells us game over, don't send anything more (hence parse at the end of the loop)
+  } while (/* context */ true); // if the above line tells us game over, don't send anything more (hence parse at the end of the loop)
 }
 
 template <config::gamecontroller::competition::phase::t CompetitionPhase,

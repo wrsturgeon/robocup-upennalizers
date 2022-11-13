@@ -10,10 +10,7 @@
 #include "config/gamecontroller.hpp"
 #include "config/player-number.hpp"
 #include "config/spl-message.hpp"
-#include "config/team-number.hpp"
-
-//%%%%%%%%%%%%%%%% Feel free to change
-#define GAMECONTROLLER_IP "192.168.1.187"
+#include "config/teams.hpp"
 
 // not this tho
 #define PLAYER_IP "10.0." TEAM_NUMBER_STR "." PLAYER_NUMBER_STR
@@ -21,18 +18,15 @@
 namespace config {
 
 namespace player {
-inline constexpr char const* ip = PLAYER_IP;
+inline std::string const ip = "10.0." + std::to_string(config::gamecontroller::team::upenn) + "." + std::to_string(config::player::number);
 } // namespace player
 
 namespace udp {
 
-inline constexpr u16 team_port = TEAM_PORT;
-inline constexpr char const* team_port_str = TEAM_PORT_STR;
+inline u16 const team_port = 10000 + config::gamecontroller::team::upenn;
 
 // From ext/GameController/examples/c/RoboCupGameControlData.h (included via config/protocol.hpp):
 namespace gamecontroller {
-
-inline constexpr char const* ip = GAMECONTROLLER_IP;
 
 namespace send {
 inline constexpr u16 port = GAMECONTROLLER_DATA_PORT;
@@ -78,7 +72,6 @@ static_assert(version == 7, "Updated SPL message version: please MANUALLY make s
 #undef TEAM_PORT_STR
 #undef TEAM_PORT
 
-#undef PLAYER_IP
 #undef GAMECONTROLLER_IP
 
 // No more macros floating around

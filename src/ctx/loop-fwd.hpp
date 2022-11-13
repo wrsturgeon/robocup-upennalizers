@@ -9,12 +9,11 @@
 #include <atomic>     // std::atomic
 #include <chrono>     // std::chrono::milliseconds
 #include <functional> // std::bind
+#include <string>     // std::string
 #include <thread>     // std::thread
 
 namespace ctx {
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wpadded"
 template <config::gamecontroller::competition::phase::t CompetitionPhase,
           config::gamecontroller::competition::type ::t CompetitionType>
 class Loop {
@@ -29,13 +28,12 @@ class Loop {
   auto operator()() noexcept -> void;
   INLINE auto parse(std::optional<spl::GameControlData>&& from_gc) noexcept -> void;
  public:
-  Loop(Context<CompetitionPhase, CompetitionType>& context_ref) noexcept : context{context_ref} { assert(!any_loop_started.exchange(true)); }
+  Loop(Context<CompetitionPhase, CompetitionType>& context_ref) noexcept;
   Loop(Loop const&) = delete;
   Loop(Loop&&) = delete;
   auto operator=(Loop const&) -> Loop& = delete;
   auto operator=(Loop&&) -> Loop& = delete;
   ~Loop() noexcept { thread.join(); }
 };
-#pragma clang diagnostic pop
 
 } // namespace ctx

@@ -20,8 +20,6 @@ namespace ctx {
     }                                                         \
   private:
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wpadded"
 template <config::gamecontroller::competition::phase::t CompetitionPhase,
           config::gamecontroller::competition::type ::t CompetitionType>
 class Context {
@@ -32,7 +30,7 @@ class Context {
   ATOMIC_MEMBER(config::gamecontroller::state::t, state, config::gamecontroller::state::initial)
   ATOMIC_MEMBER(config::gamecontroller::set_play::t, set_play, config::gamecontroller::set_play::none)
   ATOMIC_MEMBER(u8, first_half, true)
-  ATOMIC_MEMBER(u8, kicking_team, config::gamecontroller::team::blue)
+  ATOMIC_MEMBER(u8, kicking_team, config::gamecontroller::color::blue)
   ATOMIC_MEMBER(i16, secs_remaining, -1)
   ATOMIC_MEMBER(i16, secondary_time, 0)
   ATOMIC_MEMBER(spl::TeamInfo, team1, {})
@@ -52,6 +50,5 @@ class Context {
   auto parse(spl::GameControlData&&) noexcept -> void;
   pure operator bool() const noexcept { return state() != config::gamecontroller::state::finished; }
 };
-#pragma clang diagnostic pop
 
 } // namespace ctx

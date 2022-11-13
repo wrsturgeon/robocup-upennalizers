@@ -20,13 +20,11 @@ extern "C" {
 #include <atomic>    // std::atomic
 #include <cassert>   // assert
 #include <cstddef>   // std::size_t
+#include <fstream>   // std::ifstream (to read config/runtime/gamecontroller.ip)
+#include <iostream>  // std::cout
 #include <optional>  // std::optional
 #include <stdexcept> // std::runtime_error
 #include <string>    // std::to_string
-
-#if DEBUG || VERBOSE
-#include <iostream> // std::cout
-#endif
 
 namespace msg {
 
@@ -37,7 +35,7 @@ address_from_ip(char const *ip_str)
 -> in_addr_t {
   auto sin = uninitialized<sockaddr_in>();
   if (inet_pton(AF_INET, ip_str, &sin.sin_addr) != 1) {
-    throw std::runtime_error{"Invalid IP address (" + std::string{ip_str} + "): " + strerror(errno) + " (errno " + std::to_string(errno) + ')'};
+    throw std::runtime_error{"Invalid IP address (\"" + std::string{ip_str} + "\"): " + strerror(errno) + " (errno " + std::to_string(errno) + ')'};
   }
   return sin.sin_addr.s_addr;
 }
@@ -75,7 +73,8 @@ struct SocketToGC {
   static std::atomic<bool> first_instance;
 #endif
   decltype(socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) const socket_fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-  in_addr_t const gc_address = address_from_ip(config::udp::gamecontroller::ip);
+  std::string gc_ip{[]{ std::string s; std::ifstream f{"../config/runtime/gamecontroller.ip"}; if (!f) { std::cerr << "Couldn't open ../config/runtime/gamecontroller.ip\n"; std::exit(1); } f >> s; return s; }()};
+  in_addr_t const gc_address = address_from_ip(gc_ip.c_str());
   sockaddr_in const remote = make_sockaddr_in(gc_address, config::udp::gamecontroller::recv::port);
   SocketToGC();
   SocketToGC(SocketToGC const&) = delete;
@@ -122,10 +121,7 @@ SocketToGC::SocketToGC() {
 static auto
 recv_from_gc()
 -> std::optional<spl::GameControlData> {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wexit-time-destructors" // Perfectly fine that we close the socket at program exit
   static auto s = internal::SocketFromGC{};
-#pragma clang diagnostic pop
   auto src = uninitialized<sockaddr_in>();
   auto src_len = uninitialized<socklen_t>();
   auto msg = uninitialized<spl::GameControlData>();
@@ -143,10 +139,7 @@ recv_from_gc()
 static auto
 send_to_gc(spl::GameControlReturnData const& data)
 -> void {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wexit-time-destructors" // Perfectly fine that we close the socket at program exit
   static auto s = internal::SocketToGC{};
-#pragma clang diagnostic pop
 #if VERBOSE
   std::cout << "Sending to GameController...\n";
 #endif
