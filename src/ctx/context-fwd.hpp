@@ -11,8 +11,10 @@ namespace ctx {
 #define ATOMIC_VAR(NAME, TYPE, INIT)                                 \
   namespace internal { static auto NAME = std::atomic<TYPE>{INIT}; } \
   impure static auto NAME() noexcept -> TYPE { return internal::NAME.load(std::memory_order_relaxed); }
+#if DEBUG
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"
+#endif // DEBUG
 ATOMIC_VAR(competition_phase, config::gamecontroller::competition::phase::t, config::gamecontroller::competition::phase::playoff) // better safe than sorry ig
 ATOMIC_VAR(competition_type, config::gamecontroller::competition::type::t, config::gamecontroller::competition::type::normal)
 ATOMIC_VAR(game_phase, config::gamecontroller::game::phase::t, config::gamecontroller::game::phase::normal)
@@ -24,7 +26,9 @@ ATOMIC_VAR(secs_remaining, i16, -1)
 ATOMIC_VAR(secondary_time, i16, 0)
 ATOMIC_VAR(team1, spl::TeamInfo, {})
 ATOMIC_VAR(team2, spl::TeamInfo, {})
+#if DEBUG
 #pragma clang diagnostic pop
+#endif // DEBUG
 #undef ATOMIC_VAR
 
 impure static auto make_spl_message() noexcept -> spl::Message;

@@ -18,7 +18,7 @@ inline std::array<std::string, 256> number;
 
 // clever trick: run code outside main by returning into a variable (that we'll use often!)
 inline u8 const count = []() -> u8 {
-#if DEBUG
+#if DEBUG || VERBOSE
   std::cout << "Parsing the GameController source code to register teams by number...";
 #endif
   std::ifstream file{"../ext/GameController/resources/config/spl/teams.cfg"};
@@ -54,7 +54,7 @@ inline u8 const count = []() -> u8 {
       internal::number[static_cast<u8>(most_so_far)] = line.substr(eq_idx + 1, comma_idx - eq_idx - 1);
     }
   }
-#if DEBUG
+#if DEBUG || VERBOSE
   std::cout << "done!\n";
 #endif
   return static_cast<u8>(most_so_far);

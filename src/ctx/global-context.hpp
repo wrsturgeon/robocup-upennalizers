@@ -10,8 +10,10 @@
 
 namespace ctx {
 
+#if DEBUG
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"
+#endif // DEBUG
 
 impure static auto
 make_spl_message() noexcept
@@ -47,13 +49,11 @@ INLINE static auto
 parse(spl::GameControlData&& msg) noexcept
 -> void {
 #define TYPECHECK(LVALUE, RVALUE) static_assert(std::is_same_v<typename decltype(internal::LVALUE)::value_type, std::decay_t<decltype(msg.RVALUE)>>)
-#if DEBUG
+#if DEBUG || VERBOSE
 #define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); if (msg.RVALUE != internal::LVALUE.exchange(std::move(msg.RVALUE), std::memory_order_relaxed)) { std::cout << #LVALUE << " updated -> " << PRINT(internal::LVALUE.load()) << std::endl; }
-#else // DEBUG
+#else // DEBUG || VERBOSE
 #define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); internal::LVALUE.store(std::move(msg.RVALUE), std::memory_order_relaxed);
-#endif // DEBUG
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-function"
+#endif // DEBUG || VERBOSE
 
   // In struct order
   // msg.header is valid (since this fn was called) & can be ignored
@@ -72,11 +72,12 @@ parse(spl::GameControlData&& msg) noexcept
   UPDATE_ATOMIC(team1, teams[0], )
   UPDATE_ATOMIC(team2, teams[1], )
 
-#pragma clang diagnostic pop
 #undef TYPECHECK
 #undef UPDATE_ATOMIC
 }
 
+#if DEBUG
 #pragma clang diagnostic pop
+#endif // DEBUG
 
 } // namespace ctx

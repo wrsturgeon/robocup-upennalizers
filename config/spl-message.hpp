@@ -2,7 +2,7 @@
 
 #include "config/gamecontroller.hpp"
 
-#if DEBUG
+#if DEBUG || VERBOSE
 #include <iostream>
 #endif
 
@@ -14,7 +14,7 @@ namespace spl {
 #pragma clang diagnostic pop
 #undef SPLStandardMessage
 
-#if DEBUG
+#if DEBUG || VERBOSE
 
 INLINE auto
 operator<<(std::ostream& os, Message const& msg) noexcept
@@ -29,6 +29,6 @@ operator<<(std::ostream& os, Message const& msg) noexcept
   return os << " + " << +msg.numOfDataBytes << "B data]";
 }
 
-#endif // DEBUG
+#endif // DEBUG || VERBOSE
 
 } // namespace spl

@@ -7,7 +7,7 @@
 
 #include <cstddef>     // std::size_t
 
-#if DEBUG
+#if DEBUG || VERBOSE
 #include <iostream> // std::cout
 #endif
 
@@ -18,7 +18,7 @@ static auto
 run() noexcept
 -> void {
 
-#if DEBUG
+#if DEBUG || VERBOSE
   std::cout << "Waiting for a GameController to open communication...\n";
 #endif
   parse(msg::recv_from_gc()); // blocking
@@ -36,7 +36,7 @@ parse(spl::GameControlData&& from_gc) noexcept
 -> void {
   if ((from_gc.version == config::udp::gamecontroller::send::version) and !strncmp(from_gc.header, config::udp::gamecontroller::send::header, sizeof from_gc.header)) {
     ::ctx::parse(std::move(from_gc));
-#if DEBUG
+#if DEBUG || VERBOSE
   } else {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warray-bounds"

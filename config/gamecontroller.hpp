@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-#if DEBUG
+#if DEBUG || VERBOSE
 #include <bitset>
 #include <iostream>
 #endif
@@ -48,7 +48,7 @@ inline constexpr t brown = TEAM_BROWN;
 #undef TEAM_BROWN
 inline constexpr t gray = TEAM_GRAY;
 #undef TEAM_GRAY
-#if DEBUG
+#if DEBUG || VERBOSE
 pure auto
 print(t x) noexcept
 -> std::string {
@@ -77,7 +77,7 @@ inline constexpr t round_robin = COMPETITION_PHASE_ROUNDROBIN;
 #undef COMPETITION_PHASE_ROUNDROBIN
 inline constexpr t playoff = COMPETITION_PHASE_PLAYOFF;
 #undef COMPETITION_PHASE_PLAYOFF
-#if DEBUG
+#if DEBUG || VERBOSE
 pure auto
 print(t x) noexcept
 -> std::string {
@@ -100,7 +100,7 @@ inline constexpr t seven_on_seven = COMPETITION_TYPE_7V7;
 #undef COMPETITION_TYPE_7V7
 inline constexpr t dynamic_ball_handling = COMPETITION_TYPE_DYNAMIC_BALL_HANDLING;
 #undef COMPETITION_TYPE_DYNAMIC_BALL_HANDLING
-#if DEBUG
+#if DEBUG || VERBOSE
 pure auto
 print(t x) noexcept
 -> std::string {
@@ -128,7 +128,7 @@ inline constexpr t overtime = GAME_PHASE_OVERTIME;
 #undef GAME_PHASE_OVERTIME
 inline constexpr t timeout = GAME_PHASE_TIMEOUT;
 #undef GAME_PHASE_TIMEOUT
-#if DEBUG
+#if DEBUG || VERBOSE
 pure auto
 print(t x) noexcept
 -> std::string {
@@ -156,7 +156,7 @@ inline constexpr t playing = STATE_PLAYING;
 #undef STATE_PLAYING
 inline constexpr t finished = STATE_FINISHED;
 #undef STATE_FINISHED
-#if DEBUG
+#if DEBUG || VERBOSE
 pure auto
 print(t x) noexcept
 -> std::string {
@@ -186,7 +186,7 @@ inline constexpr t kick_in = SET_PLAY_KICK_IN;
 #undef SET_PLAY_KICK_IN
 inline constexpr t penalty_kick = SET_PLAY_PENALTY_KICK;
 #undef SET_PLAY_PENALTY_KICK
-#if DEBUG
+#if DEBUG || VERBOSE
 pure auto
 print(t x) noexcept
 -> std::string {
@@ -229,7 +229,7 @@ inline constexpr t substitute = PENALTY_SUBSTITUTE;
 #undef PENALTY_SUBSTITUTE
 inline constexpr t manual = PENALTY_MANUAL;
 #undef PENALTY_MANUAL
-#if DEBUG
+#if DEBUG || VERBOSE
 pure auto
 print(t x) noexcept
 -> std::string {
@@ -277,7 +277,7 @@ operator==(TeamInfo const& lhs, TeamInfo const& rhs) noexcept
     (lhs.teamNumber == rhs.teamNumber));
 }
 
-#if DEBUG
+#if DEBUG || VERBOSE
 
 INLINE auto
 operator<<(std::ostream& os, RobotInfo const& robot) noexcept
@@ -317,6 +317,6 @@ operator<<(std::ostream& os, GameControlReturnData const& msg) noexcept
   return os << "never seen)]";
 }
 
-#endif // DEBUG
+#endif // DEBUG || VERBOSE
 
 } // namespace spl
