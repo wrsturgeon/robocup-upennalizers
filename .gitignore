@@ -102,6 +102,10 @@ legacy/Lib/Modules/Webots/Controller/controller_wrap.c
 legacy/Tools/Matlab/logs/
 legacy/Tools/Matlab/colortableFiles/
 
+# nohup
+error.txt
+nohup.out
+
 #exclude matlab data --DP
 *.raw
 *.mat

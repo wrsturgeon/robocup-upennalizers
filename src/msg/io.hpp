@@ -154,6 +154,7 @@ send_to_gc()
 //   } else
 // #endif
     throw std::runtime_error{"sendto(s.socket_fd = " + std::to_string(s.socket_fd) + ", &msg = ..., sizeof msg = " + std::to_string(sizeof msg) + "B, 0, &s.remote = &(" + inet_ntoa(s.remote.sin_addr) + ':' + std::to_string(ntohs(s.remote.sin_port)) + "), sizeof s.remote = " + std::to_string(sizeof s.remote) + "B) returned " + std::to_string(n) + ": " + strerror(errno) + " (errno " + std::to_string(errno) + ')'};
+    // TODO: 32B is throwing
   }
 }
 
