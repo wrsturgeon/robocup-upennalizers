@@ -95,10 +95,6 @@ inline constexpr u16 update_period_ms = 500;
 
 //%%%%%%%%%%%%%%%% Stack-allocation without initialization
 
-#if VERBOSE
-#include <iostream>
-#endif
-
 template <typename T>
 pure auto
 uninitialized() -> std::decay_t<T> {

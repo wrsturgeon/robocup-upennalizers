@@ -126,11 +126,11 @@ recv_from_gc()
   char raw[sizeof(spl::GameControlData)];
   auto* const msg = reinterpret_cast<spl::GameControlData*>(raw);
   auto const n = recvfrom(s.socket_fd, msg, sizeof raw, 0, reinterpret_cast<sockaddr*>(&src), &src_len);
-#if VERBOSE
-  if (n >= 0) {
-    std::cout << "Received " << n << "B from " << inet_ntoa(src.sin_addr) << ':' << ntohs(src.sin_port) << std::endl;
-  }
-#endif
+// #if VERBOSE
+//   if (n >= 0) {
+//     std::cout << "Received " << n << "B from " << inet_ntoa(src.sin_addr) << ':' << ntohs(src.sin_port) << std::endl;
+//   }
+// #endif
   // TODO: if (n > sizeof msg) ...
   if (n == sizeof raw) { return *msg; }
   throw std::runtime_error{"recvfrom(s.socket_fd = " + std::to_string(s.socket_fd) + ", &msg = ..., sizeof msg = " + std::to_string(sizeof msg) + "B, 0, &src, &src_len) returned " + std::to_string(n) + ": " + strerror(errno) + " (errno " + std::to_string(errno) + ')'};
@@ -140,19 +140,19 @@ static auto
 send_to_gc()
 -> void {
   static auto s = internal::SocketToGC{};
-#if VERBOSE
-  std::cout << "Sending to GameController...\n";
-#endif
+// #if VERBOSE
+//   std::cout << "Sending to GameController...\n";
+// #endif
   auto const msg = ctx::make_gc_message();
   auto const n = send(s.socket_fd, &msg, sizeof msg, 0);
   if (n != sizeof msg) {
     std::cerr << "  Unsuccessful attempt to send to " << inet_ntoa(s.remote.sin_addr) << ':' << ntohs(s.remote.sin_port) << " (" << n << "B actually sent instead of " << sizeof msg << ")\n";
   } else {
-#if VERBOSE
-  if (n >= 0) {
-    std::cout << "  Sent " << msg << " (" << n << "B) to " << inet_ntoa(s.remote.sin_addr) << ':' << ntohs(s.remote.sin_port) << std::endl;
-  } else
-#endif
+// #if VERBOSE
+//   if (n >= 0) {
+//     std::cout << "  Sent " << msg << " (" << n << "B) to " << inet_ntoa(s.remote.sin_addr) << ':' << ntohs(s.remote.sin_port) << std::endl;
+//   } else
+// #endif
     throw std::runtime_error{"sendto(s.socket_fd = " + std::to_string(s.socket_fd) + ", &msg = ..., sizeof msg = " + std::to_string(sizeof msg) + "B, 0, &s.remote = &(" + inet_ntoa(s.remote.sin_addr) + ':' + std::to_string(ntohs(s.remote.sin_port)) + "), sizeof s.remote = " + std::to_string(sizeof s.remote) + "B) returned " + std::to_string(n) + ": " + strerror(errno) + " (errno " + std::to_string(errno) + ')'};
   }
 }

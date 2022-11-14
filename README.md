@@ -1,8 +1,9 @@
 UPennalizers
 
 Forked from the original (c. 2019, GitLab); iterative improvements.
-New code can be compiled by `cd`ing to `src/` and running `./compile start.cpp [--release/--debug]`, which creates the main executable at `bin/start`.
-Legacy code can be run by `cd`ing to `legacy/Player/` and running `./game main`.
+New code can be compiled by `cd`ing to `src/` and using `./compile start.cpp [--release/--debug]`, which creates the main executable at `bin/start`.
+When `ssh`'d into a robot, use `./bin/start &` (with the ampersand) to start play and relinquish control of the process; it'll then continue until the GameController tells it to stop, even if you disconnect or close the terminal. To kill a process running in the background (with the ampersand), use `killall start`.
+Legacy code can be run by `cd`ing to `legacy/Player/` and using `./game main`.
 
 Description from the legacy codebase:
 
