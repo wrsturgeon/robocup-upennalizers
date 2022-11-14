@@ -1,3 +1,10 @@
+-- THE START OF EVERYTHING
+-- This is the first file (other than maybe detect_whistle) that's called from ./game main
+-- Control flow:
+--   - disgusting loop that blocks until "0.005" (presumably seconds?) have passed
+--   - calls "update()" (fuck Lua's import system--can't tell where this comes from)
+--       - tracked it down with `grep -rnw`: ./legacy/Player/Run/main.lua:114
+
 cwd = os.getenv('PWD')
 require('init') -- Player/init.lua
 

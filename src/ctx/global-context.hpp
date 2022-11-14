@@ -1,38 +1,21 @@
 #pragma once
 
 #include "src/ctx/context-fwd.hpp"
-
 #include "src/ctx/loop.hpp"
 
 #include "config/gamecontroller.hpp"
 
 #include <algorithm> // std::copy_n
 #include <cassert>   // assert
-#include <utility>   // std::ref
 
 namespace ctx {
 
-#if DEBUG
-template <config::gamecontroller::competition::phase::t CompetitionPhase,
-          config::gamecontroller::competition::type ::t CompetitionType>
-std::atomic<bool> Context<CompetitionPhase, CompetitionType>::first_context = true;
-#endif
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
 
-template <config::gamecontroller::competition::phase::t CompetitionPhase,
-          config::gamecontroller::competition::type ::t CompetitionType>
-Context<CompetitionPhase, CompetitionType>::Context() noexcept
-    : loop{*this}
-{
-#if DEBUG
-  assert(first_context.exchange(false));
-#endif
-}
-
-template <config::gamecontroller::competition::phase::t CompetitionPhase,
-          config::gamecontroller::competition::type ::t CompetitionType>
-impure
-Context<CompetitionPhase, CompetitionType>::operator spl::Message() const noexcept
-{
+impure static auto
+make_spl_message() noexcept
+-> spl::Message {
   auto msg = uninitialized<spl::Message>();
   std::copy_n(config::udp::msg::header, sizeof msg.header, msg.header);
   msg.version = config::udp::msg::version;
@@ -44,11 +27,9 @@ Context<CompetitionPhase, CompetitionType>::operator spl::Message() const noexce
   return msg;
 }
 
-template <config::gamecontroller::competition::phase::t CompetitionPhase,
-          config::gamecontroller::competition::type ::t CompetitionType>
-impure
-Context<CompetitionPhase, CompetitionType>::operator spl::GameControlReturnData() const noexcept
-{
+impure static auto
+make_gc_message() noexcept
+-> spl::GameControlReturnData {
   auto msg = uninitialized<spl::GameControlReturnData>();
   std::copy_n(config::udp::gamecontroller::recv::header, sizeof msg.header, msg.header);
   msg.version = config::udp::gamecontroller::recv::version;
@@ -62,18 +43,17 @@ Context<CompetitionPhase, CompetitionType>::operator spl::GameControlReturnData(
   return msg;
 }
 
-template <config::gamecontroller::competition::phase::t CompetitionPhase,
-          config::gamecontroller::competition::type ::t CompetitionType>
-auto
-Context<CompetitionPhase, CompetitionType>::parse(spl::GameControlData&& msg) noexcept
--> void
-{
-#define TYPECHECK(LVALUE, RVALUE) static_assert(std::is_same_v<typename decltype(_atomic_##LVALUE)::value_type, std::decay_t<decltype(msg.RVALUE)>>)
+INLINE static auto
+parse(spl::GameControlData&& msg) noexcept
+-> void {
+#define TYPECHECK(LVALUE, RVALUE) static_assert(std::is_same_v<typename decltype(internal::LVALUE)::value_type, std::decay_t<decltype(msg.RVALUE)>>)
 #if DEBUG
-#define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); if (msg.RVALUE != _atomic_##LVALUE.exchange(std::move(msg.RVALUE), std::memory_order_relaxed)) { std::cout << #LVALUE << " updated -> " << PRINT(_atomic_##LVALUE.load()) << std::endl; }
+#define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); if (msg.RVALUE != internal::LVALUE.exchange(std::move(msg.RVALUE), std::memory_order_relaxed)) { std::cout << #LVALUE << " updated -> " << PRINT(internal::LVALUE.load()) << std::endl; }
 #else // DEBUG
-#define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); _atomic_##LVALUE.store(std::move(msg.RVALUE), std::memory_order_relaxed);
+#define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); internal::LVALUE.store(std::move(msg.RVALUE), std::memory_order_relaxed);
 #endif // DEBUG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
 
   // In struct order
   // msg.header is valid (since this fn was called) & can be ignored
@@ -92,8 +72,11 @@ Context<CompetitionPhase, CompetitionType>::parse(spl::GameControlData&& msg) no
   UPDATE_ATOMIC(team1, teams[0], )
   UPDATE_ATOMIC(team2, teams[1], )
 
+#pragma clang diagnostic pop
 #undef TYPECHECK
 #undef UPDATE_ATOMIC
 }
+
+#pragma clang diagnostic pop
 
 } // namespace ctx

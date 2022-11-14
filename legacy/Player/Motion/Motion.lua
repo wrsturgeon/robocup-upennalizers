@@ -2,7 +2,7 @@ module(..., package.seeall);
 
 require('Body')
 require('UltraSound')
-require('fsm')
+require('fsm') -- Player/Util/fsm.lua
 require('vector')
 require('mcm')
 require('gcm')

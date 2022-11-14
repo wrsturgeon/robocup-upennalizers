@@ -1,3 +1,20 @@
+-- THE START OF THE MAIN PROGRAM LOOP
+-- update() called every "0.005" (seconds?) from ./legacy/Player/run_main.lua, and that's literally all run_main does
+-- control flow (TL;DR: basically *just* updating FSMs individually):
+--   - Motion.entry()
+--       - robot walks onto the field...?
+--   - update() [from ./legacy/Player/run_main.lua]
+--       - some probably broken battery-level shit
+--       - ...opening a broadcast socket every loop iteration?
+--       - checking, at runtime, whether or not this is the first iteration of the loop
+--           - configuring if not
+--           - else, update FSMs individually
+--       - get the body's battery level for the third time
+-- Best bet for tracing further control flow:
+--   - ./legacy/Player/BodyFSM/[here it gets murky]BodyFSM.lua(?):update()
+--   - ./legacy/Player/GameFSM/GameFSM.lua(?):update()
+--   - ./legacy/Player/HeadFSM/HeadFSM.lua(?):update()
+
 cwd = cwd or os.getenv('PWD')
 package.path = cwd.."/?.lua;"..package.path;
 require('init') -- Player/init.lua

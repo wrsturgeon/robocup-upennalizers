@@ -35,17 +35,18 @@ else
     VERBOSE=0
 fi
 
-# Kill processes on competing ports
-lsof -t -i :3838 | xargs kill
+# Get latest submodule commits
+echo "Updating submodules..."
+git submodule update --init --recursive --remote > /dev/null 2>&1 && echo "  done" || echo "  Couldn't; maybe no Internet? Proceeding..."
 
 cd .. # .../robocup-legacy/
 mkdir -p bin
 EXECNAME=$(basename ${1} | cut -d. -f1)
-COMMON="-DSYSTEM_BITS=32 -DDEBUG=${DEBUG} -DVERBOSE=${VERBOSE} -o ./bin/${EXECNAME} ./src/${1} -std=c++2b -include./src/prologue.hpp -I. -Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-exit-time-destructors -Wno-global-constructors -ftemplate-backtrace-limit=0"
+COMMON="-DSYSTEM_BITS=32 -DDEBUG=${DEBUG} -DVERBOSE=${VERBOSE} -o ./bin/${EXECNAME} ./src/${1} -std=c++2b -include./src/prologue.hpp -I. -Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-exit-time-destructors -Wno-global-constructors -Os -ffast-math -ftemplate-backtrace-limit=0"
 # TODO: release & debug options (pull from other repo)
 
-  DEBUG_FLAGS="-O0 -ffast-math -fno-omit-frame-pointer -g -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"
-RELEASE_FLAGS="-O3 -ffast-math    -fomit-frame-pointer -fshort-enums -march=native -mtune=native -mllvm -polly -mllvm -polly-vectorizer=stripmine -DNDEBUG"
+  DEBUG_FLAGS="-fno-omit-frame-pointer -g3 -ffunction-sections -fdata-sections -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"
+RELEASE_FLAGS="-fomit-frame-pointer -fshort-enums -march=native -mtune=native -mllvm -polly -mllvm -polly-vectorizer=stripmine -DNDEBUG"
 if [ ${DEBUG} -eq 1 ]; then
     FLAGS=${DEBUG_FLAGS}
 else
@@ -53,4 +54,11 @@ else
 fi
 
 # set -x
+echo "Compiling..."
 clang++ ${COMMON} ${FLAGS}
+echo "  done"
+
+# Kill processes on competing ports
+echo "Competing IO processes running:"
+lsof -t -i :3838 || echo "  none (good to go!)" # | xargs kill
+# echo "  done"

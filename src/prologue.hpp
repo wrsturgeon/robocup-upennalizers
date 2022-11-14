@@ -77,9 +77,9 @@ inline constexpr u16 update_period_ms = 500;
 //%%%%%%%%%%%%%%%% Useful macros
 #ifdef NDEBUG
 #define INLINE_NOATTR inline constexpr
-#define INLINE [[gnu::always_inline]] INLINE_NOATTR
+#define INLINE /*[[gnu::always_inline]]*/ INLINE_NOATTR
 #define IMPURE_NOATTR inline
-#define impure [[nodiscard]] [[gnu::always_inline]] IMPURE_NOATTR  // not constexpr since std::string for whatever reason isn't
+#define impure [[nodiscard]] /*[[gnu::always_inline]]*/ IMPURE_NOATTR  // not constexpr since std::string for whatever reason isn't
 #define CONST_IF_RELEASE const
 #define NOX noexcept
 #else
@@ -95,9 +95,13 @@ inline constexpr u16 update_period_ms = 500;
 
 //%%%%%%%%%%%%%%%% Stack-allocation without initialization
 
+#if VERBOSE
+#include <iostream>
+#endif
+
 template <typename T>
 pure auto
 uninitialized() -> std::decay_t<T> {
-  std::byte bytes[sizeof(T)];
-  return *reinterpret_cast<T*>(bytes);
+  char bytes[sizeof(std::decay_t<T>)];
+  return *reinterpret_cast<std::decay_t<T>*>(bytes);
 }

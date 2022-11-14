@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# observed control flow from `./game main`:
+#   - sets a bunch of variables based on kernel (whether or not we're on a Nao machine)
+#   - calls run_main
+#       - sort of ingeniously (sort of confusingly) uses built-in `screen` to start a process that'll continue without ssh
+#       - presumably used to call detect_whistle.lua (commented out--now seems to be a different function run_main_whistle)
+#       - *** calls run_main.lua ***
+#           - the mystery continues...
+
 set -eux
 
 KERNEL=`uname -r`

@@ -1,7 +1,14 @@
+-- This file is probably(? lol) called from ./legacy/Player/Run/main.lua
+-- at least there's a `require('BodyFSM')` and a `BodyFSM.update()`
+-- control flow of update():
+--   - fucking fuck Lua is more obscurantist than Lacan
+--   - so we have a FSM (whose implementation comes from...some file?)
+--   - and this FSM has an update() member function
+
 module(..., package.seeall);
 
 require('Body')
-require('fsm')
+require('fsm') -- Player/Util/fsm.lua
 require('gcm')
 require('Config')
 

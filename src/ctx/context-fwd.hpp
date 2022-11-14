@@ -1,54 +1,35 @@
 #pragma once
 
-#include "src/ctx/context-fwd-fwd.hpp" // ikr
-
-#include "src/ctx/loop-fwd.hpp"
-
 #include "config/gamecontroller.hpp"
 #include "config/spl-message.hpp"
-#include "config/wireless.hpp"
 
 #include <atomic> // std::atomic
 
 namespace ctx {
 
-#define ATOMIC_MEMBER(TYPE, NAME, INIT)                       \
-    std::atomic<TYPE> _atomic_##NAME = INIT;                  \
-  public:                                                     \
-    pure auto NAME() const noexcept -> TYPE {                 \
-      return _atomic_##NAME.load(std::memory_order_relaxed);  \
-    }                                                         \
-  private:
+// global atomic variables (in ctx::internal namespace, with thread-safe ctx:: accessors)
+#define ATOMIC_VAR(NAME, TYPE, INIT)                                 \
+  namespace internal { static auto NAME = std::atomic<TYPE>{INIT}; } \
+  impure static auto NAME() noexcept -> TYPE { return internal::NAME.load(std::memory_order_relaxed); }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+ATOMIC_VAR(competition_phase, config::gamecontroller::competition::phase::t, config::gamecontroller::competition::phase::playoff) // better safe than sorry ig
+ATOMIC_VAR(competition_type, config::gamecontroller::competition::type::t, config::gamecontroller::competition::type::normal)
+ATOMIC_VAR(game_phase, config::gamecontroller::game::phase::t, config::gamecontroller::game::phase::normal)
+ATOMIC_VAR(state, config::gamecontroller::state::t, config::gamecontroller::state::initial)
+ATOMIC_VAR(set_play, config::gamecontroller::set_play::t, config::gamecontroller::set_play::none)
+ATOMIC_VAR(first_half, u8, 1)
+ATOMIC_VAR(kicking_team, u8, config::gamecontroller::color::blue)
+ATOMIC_VAR(secs_remaining, i16, -1)
+ATOMIC_VAR(secondary_time, i16, 0)
+ATOMIC_VAR(team1, spl::TeamInfo, {})
+ATOMIC_VAR(team2, spl::TeamInfo, {})
+#pragma clang diagnostic pop
+#undef ATOMIC_VAR
 
-template <config::gamecontroller::competition::phase::t CompetitionPhase,
-          config::gamecontroller::competition::type ::t CompetitionType>
-class Context {
-  // ATOMIC_MEMBER(u8, packet_number, 0)
-  ATOMIC_MEMBER(config::gamecontroller::competition::phase::t, competition_phase, config::gamecontroller::competition::phase::playoff) // better safe than sorry ig
-  ATOMIC_MEMBER(config::gamecontroller::competition::type::t, competition_type, config::gamecontroller::competition::type::normal)
-  ATOMIC_MEMBER(config::gamecontroller::game::phase::t, game_phase, config::gamecontroller::game::phase::normal)
-  ATOMIC_MEMBER(config::gamecontroller::state::t, state, config::gamecontroller::state::initial)
-  ATOMIC_MEMBER(config::gamecontroller::set_play::t, set_play, config::gamecontroller::set_play::none)
-  ATOMIC_MEMBER(u8, first_half, true)
-  ATOMIC_MEMBER(u8, kicking_team, config::gamecontroller::color::blue)
-  ATOMIC_MEMBER(i16, secs_remaining, -1)
-  ATOMIC_MEMBER(i16, secondary_time, 0)
-  ATOMIC_MEMBER(spl::TeamInfo, team1, {})
-  ATOMIC_MEMBER(spl::TeamInfo, team2, {})
-#if DEBUG
-  static std::atomic<bool> first_context;
-#endif
-  ctx::Loop<CompetitionPhase, CompetitionType> loop;
- public:
-  Context() noexcept;
-  Context(Context const&) = delete;
-  Context(Context&&) = delete;
-  auto operator=(Context const&) -> Context& = delete;
-  auto operator=(Context&&) -> Context& = delete;
-  impure explicit operator spl::Message() const noexcept;
-  impure explicit operator spl::GameControlReturnData() const noexcept;
-  auto parse(spl::GameControlData&&) noexcept -> void;
-  pure operator bool() const noexcept { return state() != config::gamecontroller::state::finished; }
-};
+impure static auto make_spl_message() noexcept -> spl::Message;
+impure static auto make_gc_message() noexcept -> spl::GameControlReturnData;
+INLINE static auto parse(spl::GameControlData&&) noexcept -> void;
+impure static auto done() noexcept -> bool { return (state() == config::gamecontroller::state::finished) and not first_half(); }
 
 } // namespace ctx

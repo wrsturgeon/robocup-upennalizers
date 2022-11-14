@@ -18,6 +18,9 @@ inline std::array<std::string, 256> number;
 
 // clever trick: run code outside main by returning into a variable (that we'll use often!)
 inline u8 const count = []() -> u8 {
+#if DEBUG
+  std::cout << "Parsing the GameController source code to register teams by number...";
+#endif
   std::ifstream file{"../ext/GameController/resources/config/spl/teams.cfg"};
   if (!file) {
     std::cerr << "Couldn't open ../ext/GameController/resources/config/spl/teams.cfg" << std::endl;
@@ -51,6 +54,9 @@ inline u8 const count = []() -> u8 {
       internal::number[static_cast<u8>(most_so_far)] = line.substr(eq_idx + 1, comma_idx - eq_idx - 1);
     }
   }
+#if DEBUG
+  std::cout << "done!\n";
+#endif
   return static_cast<u8>(most_so_far);
 }();
 
@@ -63,7 +69,7 @@ inline u8 const upenn = []{
 impure static auto
 number(u8 i) noexcept
 -> std::string const& {
-  assert(i >= 1);
+  // assert(i >= 1); // "Invisibles" placeholder team := 0
   assert(i <= count);
   return internal::number[i];
 }

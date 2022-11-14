@@ -22,7 +22,6 @@ extern "C" {
 #include <cstddef>   // std::size_t
 #include <fstream>   // std::ifstream (to read config/runtime/gamecontroller.ip)
 #include <iostream>  // std::cout
-#include <optional>  // std::optional
 #include <stdexcept> // std::runtime_error
 #include <string>    // std::to_string
 
@@ -120,42 +119,44 @@ SocketToGC::SocketToGC() {
 
 static auto
 recv_from_gc()
--> std::optional<spl::GameControlData> {
+-> spl::GameControlData {
   static auto s = internal::SocketFromGC{};
   auto src = uninitialized<sockaddr_in>();
   auto src_len = uninitialized<socklen_t>();
-  auto msg = uninitialized<spl::GameControlData>();
-  auto const n = recvfrom(s.socket_fd, &msg, sizeof msg, 0, reinterpret_cast<sockaddr*>(&src), &src_len);
+  char raw[sizeof(spl::GameControlData)];
+  auto* const msg = reinterpret_cast<spl::GameControlData*>(raw);
+  auto const n = recvfrom(s.socket_fd, msg, sizeof raw, 0, reinterpret_cast<sockaddr*>(&src), &src_len);
 #if VERBOSE
   if (n >= 0) {
     std::cout << "Received " << n << "B from " << inet_ntoa(src.sin_addr) << ':' << ntohs(src.sin_port) << std::endl;
   }
 #endif
-  if (n == sizeof msg) { return {msg}; }
-  if (!n) { return {}; }
+  // TODO: if (n > sizeof msg) ...
+  if (n == sizeof raw) { return *msg; }
   throw std::runtime_error{"recvfrom(s.socket_fd = " + std::to_string(s.socket_fd) + ", &msg = ..., sizeof msg = " + std::to_string(sizeof msg) + "B, 0, &src, &src_len) returned " + std::to_string(n) + ": " + strerror(errno) + " (errno " + std::to_string(errno) + ')'};
 }
 
 static auto
-send_to_gc(spl::GameControlReturnData const& data)
+send_to_gc()
 -> void {
   static auto s = internal::SocketToGC{};
 #if VERBOSE
   std::cout << "Sending to GameController...\n";
 #endif
-  auto const n = send(s.socket_fd, &data, sizeof data, 0);
+  auto const msg = ctx::make_gc_message();
+  auto const n = send(s.socket_fd, &msg, sizeof msg, 0);
 #if VERBOSE
   if (n >= 0) {
-    std::cout << "  Sent " << data << " (" << n << "B) to " << inet_ntoa(s.remote.sin_addr) << ':' << ntohs(s.remote.sin_port) << std::endl;
+    std::cout << "  Sent " << msg << " (" << n << "B) to " << inet_ntoa(s.remote.sin_addr) << ':' << ntohs(s.remote.sin_port) << std::endl;
   }
 #endif
 #if DEBUG || VERBOSE
-  if (n != sizeof data) {
-    std::cout << "  Unsuccessful attempt to send to " << inet_ntoa(s.remote.sin_addr) << ':' << ntohs(s.remote.sin_port) << " (" << n << "B actually sent instead of " << sizeof data << ")\n";
+  if (n != sizeof msg) {
+    std::cout << "  Unsuccessful attempt to send to " << inet_ntoa(s.remote.sin_addr) << ':' << ntohs(s.remote.sin_port) << " (" << n << "B actually sent instead of " << sizeof msg << ")\n";
   }
 #endif
-  if (n == sizeof data) { return; }
-  throw std::runtime_error{"sendto(s.socket_fd = " + std::to_string(s.socket_fd) + ", &data = ..., sizeof data = " + std::to_string(sizeof data) + "B, 0, &s.remote = &(" + inet_ntoa(s.remote.sin_addr) + ':' + std::to_string(ntohs(s.remote.sin_port)) + "), sizeof s.remote = " + std::to_string(sizeof s.remote) + "B) returned " + std::to_string(n) + ": " + strerror(errno) + " (errno " + std::to_string(errno) + ')'};
+  if (n == sizeof msg) { return; }
+  throw std::runtime_error{"sendto(s.socket_fd = " + std::to_string(s.socket_fd) + ", &msg = ..., sizeof msg = " + std::to_string(sizeof msg) + "B, 0, &s.remote = &(" + inet_ntoa(s.remote.sin_addr) + ':' + std::to_string(ntohs(s.remote.sin_port)) + "), sizeof s.remote = " + std::to_string(sizeof s.remote) + "B) returned " + std::to_string(n) + ": " + strerror(errno) + " (errno " + std::to_string(errno) + ')'};
 }
 
 } // namespace msg
