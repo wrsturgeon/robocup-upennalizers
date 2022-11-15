@@ -21,7 +21,7 @@ inline u8 const count = []() -> u8 {
   std::ifstream file{"../ext/GameController/resources/config/spl/teams.cfg"};
   if (!file) {
     std::cerr << "Couldn't open ../ext/GameController/resources/config/spl/teams.cfg" << std::endl;
-    std::exit(1);
+    std::terminate();
   }
   std::string line; // Format: ^[team number]=[team name]$ or ^[team number]=[team name],[team colors...]
   i16 most_so_far = -1;
@@ -32,16 +32,16 @@ inline u8 const count = []() -> u8 {
     const auto eq_idx = line.find('=');
     if (eq_idx == std::string::npos) {
       std::cerr << "Invalid line " << +line_n << " in ../ext/GameController/resources/config/spl/teams.cfg (no '=' found)\n";
-      std::exit(1);
+      std::terminate();
     }
     const auto team_number = std::stoi(line.substr(0, eq_idx));
     if (team_number <= most_so_far) {
       std::cerr << "Invalid line " << +line_n << " in ../ext/GameController/resources/config/spl/teams.cfg (team number " << +team_number << " not strictly monotonically increasing)\n";
-      std::exit(1);
+      std::terminate();
     }
     if (team_number > 255) {
       std::cerr << "Invalid line " << +line_n << " in ../ext/GameController/resources/config/spl/teams.cfg (team number " << +team_number << " > 255)\n";
-      std::exit(1);
+      std::terminate();
     }
     most_so_far = static_cast<u8>(team_number);
     const auto comma_idx = line.find(',');
@@ -57,15 +57,15 @@ inline u8 const count = []() -> u8 {
 inline u8 const upenn = []{
   for (u8 i = 1; i <= count; ++i) { if (internal::number[i] == "UPennalizers") { return i; } }
   std::cerr << "Couldn't find UPennalizers in ../ext/GameController/resources/config/spl/teams.cfg" << std::endl;
-  std::exit(1);
+  std::terminate();
 }();
 
 impure static auto
 number(u8 i) noexcept
--> std::string const& {
+-> char const* {
   // assert(i >= 1); // "Invisibles" placeholder team := 0
   assert(i <= count);
-  return internal::number[i];
+  return internal::number[i].c_str();
 }
 
 } // namespace team

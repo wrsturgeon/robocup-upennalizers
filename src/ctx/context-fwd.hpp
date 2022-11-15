@@ -31,9 +31,9 @@ ATOMIC_VAR(team2, spl::TeamInfo, {})
 #endif // DEBUG
 #undef ATOMIC_VAR
 
-impure static auto make_spl_message() noexcept -> spl::Message;
-impure static auto make_gc_message() noexcept -> spl::GameControlReturnData;
-INLINE static auto parse(spl::GameControlData&&) noexcept -> void;
+static auto make_spl_message() noexcept -> spl::Message;
+static auto make_gc_message() noexcept -> spl::GameControlReturnData;
+static auto parse(spl::GameControlData&&) noexcept -> void;
 impure static auto done() noexcept -> bool { return (state() == config::gamecontroller::state::finished) and not first_half(); }
 
 } // namespace ctx

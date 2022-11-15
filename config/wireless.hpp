@@ -12,6 +12,8 @@
 #include "config/spl-message.hpp"
 #include "config/teams.hpp"
 
+#include "util/read_file.hpp"
+
 // not this tho
 #define PLAYER_IP "10.0." TEAM_NUMBER_STR "." PLAYER_NUMBER_STR
 
@@ -27,6 +29,13 @@ inline u16 const team_port = 10000 + config::gamecontroller::team::upenn;
 
 // From ext/GameController/examples/c/RoboCupGameControlData.h (included via config/protocol.hpp):
 namespace gamecontroller {
+
+static auto
+ip() noexcept
+-> char const* {
+  static auto const ip = util::read_file("../config/runtime/gamecontroller.ip");
+  return ip.c_str();
+}
 
 namespace send {
 inline constexpr u16 port = GAMECONTROLLER_DATA_PORT;

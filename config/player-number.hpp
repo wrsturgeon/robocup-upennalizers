@@ -1,7 +1,7 @@
 #ifndef CONFIG_PLAYER_NUMBER_INCLUDED // instead of #pragma once (for wireless.hpp--see its first few lines)
 #define CONFIG_PLAYER_NUMBER_INCLUDED
 
-#include "src/util/stringify.hpp"
+#include "util/stringify.hpp"
 
 #include "config/gamecontroller.hpp"
 

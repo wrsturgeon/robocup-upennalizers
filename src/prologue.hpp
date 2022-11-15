@@ -77,9 +77,9 @@ inline constexpr u16 update_period_ms = 500;
 //%%%%%%%%%%%%%%%% Useful macros
 #ifdef NDEBUG
 #define INLINE_NOATTR inline constexpr
-#define INLINE /*[[gnu::always_inline]]*/ INLINE_NOATTR
+#define INLINE [[gnu::always_inline]] INLINE_NOATTR
 #define IMPURE_NOATTR inline
-#define impure [[nodiscard]] /*[[gnu::always_inline]]*/ IMPURE_NOATTR  // not constexpr since std::string for whatever reason isn't
+#define impure [[nodiscard]] [[gnu::always_inline]] IMPURE_NOATTR  // not constexpr since std::string for whatever reason isn't
 #define CONST_IF_RELEASE const
 #define NOX noexcept
 #else
@@ -93,6 +93,18 @@ inline constexpr u16 update_period_ms = 500;
 #define PURE_NOATTR INLINE_NOATTR
 #define pure [[nodiscard]] PURE_NOATTR
 
+#if DEBUG
+// Always run, but only assert zero when debugging
+#define ASSERT_ZERO(...) auto const _assert_zero_rtn = (__VA_ARGS__); assert(!_assert_zero_rtn)
+// Always run, but only assert nonzero when debugging
+#define ASSERT_NONZERO(...) auto const _assert_nonzero_rtn = (__VA_ARGS__); assert(_assert_nonzero_rtn)
+#else // DEBUG
+// Always run, but only assert zero when debugging
+#define ASSERT_ZERO(...) (__VA_ARGS__)
+// Always run, but only assert nonzero when debugging
+#define ASSERT_NONZERO(...) (__VA_ARGS__)
+#endif // DEBUG
+
 //%%%%%%%%%%%%%%%% Stack-allocation without initialization
 
 template <typename T>
@@ -101,3 +113,8 @@ uninitialized() -> std::decay_t<T> {
   char bytes[sizeof(std::decay_t<T>)];
   return *reinterpret_cast<std::decay_t<T>*>(bytes);
 }
+
+//%%%%%%%%%%%%%%%% Global context manager
+
+// #including this file immediately initializes thread-safe global variables and starts the GC communication thread
+#include "src/ctx/global-context.hpp"

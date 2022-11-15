@@ -15,8 +15,10 @@ namespace spl {
 #undef SPLStandardMessage
 
 #if DEBUG || VERBOSE
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
 
-INLINE auto
+static auto
 operator<<(std::ostream& os, Message const& msg) noexcept
 -> std::ostream& {
   os << '[' << config::gamecontroller::team::number(msg.teamNum) << " Player #" << +msg.playerNum;
@@ -29,6 +31,7 @@ operator<<(std::ostream& os, Message const& msg) noexcept
   return os << " + " << +msg.numOfDataBytes << "B data]";
 }
 
+#pragma clang diagnostic pop
 #endif // DEBUG || VERBOSE
 
 } // namespace spl

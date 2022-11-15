@@ -1,4 +1,9 @@
-#pragma once
+// #pragma once // nope, stronger--see below
+#ifdef GLOBAL_CONTEXT_INCLUDED
+#error "Please never manually #include \"src/ctx/global-context.hpp\""; it's already included in \"src/prologue.hpp\", which is automatically prepended to every source file"
+#else // GLOBAL_CONTEXT_INCLUDED
+#define GLOBAL_CONTEXT_INCLUDED // first time only
+#endif // GLOBAL_CONTEXT_INCLUDED
 
 #include "src/ctx/context-fwd.hpp"
 #include "src/ctx/loop.hpp"
@@ -15,7 +20,7 @@ namespace ctx {
 #pragma clang diagnostic ignored "-Wunused-function"
 #endif // DEBUG
 
-impure static auto
+static auto
 make_spl_message() noexcept
 -> spl::Message {
   auto msg = uninitialized<spl::Message>();
@@ -29,7 +34,7 @@ make_spl_message() noexcept
   return msg;
 }
 
-impure static auto
+static auto
 make_gc_message() noexcept
 -> spl::GameControlReturnData {
   auto msg = uninitialized<spl::GameControlReturnData>();
@@ -45,7 +50,7 @@ make_gc_message() noexcept
   return msg;
 }
 
-INLINE static auto
+static auto
 parse(spl::GameControlData&& msg) noexcept
 -> void {
 #define TYPECHECK(LVALUE, RVALUE) static_assert(std::is_same_v<typename decltype(internal::LVALUE)::value_type, std::decay_t<decltype(msg.RVALUE)>>)

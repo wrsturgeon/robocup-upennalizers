@@ -3,6 +3,8 @@
 
 #include <thread> // std::thread
 
+namespace util {
+
 class mom_we_have_std_jthread_at_home {
   std::thread thread;
  public:
@@ -13,3 +15,5 @@ class mom_we_have_std_jthread_at_home {
   auto operator=(mom_we_have_std_jthread_at_home&&) -> mom_we_have_std_jthread_at_home& = delete;
   ~mom_we_have_std_jthread_at_home() { thread.join(); }
 };
+
+} // namespace util

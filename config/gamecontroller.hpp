@@ -49,7 +49,7 @@ inline constexpr t brown = TEAM_BROWN;
 inline constexpr t gray = TEAM_GRAY;
 #undef TEAM_GRAY
 #if DEBUG || VERBOSE
-pure auto
+static auto
 print(t x) noexcept
 -> std::string {
   switch (x) {
@@ -78,7 +78,7 @@ inline constexpr t round_robin = COMPETITION_PHASE_ROUNDROBIN;
 inline constexpr t playoff = COMPETITION_PHASE_PLAYOFF;
 #undef COMPETITION_PHASE_PLAYOFF
 #if DEBUG || VERBOSE
-pure auto
+static auto
 print(t x) noexcept
 -> std::string {
   switch (x) {
@@ -101,7 +101,7 @@ inline constexpr t seven_on_seven = COMPETITION_TYPE_7V7;
 inline constexpr t dynamic_ball_handling = COMPETITION_TYPE_DYNAMIC_BALL_HANDLING;
 #undef COMPETITION_TYPE_DYNAMIC_BALL_HANDLING
 #if DEBUG || VERBOSE
-pure auto
+static auto
 print(t x) noexcept
 -> std::string {
   switch (x) {
@@ -129,7 +129,7 @@ inline constexpr t overtime = GAME_PHASE_OVERTIME;
 inline constexpr t timeout = GAME_PHASE_TIMEOUT;
 #undef GAME_PHASE_TIMEOUT
 #if DEBUG || VERBOSE
-pure auto
+static auto
 print(t x) noexcept
 -> std::string {
   switch (x) {
@@ -157,7 +157,7 @@ inline constexpr t playing = STATE_PLAYING;
 inline constexpr t finished = STATE_FINISHED;
 #undef STATE_FINISHED
 #if DEBUG || VERBOSE
-pure auto
+static auto
 print(t x) noexcept
 -> std::string {
   switch (x) {
@@ -187,7 +187,7 @@ inline constexpr t kick_in = SET_PLAY_KICK_IN;
 inline constexpr t penalty_kick = SET_PLAY_PENALTY_KICK;
 #undef SET_PLAY_PENALTY_KICK
 #if DEBUG || VERBOSE
-pure auto
+static auto
 print(t x) noexcept
 -> std::string {
   switch (x) {
@@ -230,7 +230,7 @@ inline constexpr t substitute = PENALTY_SUBSTITUTE;
 inline constexpr t manual = PENALTY_MANUAL;
 #undef PENALTY_MANUAL
 #if DEBUG || VERBOSE
-pure auto
+static auto
 print(t x) noexcept
 -> std::string {
   switch (x) {
@@ -257,14 +257,14 @@ print(t x) noexcept
 
 namespace spl {
 
-pure auto
+constexpr auto
 operator==(RobotInfo const& lhs, RobotInfo const& rhs) noexcept -> bool {
   return (
     (lhs.penalty == rhs.penalty) and
     (lhs.secsTillUnpenalised == rhs.secsTillUnpenalised));
 }
 
-pure auto
+constexpr auto
 operator==(TeamInfo const& lhs, TeamInfo const& rhs) noexcept
 -> bool {
   return (
@@ -278,8 +278,10 @@ operator==(TeamInfo const& lhs, TeamInfo const& rhs) noexcept
 }
 
 #if DEBUG || VERBOSE
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
 
-INLINE auto
+static auto
 operator<<(std::ostream& os, RobotInfo const& robot) noexcept
 -> std::ostream& {
   switch (robot.penalty) {
@@ -290,7 +292,7 @@ operator<<(std::ostream& os, RobotInfo const& robot) noexcept
 }
 
 template <u8 N>
-INLINE auto
+auto
 operator<<(std::ostream& os, RobotInfo const (&robots)[N]) noexcept
 -> std::ostream& {
   os << '{' << robots[0];
@@ -298,13 +300,13 @@ operator<<(std::ostream& os, RobotInfo const (&robots)[N]) noexcept
   return os << '}';
 }
 
-INLINE auto
+static auto
 operator<<(std::ostream& os, TeamInfo const& team) noexcept
 -> std::ostream& {
   return os << '[' << config::gamecontroller::team::number(team.teamNumber) << " (" << ::config::gamecontroller::color::print(team.teamColour) << ") with " << +team.score << " point(s), " << +team.messageBudget << " messages left, " << std::bitset<16>{team.singleShots} << " on penalty shots, players " << team.players << ']';
 }
 
-INLINE auto
+static auto
 operator<<(std::ostream& os, GameControlReturnData const& msg) noexcept
 -> std::ostream& {
   os << '[' << config::gamecontroller::team::number(msg.teamNum) << " Player #" << +msg.playerNum;
@@ -317,6 +319,7 @@ operator<<(std::ostream& os, GameControlReturnData const& msg) noexcept
   return os << "never seen)]";
 }
 
+#pragma clang diagnostic pop
 #endif // DEBUG || VERBOSE
 
 } // namespace spl

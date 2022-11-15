@@ -13,6 +13,7 @@
     "string": "cpp",
     "iosfwd": "cpp",
     "functional": "cpp",
-    "fstream": "cpp"
+    "fstream": "cpp",
+    "istream": "cpp"
   }
 }
