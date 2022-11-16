@@ -2,11 +2,11 @@
 #define CTX_LOOP_HPP
 
 #include "ctx/context.hpp"
-#include "msg/io.hpp"
+#include "messaging/io.hpp"
 
 #include "config/gamecontroller.hpp"
 
-#include "util/jthread.hpp"
+#include "concurrency/jthread.hpp"
 
 #include <cstddef>  // std::size_t
 #include <iostream> // std::cerr
@@ -20,8 +20,8 @@ bool
 parse(spl::GameControlData&& from_gc) noexcept
 {
   try {
-    if ((from_gc.version == config::udp::gamecontroller::send::version)
-    and !strncmp(static_cast<char*>(from_gc.header), config::udp::gamecontroller::send::header, sizeof from_gc.header)
+    if ((from_gc.version == config::packet::gamecontroller::send::version)
+    and !strncmp(static_cast<char*>(from_gc.header), config::packet::gamecontroller::send::header, sizeof from_gc.header)
     ) {
       ::ctx::parse(std::move(from_gc)); // NOLINT(performance-move-const-arg)
       return true; // valid packet
@@ -30,11 +30,12 @@ parse(spl::GameControlData&& from_gc) noexcept
       char header[sizeof from_gc.header + 1];
       std::copy_n(static_cast<char*>(from_gc.header), sizeof from_gc.header, static_cast<char*>(header));
       header[sizeof from_gc.header] = '\0';
-      std::cout << "Invalid packet received (probably nonsense: version " << +from_gc.version << " (should be " << +config::udp::gamecontroller::send::version << "), header \"" << static_cast<char*>(header) << "\" (should be \"" << config::udp::gamecontroller::send::header << "\"))\n";
+      std::cout << "Invalid packet received (probably nonsense: version " << +from_gc.version << " (should be " << +config::packet::gamecontroller::send::version << "), header \"" << static_cast<char*>(header) << "\" (should be \"" << config::packet::gamecontroller::send::header << "\"))\n";
   #endif
     }
   } catch (const std::exception& e) {
     std::cerr << "Exception in ctx::loop::parse: " << e.what() << std::endl;
+    std::terminate();
   } catch (...) { std::terminate(); }
   return false; // invalid packet
 }
@@ -46,12 +47,15 @@ hermeneutics() noexcept // https://youtu.be/rzXPyCY7jbs
   // Keep slamming our head into a wall until we get a valid packet from the GameController.
 
   do { // forces exceptions to start over rather than breaking out of the loop
-    try { // msg::recv_from_gc() throws if #bytes received =/= sizeof spl::GameControlData
+    try { // msg::recv_from_gc() throws msg::error if #bytes received =/= sizeof spl::GameControlData
       do {} while (!parse(msg::recv_from_gc())); // loop until we get a valid packet or throw
       break; // and here is the sole exit point
-    } catch (std::exception const& e) { // if we get an exception, try to print it out and try again
-      std::cerr << e.what() << std::endl; // there's a very very minor chance this throws
-    } catch (...) { std::terminate(); } // if we can't print, everything is probably on fire
+    } catch (msg::error const& e) { // if we get an exception, try to print it out and try again
+      try { std::cerr << e.what() << std::endl; } catch (...) { std::terminate(); } // if we can't print, everything is probably on fire
+    } catch (std::exception const& e) { // non-messaging exceptions shouldn't try again (infinite loop: nothing changed)
+      try { std::cerr << e.what() << std::endl; } catch (...) {/* below */}
+      std::terminate();
+    } catch (...) { std::terminate(); }
   } while (true);
 }
 
@@ -65,8 +69,11 @@ proselytize() noexcept
     try { // if sending fails
       msg::send_to_gc(); // update the GC so the audience can see how fucking cool we are
       break; // success: break the inner loop (second `do`)
-    } catch (std::exception const& e) { // if sending fails but not horribly
+    } catch (msg::error const& e) { // if sending fails but not horribly
       std::cerr << e.what() << std::endl;
+    } catch (std::exception const& e) { // if something else fails (not likely to change by trying again)
+      std::cerr << e.what() << std::endl;
+      std::terminate();
     } catch (...) { std::terminate(); } // on fire
   } while (true); // until we send to GC
 }
@@ -93,9 +100,12 @@ run() noexcept
 {
   //%%%%%%%%%%%%%%%% Wait for the first valid packet from a GameController
 #if DEBUG || VERBOSE
-  try { std::cout << "Waiting for a GameController to open communication...\n"; } catch (std::exception const& e) { std::cerr << e.what() << std::endl; } catch (...) { std::terminate(); }
+  try { std::cout << "Waiting for a GameController to open communication...\n"; } catch (std::exception const& e) { std::cerr << e.what() << std::endl; std::terminate(); } catch (...) { std::terminate(); }
 #endif
   hermeneutics();
+#if DEBUG || VERBOSE
+  try { std::cout << "Got it!\n"; } catch (std::exception const& e) { std::cerr << e.what() << std::endl; std::terminate(); } catch (...) { std::terminate(); }
+#endif
 
   //%%%%%%%%%%%%%%%% Loop until someone wins the game
   do { // while the game isn't over
@@ -107,10 +117,10 @@ run() noexcept
 }
 
 impure static
-util::we_have_std_jthread_at_home const&
+concurrency::we_have_std_jthread_at_home const&
 thread() noexcept
 {
-  static util::we_have_std_jthread_at_home const thread{[]{ run(); }}; // clang hasn't implemented std::jthread
+  static concurrency::we_have_std_jthread_at_home const thread{[]{ run(); }}; // clang hasn't implemented std::jthread
   return thread;
 }
 

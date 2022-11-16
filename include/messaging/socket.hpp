@@ -1,5 +1,5 @@
-#ifndef MSG_SOCKET_HPP
-#define MSG_SOCKET_HPP
+#ifndef MESSAGING_SOCKET_HPP
+#define MESSAGING_SOCKET_HPP
 
 #include "config/wireless.hpp"
 
@@ -21,11 +21,6 @@ extern "C" {
 #include <type_traits> // std::decay_t
 
 namespace msg {
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wweak-vtables"
-class error : public std::runtime_error { using std::runtime_error::runtime_error; };
-#pragma clang diagnostic pop
 
 enum direction {
   incoming,
@@ -207,4 +202,4 @@ Socket<D, M>::recv() const
 
 } // namespace msg
 
-#endif // MSG_SOCKET_HPP
+#endif // MESSAGING_SOCKET_HPP

@@ -71,10 +71,6 @@ inline constexpr bool debug{DEBUG};
 #endif // DEBUG
 } // namespace build
 
-namespace logic {
-inline constexpr u16 update_period_ms{500};
-} // namespace logic
-
 } // namespace config
 
 //%%%%%%%%%%%%%%%% Useful macros

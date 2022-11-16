@@ -19,6 +19,8 @@
     "__config": "cpp",
     "algorithm": "cpp",
     "vector": "cpp",
-    "ios": "cpp"
+    "ios": "cpp",
+    "__bit_reference": "cpp",
+    "cassert": "cpp"
   }
 }

@@ -64,8 +64,8 @@ done() noexcept
 //   // TODO(wrsturgeon): submit a PR to the TC asking for a macro to disable constructors for SPL messages and similar structs
 //   //   if we could, we could use designated initializers (i.e. { .version = ... }) for much faster and cleaner initialization
 //   spl::Message msg{uninitialized<spl::Message>()};
-//   std::copy_n(config::udp::msg::header, sizeof msg.header, static_cast<char*>(msg.header));
-//   msg.version = config::udp::msg::version;
+//   std::copy_n(config::packet::spl::header, sizeof msg.header, static_cast<char*>(msg.header));
+//   msg.version = config::packet::spl::version;
 //   msg.teamNum = config::gamecontroller::team::upenn_number();
 //   msg.playerNum = config::player::number;
 //   msg.fallen = false;
@@ -79,8 +79,8 @@ spl::GameControlReturnData
 make_gc_message()
 {
   spl::GameControlReturnData msg{uninitialized<spl::GameControlReturnData>()};
-  std::copy_n(config::udp::gamecontroller::recv::header, sizeof msg.header, static_cast<char*>(msg.header));
-  msg.version = config::udp::gamecontroller::recv::version;
+  std::copy_n(config::packet::gamecontroller::recv::header, sizeof msg.header, static_cast<char*>(msg.header));
+  msg.version = config::packet::gamecontroller::recv::version;
   msg.playerNum = config::player::number;
   msg.teamNum = config::gamecontroller::team::upenn_number();
   msg.fallen = false;
@@ -98,7 +98,7 @@ parse(spl::GameControlData&& msg) noexcept
   // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 #define TYPECHECK(LVALUE, RVALUE) static_assert(std::is_same_v<decltype(LVALUE()), std::decay_t<decltype(msg.RVALUE)>>)
 #if DEBUG || VERBOSE
-#define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); if (msg.RVALUE != internal::LVALUE().exchange(std::move(msg.RVALUE), std::memory_order_relaxed)) { try { std::cout << #LVALUE << " updated -> " << PRINT(internal::LVALUE().load(std::memory_order_relaxed)) << std::endl; } catch (std::exception& e) { std::cerr << "Exception in ctx::parse: " << e.what() << std::endl; } catch (...) { std::terminate(); } }
+#define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); if (msg.RVALUE != internal::LVALUE().exchange(std::move(msg.RVALUE), std::memory_order_relaxed)) { try { std::cout << #LVALUE << " updated -> " << PRINT(internal::LVALUE().load(std::memory_order_relaxed)) << std::endl; } catch (std::exception& e) { std::cerr << "Exception in ctx::parse while updating " #LVALUE ": " << e.what() << std::endl; std::terminate(); } catch (...) { std::terminate(); } }
 #else // DEBUG || VERBOSE
 #define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); internal::LVALUE().store(std::move(msg.RVALUE), std::memory_order_relaxed);
 #endif // DEBUG || VERBOSE

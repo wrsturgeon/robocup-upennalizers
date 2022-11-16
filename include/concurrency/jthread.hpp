@@ -1,10 +1,11 @@
-#ifndef UTIL_JTHREAD_HPP
-#define UTIL_JTHREAD_HPP
-// Clang hasn't implemented std::jthread yet
+#ifndef CONCURRENCY_JTHREAD_HPP
+#define CONCURRENCY_JTHREAD_HPP
+
+// clang hasn't implemented std::jthread yet
 
 #include <thread> // std::thread
 
-namespace util {
+namespace concurrency {
 
 class we_have_std_jthread_at_home {
   std::thread thread;
@@ -17,6 +18,6 @@ class we_have_std_jthread_at_home {
   ~we_have_std_jthread_at_home() { thread.join(); }
 };
 
-} // namespace util
+} // namespace concurrency
 
-#endif // UTIL_JTHREAD_HPP
+#endif // CONCURRENCY_JTHREAD_HPP
