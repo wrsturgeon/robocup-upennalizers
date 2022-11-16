@@ -1,4 +1,0 @@
-make libbhwalk
-make install
-make
-lua test_bhwalk.lua

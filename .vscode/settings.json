@@ -14,6 +14,11 @@
     "iosfwd": "cpp",
     "functional": "cpp",
     "fstream": "cpp",
-    "istream": "cpp"
+    "istream": "cpp",
+    "exception": "cpp",
+    "__config": "cpp",
+    "algorithm": "cpp",
+    "vector": "cpp",
+    "ios": "cpp"
   }
 }

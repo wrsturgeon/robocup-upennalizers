@@ -1,0 +1,26 @@
+dofile('init.lua');
+require('Body');
+--temperature
+local temperature = Body.get_sensor_temperature();
+print("1)  HeadYaw        ", temperature[1]);
+print("2)  HeadPitch      ", temperature[2]);
+print("3)  LShoulderPitch ", temperature[3]);
+print("4)  LShoulderRoll  ", temperature[4]);
+print("5)  LElbowYaw      ", temperature[5]);
+print("6)  LElbowRoll     ", temperature[6]);
+print("7)  LHipYawPitch   ", temperature[7]);
+print("8)  LHipRoll       ", temperature[8]);
+print("9)  LHipPitch      ", temperature[9]);
+print("10) LKneePitch     ", temperature[10]);
+print("11) LAnklePitch    ", temperature[11]);
+print("12) LAnkleRoll     ", temperature[12]);
+print("13) RHipYawPitch   ", temperature[13]);
+print("14) RHipRoll       ", temperature[14]);
+print("15) RHipPitch      ", temperature[15]);
+print("16) RKneePitch     ", temperature[16]);
+print("17) RAnklePitch    ", temperature[17]);
+print("18) RAnkleRoll     ", temperature[18]);
+print("19) RShoulderPitch ", temperature[19]);
+print("20) RShoulderRoll  ", temperature[20]);
+print("21) RElbowYaw      ", temperature[21]);
+print("22) RElbowRoll     ", temperature[22]);

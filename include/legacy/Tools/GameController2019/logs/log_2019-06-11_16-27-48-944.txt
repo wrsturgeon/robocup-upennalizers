@@ -1,0 +1,134 @@
+2019.6.11-16.27.48: GC2 1.6
+2019.6.11-16.27.48: League = SPL
+2019.6.11-16.27.48: Competition phase = round robin
+2019.6.11-16.27.48: Competition type = normal
+2019.6.11-16.27.48: Auto color change = false
+2019.6.11-16.27.48: Using broadcast address /128.91.167.255
+2019.6.11-16.27.48: Listening on address /128.91.164.78
+2019.6.11-16.27.48: UPennalizers (Blue) vs Invisibles (Red)
+2019.6.11-16.29.17: Ready
+2019.6.11-16.29.21: Set
+2019.6.11-16.29.23: Playing
+2019.6.11-16.29.40: Kick In for Blue
+2019.6.11-16.29.52: Kick In Complete
+2019.6.11-16.30.07: Goal for Blue
+2019.6.11-16.30.07: Ready
+2019.6.11-16.30.26: Set
+2019.6.11-16.30.29: Playing
+2019.6.11-16.32.52: Global Game Stuck, Kickoff Red
+2019.6.11-16.32.52: Ready
+2019.6.11-16.32.56: Set
+2019.6.11-16.32.57: Playing
+2019.6.11-16.33.17: Player Pushing Red 3
+2019.6.11-16.33.17: Pushing Free Kick for Blue
+2019.6.11-16.33.22: Pushing Free Kick Complete
+2019.6.11-16.33.26: Goal for Red
+2019.6.11-16.33.26: Ready
+2019.6.11-16.33.30: Increase Game Clock
+2019.6.11-16.33.33: Undo 2 States to Pushing Free Kick Complete
+2019.6.11-16.33.37: Goal for Red
+2019.6.11-16.33.37: Ready
+2019.6.11-16.33.52: Set
+2019.6.11-16.33.56: Playing
+2019.6.11-16.34.05: Illegal Defender Red 5
+2019.6.11-16.34.16: Unpenalised Red 3
+2019.6.11-16.34.39: Kickoff Goal Red 3
+2019.6.11-16.34.42: Request for PickUp Red 3
+2019.6.11-16.34.51: Global Game Stuck, Kickoff Red
+2019.6.11-16.34.51: Ready
+2019.6.11-16.34.53: Set
+2019.6.11-16.34.53: Playing
+2019.6.11-16.35.05: Illegal Ball Contact Red 4
+2019.6.11-16.35.11: Goal for Blue
+2019.6.11-16.35.11: Ready
+2019.6.11-16.35.14: Set
+2019.6.11-16.35.19: Inactive Player Red 1
+2019.6.11-16.35.21: Request for PickUp Red 1
+2019.6.11-16.35.24: Illegal Positioning Blue 5
+2019.6.11-16.35.27: Illegal Positioning Blue 4
+2019.6.11-16.35.29: Illegal Positioning Blue 3
+2019.6.11-16.35.30: Illegal Positioning Blue 2
+2019.6.11-16.35.40: Illegal Motion in Set Red 2
+2019.6.11-16.35.41: Illegal Motion in Set Blue 1
+2019.6.11-16.35.48: Playing
+2019.6.11-16.36.03: Unpenalised Red 5
+2019.6.11-16.36.11: Unpenalised Blue 3
+2019.6.11-16.36.11: Unpenalised Blue 4
+2019.6.11-16.36.12: Unpenalised Blue 5
+2019.6.11-16.36.13: Unpenalised Blue 2
+2019.6.11-16.36.27: Kick In for Blue
+2019.6.11-16.36.32: Kick In Complete
+2019.6.11-16.36.34: Unpenalised Red 1
+2019.6.11-16.36.36: Goal Free Kick for Blue
+2019.6.11-16.36.41: Unpenalised Red 3
+2019.6.11-16.36.50: Request for PickUp Red 4
+2019.6.11-16.36.56: Unpenalised Red 4
+2019.6.11-16.37.01: Goal Free Kick Complete
+2019.6.11-16.37.07: Corner Kick for Blue
+2019.6.11-16.37.13: Illegal Defender Red 5
+2019.6.11-16.37.15: Leaving the Field Red 4
+2019.6.11-16.37.25: Inactive Player Red 3
+2019.6.11-16.37.34: Corner Kick Complete
+2019.6.11-16.37.34: Kick In for Red
+2019.6.11-16.37.42: Kick In Complete
+2019.6.11-16.37.42: Corner Kick for Blue
+2019.6.11-16.37.43: Corner Kick Complete
+2019.6.11-16.37.46: Goal for Blue
+2019.6.11-16.37.46: Ready
+2019.6.11-16.37.48: Set
+2019.6.11-16.37.51: Playing
+2019.6.11-16.38.21: Finished
+2019.6.11-16.38.29: Unpenalised Red 3
+2019.6.11-16.38.29: Unpenalised Red 4
+2019.6.11-16.38.30: Unpenalised Red 5
+2019.6.11-16.43.21: 2nd Half
+2019.6.11-17.37.20: Undo 1 States to Unpenalised Red 5
+2019.6.11-17.37.20: 2nd Half
+2019.6.11-17.37.25: Undo 2 States to Unpenalised Red 4
+2019.6.11-17.37.25: 2nd Half
+2019.6.11-17.37.26: Undo 2 States to Unpenalised Red 3
+2019.6.11-17.37.27: 2nd Half
+2019.6.11-17.37.29: Undo 2 States to Finished
+2019.6.11-17.37.29: 2nd Half
+2019.6.11-17.37.31: Ready
+2019.6.11-17.37.33: Set
+2019.6.11-17.37.38: Undo 7 States to Corner Kick Complete
+2019.6.11-17.37.44: Goal for Blue
+2019.6.11-17.37.44: Ready
+2019.6.11-17.37.47: Set
+2019.6.11-17.37.51: Playing
+2019.6.11-17.38.21: Unpenalised Red 3
+2019.6.11-17.38.35: Unpenalised Red 5
+2019.6.11-17.38.48: Unpenalised Red 4
+2019.6.11-17.40.50: Finished
+2019.6.11-17.40.52: Increase Game Clock
+2019.6.11-17.40.55: Increase Game Clock
+2019.6.11-17.41.08: Undo 3 States to Unpenalised Red 4
+2019.6.11-17.41.14: Undo 2 States to Unpenalised Red 3
+2019.6.11-17.41.16: Undo 1 States to Playing
+2019.6.11-17.41.17: Undo 1 States to Set
+2019.6.11-17.41.18: Undo 1 States to Goal for Blue
+2019.6.11-17.41.18: Undo 1 States to Corner Kick Complete
+2019.6.11-17.41.19: Undo 1 States to Corner Kick for Blue
+2019.6.11-17.41.19: Undo 1 States to Kick In Complete
+2019.6.11-17.41.20: Undo 1 States to Kick In for Red
+2019.6.11-17.41.20: Undo 1 States to Corner Kick Complete
+2019.6.11-17.41.22: Undo 7 States to Request for PickUp Red 4
+2019.6.11-17.41.23: Undo 7 States to Unpenalised Blue 5
+2019.6.11-17.41.23: Undo 7 States to Illegal Positioning Blue 2
+2019.6.11-17.41.24: Undo 7 States to Goal for Blue
+2019.6.11-17.41.24: Undo 7 States to Unpenalised Red 3
+2019.6.11-17.41.24: Undo 7 States to Player Pushing Red 3
+2019.6.11-17.41.25: Undo 7 States to Kick In Complete
+2019.6.11-17.41.30: Corner Kick for Blue
+2019.6.11-17.41.32: Corner Kick Complete
+2019.6.11-17.41.32: Kick In for Red
+2019.6.11-17.41.33: Kick In Complete
+2019.6.11-17.41.33: Goal Free Kick for Blue
+2019.6.11-17.41.36: Goal Free Kick Complete
+2019.6.11-17.41.36: Goal Free Kick for Red
+2019.6.11-17.41.39: Goal Free Kick Complete
+2019.6.11-17.41.41: Player Pushing Red 3
+2019.6.11-17.41.41: Pushing Free Kick for Blue
+2019.6.11-17.42.11: Pushing Free Kick Complete
+2019.6.11-20.08.10: Shutdown GameController

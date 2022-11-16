@@ -1,0 +1,12 @@
+2017.6.30-17.00.45: League = SPL
+2017.6.30-17.00.45: Game type = round robin
+2017.6.30-17.00.45: Auto color change = false
+2017.6.30-17.00.45: Using broadcast address /192.168.114.255
+2017.6.30-17.00.45: Listening on address /192.168.114.76
+2017.6.30-17.00.45: Aztlan Team (Blue) vs B-Human (Black)
+2017.6.30-17.00.47: Ready
+2017.6.30-17.00.48: Set
+2017.6.30-17.00.48: Playing
+2017.6.30-17.01.24: Undo 2 States to Ready
+2017.6.30-17.02.09: Set
+2017.6.30-17.05.06: Shutdown GameController

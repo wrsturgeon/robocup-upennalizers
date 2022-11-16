@@ -1,5 +1,5 @@
-auto
+int
 main()
--> int {
+{
   return 1; // TODO
 }

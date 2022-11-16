@@ -1,7 +1,6 @@
-auto
+int
 main()
--> int {
-
+{
   // ...
 
   // Exit

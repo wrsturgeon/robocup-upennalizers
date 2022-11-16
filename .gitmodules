@@ -1,6 +1,6 @@
 [submodule "lua"]
-	path = ext/lua
+	path = include/ext/lua
 	url = https://github.com/lua/lua.git
 [submodule "GameController"]
-	path = ext/GameController
+	path = include/ext/GameController
 	url = https://github.com/RoboCup-SPL/GameController.git

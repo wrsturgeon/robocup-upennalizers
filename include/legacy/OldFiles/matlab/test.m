@@ -1,0 +1,23 @@
+hfig = gcf;
+clf;
+set(hfig, 'name', 'monitor','menubar', 'none',...
+          'toolbar', 'figure');
+figpos = get(hfig, 'position');
+figpos(3:4) = [800, 600];
+set(hfig, 'Position', figpos);
+
+DATA.ImageAxes = axes('Parent', hfig,...
+                  'XLim', [0, 640],...
+                  'YLim', [0, 480],...
+                  'Position', [0.2, 0.15, 0.7, 0.8]);
+DATA.Image = image('Parent', DATA.ImageAxes,...
+              'XData', [1 640],...
+              'YData', [1 480],...
+              'CData', []);
+              
+rgb = imread('yuyv.jpg');
+label = fread(fopen('image_labelA'), '*uint8');
+label = reshape(label, 320, 240);
+set(DATA.Image, 'CData', label);
+
+set(hfig, 'UserData', DATA, 'Visible', 'on');

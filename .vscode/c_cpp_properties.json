@@ -2,13 +2,13 @@
     "configurations": [
         {
             "name": "Mac",
-            "includePath": ["${workspaceFolder}", "/usr/local/include"],
-            "defines": ["PLAYER_ID=2", "SYSTEM_BITS=32", "DEBUG=0", "NDEBUG=1", "ZMQ_BUILD_DRAFT_API=1"],
+            "includePath": ["${workspaceFolder}/include", "/usr/local/include"],
+            "defines": ["PLAYER_NUMBER=2", "SYSTEM_BITS=32", "DEBUG=0", "NDEBUG=1", "ZMQ_BUILD_DRAFT_API=1"],
             "macFrameworkPath": ["/Library/Developer/CommandLineTools/SDKs/MacOSX12.sdk/System/Library/Frameworks"],
-            "forcedInclude": ["${workspaceFolder}/src/prologue.hpp"],
+            "forcedInclude": ["${workspaceFolder}/include/prologue.hpp"],
             "compilerPath": "/usr/local/opt/llvm/bin/clang++",
             "cStandard": "c17",
-            "cppStandard": "c++23",
+            "cppStandard": "c++20",
             "intelliSenseMode": "macos-clang-x64",
             "configurationProvider": "ms-vscode.makefile-tools"
         }

@@ -1,0 +1,6 @@
+set backspace=indent,eol,start "allows backspace to delete autoindents, line breaks, and the start of insert"
+set nocompatible "sets Vim to behave differently from Vi"
+set ruler "displays cursor line and column and its percent progess into the text document"
+set tabstop=2 "sets the number of spaces a <Tab> press will make"
+set shortmess=a
+set bg=light

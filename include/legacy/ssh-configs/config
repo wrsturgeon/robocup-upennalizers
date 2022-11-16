@@ -1,0 +1,27 @@
+HOST bacon
+	HostName 192.168.123.115
+HOST tink
+	HostName 192.168.123.116
+HOST ruffio
+	HostName 192.168.123.117
+HOST tick
+	HostName 192.168.123.118
+HOST hook
+	HostName 192.168.123.119
+HOST pocket
+	HostName 192.168.123.120
+
+
+HOST bacon_w
+	HostName 192.168.1.115
+HOST tink_w
+	HostName 192.168.1.116
+HOST ruffio_w
+	HostName 192.168.1.117
+HOST tick_w
+	HostName 192.168.1.118
+HOST hook_w
+	HostName 192.168.1.119
+HOST pocket_w
+	HostName 192.168.1.120
+

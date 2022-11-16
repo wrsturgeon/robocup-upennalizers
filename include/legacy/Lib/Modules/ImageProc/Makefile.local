@@ -1,0 +1,23 @@
+LIBNAME=ImageProcFuncs
+EXTRA_OBJ=color_count.o block_bitor.o \
+	ConnectRegions.o RegionProps.o RadonTransform.o\
+	lua_color_stats.o lua_color_count.o lua_colorlut_gen.o \
+	lua_connect_regions.o lua_goal_posts_white.o\
+	lua_goal_posts.o lua_robots.o\
+	lua_field_lines.o lua_field_spots.o lua_field_occupancy.o \
+	lua_integral_image.o lua_diff_img.o lua_local_max.o lua_high_contrast_parts.o \
+	lua_top_most_row.o \
+  im_rescale_DP.o lua_im_rescale_DP.o \
+  region_proposal.o lua_region_proposal.o \
+ # nn.o lua_nn.o
+include ../../Makefile.am
+LIBOPTS+=-lm
+
+ifdef USE_TORCH
+	CXXFLAGS+=-DTORCH=1
+	#LDFLAGS+=-ltorch
+	LIBOPTS+=-ltorch
+endif
+
+clean:
+	rm -f *.$(SHLIBEXT) *.o
