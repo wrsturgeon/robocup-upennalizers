@@ -21,8 +21,9 @@ FixedString(char const (&)[N])
 
 template <std::size_t N> // NOLINT(cppcoreguidelines-pro-type-member-init)
 requires (N > 0)
-INLINE FixedString<N>::FixedString(char const (&str)[N]) noexcept
-{
+INLINE FixedString<N>::
+FixedString(char const (&str)[N])
+noexcept {
   std::copy_n(static_cast<char const*>(str), N - 1, static_cast<char*>(arr));
   arr[N - 1] = '\0';
 }
@@ -33,8 +34,9 @@ template <std::size_t M>
 requires (M > 0)
 pure
 bool
-FixedString<N>::operator==(FixedString const& other) const noexcept
-{
+FixedString<N>::
+operator==(FixedString const& other)
+const noexcept {
   if constexpr (N != M) { return false; }
   return std::equal(arr, arr + N, other.arr);
 }
@@ -43,8 +45,7 @@ template <std::size_t N, std::size_t M>
 requires ((N > 0) and (M > 0))
 impure
 std::string
-operator+(char const (&lhs)[N], FixedString<M> const& rhs)
-{
+operator+(char const (&lhs)[N], FixedString<M> const& rhs) {
   std::string str{};
   str.reserve(N + M - 1);
   str.append(static_cast<char const*>(lhs    ), N - 1);

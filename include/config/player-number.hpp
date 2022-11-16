@@ -1,8 +1,6 @@
 #ifndef CONFIG_PLAYER_NUMBER_HPP // instead of #pragma once (for wireless.hpp--see its first few lines)
 #define CONFIG_PLAYER_NUMBER_HPP
 
-#include "util/stringify.hpp"
-
 #include "config/gamecontroller.hpp"
 
 //%%%%%%%%%%%%%%%% Set the player number below (1: goalie; ...; 6: alternate)

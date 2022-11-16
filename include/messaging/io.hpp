@@ -6,39 +6,29 @@
 #include "messaging/error.hpp"
 #include "messaging/socket.hpp"
 
-#include "config/gamecontroller.hpp"
-#include "config/spl-message.hpp"
-#include "config/wireless.hpp"
-
 #include "file/contents.hpp"
 
-#include <atomic>    // std::atomic
-#include <cassert>   // assert
-#include <cerrno>    // errno
-#include <cstddef>   // std::size_t
-#include <fstream>   // std::ifstream (to read config/runtime/gamecontroller.ip)
-#include <iostream>  // std::cout
-#include <string>    // std::to_string
+#include "context/packet-conv.hpp"
+
+#include "config/ip.hpp"
 
 namespace msg {
 
-static
+impure static
 spl::GameControlData
-recv_from_gc()
-{
+recv_from_gc() {
   static msg::Socket<msg::direction::incoming, msg::mode::unicast> const s{
-        address_from_ip(config::ip::gamecontroller::address()),
-        config::ip::gamecontroller::port::outgoing};
+        config::ip::address<"GameController">(),
+        config::ip::port<"GameController">::from()};
   return s.recv<spl::GameControlData>();
 }
 
 [[gnu::always_inline]] inline static void
-send_to_gc()
-{
+send_to_gc() {
   static msg::Socket<msg::direction::outgoing, msg::mode::unicast> const s{
-        address_from_ip(config::ip::gamecontroller::address()),
-        config::ip::gamecontroller::port::receiving};
-  s.send(ctx::make_gc_message());
+        config::ip::address<"GameController">(),
+        config::ip::port<"GameController">::to()};
+  s.send(context::make_gc_message());
 }
 
 } // namespace msg

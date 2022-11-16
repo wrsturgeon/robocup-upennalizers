@@ -5,7 +5,6 @@
 
 #include <cstddef>  // std::size_t
 #include <fstream>  // std::ifstream
-#include <iostream> // std::cerr
 #include <string>   // std::string
 
 namespace file {
@@ -19,8 +18,7 @@ class error : public std::runtime_error { using std::runtime_error::runtime_erro
 template <util::FixedString path>
 static
 char const*
-contents()
-{
+contents() {
   static std::string const str{[]{
     std::string s{};
     std::ifstream f{path.c_str()};
@@ -33,9 +31,7 @@ contents()
     f.seekg(0, std::ios::beg);
     f.read(&s[0], pos);
     if (!f) { throw error{"Couldn't read " + path}; }
-#ifdef VERBOSE
-    std::cout << "Contents of " << path.c_str() << ": \"" << s << "\"\n";
-#endif
+    debug_print(std::cout, "Contents of ", path.c_str(), ": \"", s, '"');
     return s;
   }()};
   return str.c_str();

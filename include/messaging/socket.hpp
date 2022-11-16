@@ -1,9 +1,7 @@
 #ifndef MESSAGING_SOCKET_HPP
 #define MESSAGING_SOCKET_HPP
 
-#include "config/wireless.hpp"
-
-#include "util/stringify.hpp"
+#include "util/ip.hpp"
 
 extern "C" {
 #include <arpa/inet.h>  // inet_pton
@@ -32,51 +30,10 @@ enum mode {
   broadcast,
 };
 
-static
-in_addr_t
-address_from_ip(char const *ip_str) noexcept
-{
-  sockaddr_in s_in{uninitialized<sockaddr_in>()};
-  if (inet_pton(AF_INET, ip_str, &s_in.sin_addr) != 1) {
-    char buf[256];
-    get_system_error_message(buf);
-    try { std::cerr << "Invalid IP address \"" << ip_str << "\" (errno " << errno << ": " << static_cast<char*>(buf) << ")\n"; } catch (...) {/* std::terminate below */}
-    std::terminate();
-  }
-  return s_in.sin_addr.s_addr;
-}
-
-static
-sockaddr_in
-make_sockaddr_in(in_addr_t address, u16 port) noexcept
-{
-  sockaddr_in addr{uninitialized<sockaddr_in>()};
-  std::fill_n(reinterpret_cast<char*>(&addr), sizeof addr, '\0');
-  addr.sin_family = AF_INET;
-  addr.sin_addr.s_addr = address;
-  addr.sin_port = htons(port);
-  return addr;
-}
-
-static
-std::string
-get_ip_port_str(sockaddr_in const &addr)
-{
-  static char ipbuf[INET_ADDRSTRLEN + 1];
-  assert_nonzero(inet_ntop(AF_INET, &addr.sin_addr, static_cast<char*>(ipbuf), INET_ADDRSTRLEN), "inet_ntop failed");
-  ipbuf[INET_ADDRSTRLEN] = '\0';
-  try {
-    return std::string{static_cast<char*>(ipbuf)} + ':' + std::to_string(ntohs(addr.sin_port));
-  } catch (std::exception const &e) {
-    return "[couldn't stringify IP/port: " + std::string{e.what()} + ']';
-  } catch (...) { try { return "[couldn't stringify IP/port or print why]"; } catch (...) { std::terminate(); } }
-}
-
 #define OPEN_UDP_SOCKET socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
 
 template <direction D, mode M>
-class Socket
-{
+class Socket {
   using fd_t = decltype(OPEN_UDP_SOCKET);
   fd_t const socketfd{OPEN_UDP_SOCKET};
   sockaddr_in const addr;
@@ -93,8 +50,7 @@ class Socket
 
 template <direction D, mode M>
 Socket<D, M>::Socket(in_addr_t address, u16 port) noexcept
-: addr{make_sockaddr_in(address, port)}
-{
+: addr{util::ip::make_sockaddr_in(address, port)} {
   if (socketfd < 0) {
     char buf[256];
     get_system_error_message(buf);
@@ -109,7 +65,7 @@ Socket<D, M>::Socket(in_addr_t address, u16 port) noexcept
   if constexpr (D == direction::outgoing) {
     r = connect(socketfd, reinterpret_cast<sockaddr const*>(&addr), sizeof addr);
   } else {
-    sockaddr_in from_addr{make_sockaddr_in(INADDR_ANY, port)};
+    sockaddr_in from_addr{util::ip::make_sockaddr_in(INADDR_ANY, port)};
     r = bind(socketfd, reinterpret_cast<sockaddr const*>(&from_addr), sizeof from_addr);
   }
   if (r) {
@@ -118,7 +74,7 @@ Socket<D, M>::Socket(in_addr_t address, u16 port) noexcept
     try { std::cerr << (
           (D == direction::outgoing) ? "connect" : "bind")
        << "(socket_fd = " << socketfd
-       << ", &addr = &(" << get_ip_port_str(addr)
+       << ", &addr = &(" << util::ip::get_ip_port_str(addr)
        << "), sizeof addr = " << sizeof addr
        << "B) returned " << r
        << " (errno " << errno
@@ -127,7 +83,7 @@ Socket<D, M>::Socket(in_addr_t address, u16 port) noexcept
     std::terminate();
   }
 #if VERBOSE
-  std::cout << "Opened an " << ((D == direction::outgoing) ? "outgoing" : "incoming") << ' ' << ((M == mode::broadcast) ? "broadcast" : "unicast") << " socket " << ((D == direction::incoming) ? "from" : "to") << ' ' << get_ip_port_str(addr) << std::endl;
+  std::cout << "Opened an " << ((D == direction::outgoing) ? "outgoing" : "incoming") << ' ' << ((M == mode::broadcast) ? "broadcast" : "unicast") << " socket " << ((D == direction::incoming) ? "from" : "to") << ' ' << util::ip::get_ip_port_str(addr) << std::endl;
 #endif // VERBOSE
 }
 
@@ -137,8 +93,9 @@ template <direction D, mode M>
 template <typename T>
 // NOT inline
 void
-Socket<D, M>::send(T&& data) const
-{
+Socket<D, M>::
+send(T&& data)
+const {
   static_assert(D == direction::outgoing);
   static_assert(not std::is_pointer_v<T>);
   static_assert(std::is_trivially_copyable_v<T>);
@@ -161,8 +118,9 @@ template <direction D, mode M>
 template <typename T>
 // NOT inline
 std::decay_t<T>
-Socket<D, M>::recv() const
-{
+Socket<D, M>::
+recv()
+const {
   static_assert(D == direction::incoming);
   static_assert(not std::is_pointer_v<T>);
   static_assert(std::is_trivially_copyable_v<T>);
@@ -190,7 +148,7 @@ Socket<D, M>::recv() const
     throw ::msg::error{
           "recvfrom(socket_fd = " + std::to_string(socketfd)
         + ", &data = ..., sizeof data = " + std::to_string(sizeof data)
-        + "B, 0, &src = &(" + get_ip_port_str(addr)
+        + "B, 0, &src = &(" + util::ip::get_ip_port_str(addr)
         + "), &src_len = &(" + std::to_string(src_len)
         + ")) returned " + std::to_string(r)
         + " (errno " + std::to_string(errno)

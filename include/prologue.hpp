@@ -78,6 +78,11 @@ inline constexpr bool debug{DEBUG};
 #define pure [[nodiscard]] INLINE
 #define impure [[nodiscard]] [[gnu::always_inline]] inline // not constexpr since std::string for whatever reason isn't
 
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+#define STRINGIFY(x) STRINGIFY_(x) // NOLINT(cppcoreguidelines-macro-usage)
+#define STRINGIFY_(x) #x
+// NOLINTEND(cppcoreguidelines-macro-usage)
+
 #include <cerrno>   // errno
 #include <cstring>  // strerror_r
 #include <iostream> // std::cerr
@@ -85,8 +90,8 @@ inline constexpr bool debug{DEBUG};
 template <std::size_t N>
 static
 void
-get_system_error_message(char (&buf)[N]) noexcept
-{
+get_system_error_message(char (&buf)[N])
+noexcept {
   int const orig = errno;
   int const rtn = strerror_r(orig, static_cast<char*>(buf), N);
   if (rtn) {
@@ -117,8 +122,8 @@ get_system_error_message(char (&buf)[N]) noexcept
 template <typename T>
 INLINE
 void
-assert_zero(T&& expr, char const* const errmsg) noexcept
-{
+assert_zero(T&& expr, char const* const errmsg)
+noexcept {
 #if DEBUG
   if (expr) { FAIL_ASSERTION }
 #endif // DEBUG
@@ -127,11 +132,31 @@ assert_zero(T&& expr, char const* const errmsg) noexcept
 template <typename T>
 INLINE
 void
-assert_nonzero(T&& expr, char const* const errmsg) noexcept
-{
+assert_nonzero(T&& expr, char const* const errmsg)
+noexcept {
 #if DEBUG
   if (!expr) { FAIL_ASSERTION }
 #endif // DEBUG
+}
+
+template <typename... T>
+static
+void
+debug_print(std::ostream& stream, T&&... args)
+noexcept {
+#if DEBUG || VERBOSE
+// NOLINTBEGIN(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+  try {
+    (stream << ... << args) << std::endl;
+    return;
+  } catch (std::exception const& e) {
+    std::cerr << "debug_print failed: " << e.what() << std::endl;
+  } catch (...) {
+    try { std::cerr << "debug_print failed and printing the exception failed\n"; } catch (...) {}
+  }
+  std::terminate(); // printing failed
+// NOLINTEND(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+#endif // DEBUG || VERBOSE
 }
 
 #if !DEBUG
@@ -144,7 +169,7 @@ assert_nonzero(T&& expr, char const* const errmsg) noexcept
 template <typename T>
 pure std::decay_t<T>
 uninitialized()
-{
+noexcept {
   char bytes[sizeof(std::decay_t<T>)];
   return *reinterpret_cast<std::decay_t<T>*>(bytes);
 }

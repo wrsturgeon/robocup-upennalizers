@@ -18,9 +18,8 @@ namespace team {
 
 impure static
 std::string const&
-name(u8 i)
-{
-  static std::vector<std::string> const name_vec{[] {
+name(u8 i) {
+  static std::vector<std::string> const name_vec{[]{
     std::ifstream file{"include/ext/GameController/resources/config/spl/teams.cfg"};
     if (!file) { throw file::error{"Couldn't open include/ext/GameController/resources/config/spl/teams.cfg"}; }
     std::string line; // Format: ^[team number]=[team name]$ or ^[team number]=[team name],[team colors...]
@@ -42,7 +41,8 @@ name(u8 i)
       std::size_t const comma_idx{line.find(',')};
       names.push_back((comma_idx == std::string::npos) ? line.substr(eq_idx + 1) : line.substr(eq_idx + 1, comma_idx - eq_idx - 1));
     }
-    return names; }()};
+    return names;
+  }()};
   // assert(i >= 1); // "Invisibles" placeholder team := 0
 #if DEBUG
   if (i >= name_vec.size()) { throw std::out_of_range{"Team number " + std::to_string(i) + " requested, but only " + std::to_string(name_vec.size()) + " teams defined"}; }
@@ -53,10 +53,19 @@ name(u8 i)
 impure static
 u8
 upenn_number()
-{
-  static u8 const idx{[] {
-    try { u8 i = 0; do { if (name(i) == "UPennalizers") { return i; } } while (++i); } catch (std::out_of_range const&) {/* below */}
-    throw std::logic_error{"Couldn't find UPennalizers in include/ext/GameController/resources/config/spl/teams.cfg"}; }()};
+noexcept {
+  static u8 const idx{[]{
+    try {
+      u8 i = 0; do { if (name(i) == "UPennalizers") { return i; } } while (++i);
+    } catch (std::out_of_range const&) {
+      std::cerr << "Couldn't find UPennalizers in include/ext/GameController/resources/config/spl/teams.cfg\n";
+    } catch (std::exception const& e) {
+      std::cerr << "Exception while looking for UPennalizers' team number: " << e.what() << std::endl;
+    } catch (...) {
+      try { std::cerr << "Unknown exception while looking for UPennalizers' team number\n"; } catch (...) {}
+    }
+    std::terminate();
+  }()};
   return idx;
 }
 

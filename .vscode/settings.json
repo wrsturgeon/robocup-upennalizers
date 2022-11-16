@@ -21,6 +21,7 @@
     "vector": "cpp",
     "ios": "cpp",
     "__bit_reference": "cpp",
-    "cassert": "cpp"
+    "cassert": "cpp",
+    "type_traits": "cpp"
   }
 }

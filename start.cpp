@@ -1,11 +1,13 @@
 // note that prologue.hpp is automatically prepended here
 
-#include "ctx/loop.hpp"
+#include "context/loop.hpp"
 
 int
 main()
-{
-  ctx::loop::victor_frankenstein();
+noexcept {
+
+  // Function that starts everything & blocks until the game is over
+  context::loop::victor_frankenstein();
 
   // Exit
   return 0;

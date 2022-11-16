@@ -7,7 +7,6 @@
 
 #if DEBUG || VERBOSE
 #include <bitset>
-#include <iostream>
 #endif
 
 namespace spl {
@@ -52,9 +51,8 @@ inline constexpr t gray{TEAM_GRAY};
 #if DEBUG || VERBOSE
 static
 std::string
-print(t x)
-{
-  switch (x) {
+print(t x) {
+  try { switch (x) {
     case blue: return "Blue";
     case red: return "Red";
     case yellow: return "Yellow";
@@ -66,7 +64,7 @@ print(t x)
     case brown: return "Brown";
     case gray: return "Gray";
     default: return "[unrecognized team color " + std::to_string(x) + "]";
-  }
+  } } catch (...) { std::terminate(); }
 }
 #endif
 } // namespace color
@@ -83,12 +81,12 @@ inline constexpr t playoff{COMPETITION_PHASE_PLAYOFF};
 static
 std::string
 print(t x)
-{
-  switch (x) {
+noexcept {
+  try { switch (x) {
     case round_robin: return "Round-Robin";
     case playoff: return "Playoff";
     default: return "[unrecognized competition phase " + std::to_string(x) + "]";
-  }
+  } } catch (...) { std::terminate(); }
 }
 #endif
 } // namespace phase
@@ -107,14 +105,14 @@ inline constexpr t dynamic_ball_handling{COMPETITION_TYPE_DYNAMIC_BALL_HANDLING}
 static
 std::string
 print(t x)
-{
-  switch (x) {
+noexcept {
+  try { switch (x) {
     case normal: return "Normal";
     case challenge_shield: return "Challenge Shield";
     case seven_on_seven: return "7v7";
     case dynamic_ball_handling: return "Dynamic Ball Handling";
     default: return "[unrecognized competition type " + std::to_string(x) + "]";
-  }
+  } } catch (...) { std::terminate(); }
 }
 #endif
 } // namespace type
@@ -136,14 +134,14 @@ inline constexpr t timeout{GAME_PHASE_TIMEOUT};
 static
 std::string
 print(t x)
-{
-  switch (x) {
+noexcept {
+  try { switch (x) {
     case normal: return "Normal";
     case penalty: return "Penalty";
     case overtime: return "Overtime";
     case timeout: return "Timeout";
     default: return "[unrecognized game phase " + std::to_string(x) + "]";
-  }
+  } } catch (...) { std::terminate(); }
 }
 #endif
 } // namespace phase
@@ -165,15 +163,15 @@ inline constexpr t finished{STATE_FINISHED};
 static
 std::string
 print(t x)
-{
-  switch (x) {
+noexcept {
+  try { switch (x) {
     case initial: return "Initial";
     case ready: return "Ready";
     case set: return "Set";
     case playing: return "Playing";
     case finished: return "Finished";
     default: return "[unrecognized state " + std::to_string(x) + "]";
-  }
+  } } catch (...) { std::terminate(); }
 }
 #endif
 } // namespace state
@@ -196,8 +194,8 @@ inline constexpr t penalty_kick{SET_PLAY_PENALTY_KICK};
 static
 std::string
 print(t x)
-{
-  switch (x) {
+noexcept {
+  try { switch (x) {
     case none: return "None";
     case goal_kick: return "Goal Kick";
     case pushing_free_kick: return "Pushing Free Kick";
@@ -205,7 +203,7 @@ print(t x)
     case kick_in: return "Kick In";
     case penalty_kick: return "Penalty Kick";
     default: return "[unrecognized set-play " + std::to_string(x) + "]";
-  }
+  } } catch (...) { std::terminate(); }
 }
 #endif
 } // namespace set_play
@@ -240,8 +238,8 @@ inline constexpr t manual{PENALTY_MANUAL};
 static
 std::string
 print(t x)
-{
-  switch (x) {
+noexcept {
+  try { switch (x) {
     case none: return "None";
     case illegal_ball_contact: return "Illegal Ball Contact";
     case player_pushing: return "Pushing";
@@ -255,7 +253,7 @@ print(t x)
     case substitute: return "Substitute";
     case manual: return "Manual Penalty";
     default: return "[unrecognized penalty " + std::to_string(x) + "]";
-  }
+  } } catch (...) { std::terminate(); }
 }
 #endif
 } // namespace penalty
@@ -267,7 +265,8 @@ namespace spl {
 
 constexpr
 bool
-operator==(RobotInfo const& lhs, RobotInfo const& rhs) noexcept {
+operator==(RobotInfo const& lhs, RobotInfo const& rhs)
+noexcept {
   return (
     (lhs.penalty == rhs.penalty) and
     (lhs.secsTillUnpenalised == rhs.secsTillUnpenalised));
@@ -275,8 +274,8 @@ operator==(RobotInfo const& lhs, RobotInfo const& rhs) noexcept {
 
 constexpr
 bool
-operator==(TeamInfo const& lhs, TeamInfo const& rhs) noexcept
-{
+operator==(TeamInfo const& lhs, TeamInfo const& rhs)
+noexcept {
   return (
     (lhs.messageBudget == rhs.messageBudget) and
     (lhs.penaltyShot == rhs.penaltyShot) and
@@ -291,20 +290,20 @@ operator==(TeamInfo const& lhs, TeamInfo const& rhs) noexcept
 
 static
 std::ostream&
-operator<<(std::ostream& os, RobotInfo const& robot) noexcept
-{
-  switch (robot.penalty) {
+operator<<(std::ostream& os, RobotInfo const& robot)
+noexcept {
+  try { switch (robot.penalty) {
     case config::gamecontroller::penalty::none: return os << "in";
     case config::gamecontroller::penalty::substitute: return os << "sub";
     default: return os << config::gamecontroller::penalty::print(robot.penalty) << " for " << +robot.secsTillUnpenalised << 's';
-  }
+  } } catch (...) { std::terminate(); }
 }
 
 template <u8 N>
 static
 std::ostream&
-operator<<(std::ostream& os, RobotInfo const (&robots)[N]) noexcept
-{
+operator<<(std::ostream& os, RobotInfo const (&robots)[N])
+noexcept {
   os << '{' << robots[0];
   for (u8 i{1}; i < N; ++i) { os << ", " << robots[i]; }
   return os << '}';
@@ -312,15 +311,15 @@ operator<<(std::ostream& os, RobotInfo const (&robots)[N]) noexcept
 
 static
 std::ostream&
-operator<<(std::ostream& os, TeamInfo const& team) noexcept
-{
+operator<<(std::ostream& os, TeamInfo const& team)
+noexcept {
   return os << '[' << config::gamecontroller::team::name(team.teamNumber) << " (" << ::config::gamecontroller::color::print(team.teamColour) << ") with " << +team.score << " point(s), " << +team.messageBudget << " messages left, " << std::bitset<16>{team.singleShots} << " on penalty shots, players " << team.players << ']';
 }
 
 // static
 // std::ostream&
-// operator<<(std::ostream& os, GameControlReturnData const& msg) noexcept
-// {
+// operator<<(std::ostream& os, GameControlReturnData const& msg)
+// noexcept {
 //   os << '[' << config::gamecontroller::team::number(msg.teamNum) << " Player #" << +msg.playerNum;
 //   if (msg.fallen) { os << ", FALLEN,"; }
 //   os << " at (" << msg.pose[0] << ' ' << msg.pose[1] << ' ' << msg.pose[2] << "), ball (" << msg.ball[0] << ' ' << msg.ball[1] << ") (";

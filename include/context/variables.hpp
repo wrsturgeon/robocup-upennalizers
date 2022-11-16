@@ -1,13 +1,11 @@
-#ifndef CTX_CONTEXT_HPP
-#define CTX_CONTEXT_HPP
-
-#include "config/wireless.hpp"
+#ifndef CONTEXT_VARIABLES_HPP
+#define CONTEXT_VARIABLES_HPP
 
 #include <algorithm> // std::copy_n
 #include <atomic>    // std::atomic
 #include <cassert>   // assert
 
-namespace ctx {
+namespace context {
 
 // We have to be very careful with these to avoid throwing exceptions before calling main()
 //   (if we do, we can't get an exception, just get a system kill signal with no explanation)
@@ -52,53 +50,19 @@ ATOMIC_VAR(team2, spl::TeamInfo, {})
 
 impure static
 bool
-done() noexcept
-{
+gameover()
+noexcept {
   return (state() == config::gamecontroller::state::finished) and not first_half();
-}
-
-// static
-// spl::Message
-// make_spl_message()
-// {
-//   // TODO(wrsturgeon): submit a PR to the TC asking for a macro to disable constructors for SPL messages and similar structs
-//   //   if we could, we could use designated initializers (i.e. { .version = ... }) for much faster and cleaner initialization
-//   spl::Message msg{uninitialized<spl::Message>()};
-//   std::copy_n(config::packet::spl::header, sizeof msg.header, static_cast<char*>(msg.header));
-//   msg.version = config::packet::spl::version;
-//   msg.teamNum = config::gamecontroller::team::upenn_number();
-//   msg.playerNum = config::player::number;
-//   msg.fallen = false;
-//   msg.numOfDataBytes = 0;
-//   // TODO(wrsturgeon): see TODO in the next function
-//   return msg;
-// }
-
-static
-spl::GameControlReturnData
-make_gc_message()
-{
-  spl::GameControlReturnData msg{uninitialized<spl::GameControlReturnData>()};
-  std::copy_n(config::packet::gamecontroller::recv::header, sizeof msg.header, static_cast<char*>(msg.header));
-  msg.version = config::packet::gamecontroller::recv::version;
-  msg.playerNum = config::player::number;
-  msg.teamNum = config::gamecontroller::team::upenn_number();
-  msg.fallen = false;
-  std::fill_n(static_cast<float*>(msg.pose), sizeof msg.pose, 0.f);
-  std::fill_n(static_cast<float*>(msg.ball), sizeof msg.ball, 0.f);
-  msg.ballAge = -1.F;
-  // TODO(wrsturgeon): make a separate structs for debugging and intra-team communication that are the size of SPL's data member
-  return msg;
 }
 
 static
 void
-parse(spl::GameControlData&& msg) noexcept
-{
+parse(spl::GameControlData&& msg)
+noexcept {
   // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 #define TYPECHECK(LVALUE, RVALUE) static_assert(std::is_same_v<decltype(LVALUE()), std::decay_t<decltype(msg.RVALUE)>>)
 #if DEBUG || VERBOSE
-#define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); if (msg.RVALUE != internal::LVALUE().exchange(std::move(msg.RVALUE), std::memory_order_relaxed)) { try { std::cout << #LVALUE << " updated -> " << PRINT(internal::LVALUE().load(std::memory_order_relaxed)) << std::endl; } catch (std::exception& e) { std::cerr << "Exception in ctx::parse while updating " #LVALUE ": " << e.what() << std::endl; std::terminate(); } catch (...) { std::terminate(); } }
+#define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); if (msg.RVALUE != internal::LVALUE().exchange(std::move(msg.RVALUE), std::memory_order_relaxed)) { debug_print(std::cout, #LVALUE " updated -> ", PRINT(internal::LVALUE().load(std::memory_order_relaxed))); }
 #else // DEBUG || VERBOSE
 #define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); internal::LVALUE().store(std::move(msg.RVALUE), std::memory_order_relaxed);
 #endif // DEBUG || VERBOSE
@@ -125,6 +89,6 @@ parse(spl::GameControlData&& msg) noexcept
 #undef UPDATE_ATOMIC
 }
 
-} // namespace ctx
+} // namespace context
 
-#endif // CTX_CONTEXT_HPP
+#endif // CONTEXT_VARIABLES_HPP
