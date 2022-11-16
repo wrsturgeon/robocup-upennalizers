@@ -40,9 +40,7 @@ name(u8 i)
       if (team_number > 255) { throw std::logic_error{"Invalid line " + std::to_string(line_n) + " in include/ext/GameController/resources/config/spl/teams.cfg (team number " + std::to_string(team_number) + " > 255)"}; }
       most_so_far = static_cast<i16>(team_number);
       std::size_t const comma_idx{line.find(',')};
-      std::cout << "Pushing back...\n";
       names.push_back((comma_idx == std::string::npos) ? line.substr(eq_idx + 1) : line.substr(eq_idx + 1, comma_idx - eq_idx - 1));
-      std::cout << "names.size() = " << names.size() << std::endl;
     }
     return names; }()};
   // assert(i >= 1); // "Invisibles" placeholder team := 0
