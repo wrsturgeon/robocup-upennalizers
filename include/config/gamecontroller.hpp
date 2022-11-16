@@ -15,7 +15,7 @@ namespace spl {
 #define RoboCupGameControlReturnData GameControlReturnData
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Ignore any errors from SPL code
-#include "ext/GameController/examples/c/RoboCupGameControlData.h"
+#include <RoboCupGameControlData.h> // check compilation args: -isystem so clang-tidy will stfu
 #pragma clang diagnostic pop
 #undef RoboCupGameControlReturnData
 #undef RoboCupGameControlData
