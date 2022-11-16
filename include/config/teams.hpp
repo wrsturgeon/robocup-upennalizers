@@ -19,8 +19,8 @@ std::string const&
 name(u8 i)
 {
   static std::vector<std::string> const name_vec{[] {
-    std::ifstream file{PWDINCLUDE "ext/GameController/resources/config/spl/teams.cfg"};
-    if (!file) { throw std::runtime_error{"Couldn't open " PWDINCLUDE "ext/GameController/resources/config/spl/teams.cfg"}; }
+    std::ifstream file{"include/ext/GameController/resources/config/spl/teams.cfg"};
+    if (!file) { throw std::runtime_error{"Couldn't open include/ext/GameController/resources/config/spl/teams.cfg"}; }
     std::string line; // Format: ^[team number]=[team name]$ or ^[team number]=[team name],[team colors...]
     i16 most_so_far{-1};
     std::vector<std::string> names;
@@ -29,10 +29,10 @@ name(u8 i)
       ++line_n;
       if (line.empty()) { continue; }
       std::size_t const eq_idx{line.find('=')};
-      if (eq_idx == std::string::npos) { throw std::logic_error{"Invalid line " + std::to_string(line_n) + " in " PWDINCLUDE "ext/GameController/resources/config/spl/teams.cfg (no '=' found)"}; }
+      if (eq_idx == std::string::npos) { throw std::logic_error{"Invalid line " + std::to_string(line_n) + " in include/ext/GameController/resources/config/spl/teams.cfg (no '=' found)"}; }
       int const team_number{std::stoi(line.substr(0, eq_idx))};
-      if (team_number != most_so_far + 1) { throw std::logic_error{"Invalid line " + std::to_string(line_n) + " in " PWDINCLUDE "ext/GameController/resources/config/spl/teams.cfg (team number " + std::to_string(team_number) + " not monotonically increasing by 1)"}; }
-      if (team_number > 255) { throw std::logic_error{"Invalid line " + std::to_string(line_n) + " in " PWDINCLUDE "ext/GameController/resources/config/spl/teams.cfg (team number " + std::to_string(team_number) + " > 255)"}; }
+      if (team_number != most_so_far + 1) { throw std::logic_error{"Invalid line " + std::to_string(line_n) + " in include/ext/GameController/resources/config/spl/teams.cfg (team number " + std::to_string(team_number) + " not monotonically increasing by 1)"}; }
+      if (team_number > 255) { throw std::logic_error{"Invalid line " + std::to_string(line_n) + " in include/ext/GameController/resources/config/spl/teams.cfg (team number " + std::to_string(team_number) + " > 255)"}; }
       ++most_so_far;
       std::size_t const comma_idx{line.find(',')};
       names.push_back((comma_idx == std::string::npos) ? line.substr(eq_idx + 1) : line.substr(eq_idx + 1, comma_idx - eq_idx - 1));
@@ -49,7 +49,7 @@ upenn_number()
 {
   static u8 const idx{[] {
     for (u8 i{0}; i < 255; ++i) { if (name(i) == "UPenn") { return i; } }
-    throw std::logic_error{"Couldn't find UPennalizers in " PWDINCLUDE "ext/GameController/resources/config/spl/teams.cfg"}; }()};
+    throw std::logic_error{"Couldn't find UPennalizers in include/ext/GameController/resources/config/spl/teams.cfg"}; }()};
   return idx;
 }
 

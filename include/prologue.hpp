@@ -82,8 +82,6 @@ inline constexpr u16 update_period_ms{500};
 #define pure [[nodiscard]] INLINE
 #define impure [[nodiscard]] [[gnu::always_inline]] inline // not constexpr since std::string for whatever reason isn't
 
-#define PWDINCLUDE "../include/" // NOLINT(cppcoreguidelines-macro-usage)
-
 #include <cerrno>   // errno
 #include <cstring>  // strerror_r
 #include <iostream> // std::cerr

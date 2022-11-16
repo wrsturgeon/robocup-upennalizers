@@ -7,9 +7,9 @@ if [ ${#} -lt 3 ]; then
     exit 1
 fi
 
-# make sure we're in robocup-legacy/src
-if [ $(pwd | rev | cut -d '/' -f-2 | rev) != "robocup-legacy/src" ]; then
-    echo "Please run this script from robocup-legacy/src"
+# make sure we're in .../robocup-legacy
+if [ $(pwd | rev | cut -d '/' -f1) != "ycagel-pucobor" ]; then
+    echo "Please run this script from the main project directory (.../robocup-legacy)"
     exit 1
 fi
 
@@ -47,17 +47,15 @@ fi
 echo "Updating submodules..."
 git submodule update --init --recursive --remote > /dev/null 2>&1 || echo "  Couldn't; maybe no Internet? Proceeding..."
 
-cd .. # .../robocup-legacy/
 mkdir -p bin
 EXECNAME=$(basename ${1} | cut -d. -f1)
-SRC="src/${1}" #$(find src -name '*.cpp' -o -name '*.hpp' -o -name '*.c' -o -name '*.h' -o -name '*.cc' -o -name '*.hh' | grep -v 'src/prologue.hpp' | tr '\n' ' ')
 MACROS="-DSYSTEM_BITS=32 -DLUA_32BITS"
-COMMON="-o bin/robocup-${EXECNAME} ${SRC} -std=c++20 -Iinclude -include prologue.hpp -Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-exit-time-destructors -Wno-global-constructors -ffast-math -ftemplate-backtrace-limit=0"
+COMMON="-o bin/robocup-${EXECNAME} ${1} -std=c++20 -Iinclude -include prologue.hpp -Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-exit-time-destructors -Wno-global-constructors -ffast-math -ftemplate-backtrace-limit=0"
 
 echo "Running static analysis..."
 clang-tidy --verify-config > /dev/null 2>&1 || clang-tidy --verify-config
-clang-tidy ${SRC} -- -DPLAYER=1 -DCLANG_TIDY -DDEBUG -DVERBOSE -UNDEBUG ${MACROS} ${COMMON} # Goalie
-clang-tidy ${SRC} -- -DPLAYER=2 -DCLANG_TIDY -DDEBUG -DVERBOSE -UNDEBUG ${MACROS} ${COMMON} # Non-goalie? (probably shouldn't run 6 times)
+clang-tidy ${1} -- -DPLAYER=1 -DCLANG_TIDY -DDEBUG -DVERBOSE -UNDEBUG ${MACROS} ${COMMON} # Goalie
+clang-tidy ${1} -- -DPLAYER=2 -DCLANG_TIDY -DDEBUG -DVERBOSE -UNDEBUG ${MACROS} ${COMMON} # Non-goalie? (probably shouldn't run 6 times)
 
   DEBUG_FLAGS="-Os -fno-omit-frame-pointer -g3 -ffunction-sections -fdata-sections -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common -Wno-unused-function" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"
 RELEASE_FLAGS="-O3 -fomit-frame-pointer -fshort-enums -march=native -mtune=native -mllvm -polly -mllvm -polly-vectorizer=stripmine"
