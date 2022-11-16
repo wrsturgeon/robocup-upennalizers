@@ -17,6 +17,7 @@ extern "C" {
 #include <cerrno>      // errno
 #include <cstddef>     // std::ssize_t
 #include <iostream>    // std::cerr
+#include <string>      // std::string
 #include <type_traits> // std::decay_t
 
 namespace msg {
@@ -42,7 +43,9 @@ address_from_ip(char const *ip_str) noexcept
 {
   sockaddr_in s_in{uninitialized<sockaddr_in>()};
   if (inet_pton(AF_INET, ip_str, &s_in.sin_addr) != 1) {
-    std::cerr << "Invalid IP address (\"" << ip_str << "\"): " << strerror(errno) << " (errno " << errno << ")\n";
+    char buf[256];
+    get_system_error_message(buf);
+    try { std::cerr << "Invalid IP address \"" << ip_str << "\" (errno " << errno << ": " << static_cast<char*>(buf) << ")\n"; } catch (...) {/* std::terminate below */}
     std::terminate();
   }
   return s_in.sin_addr.s_addr;
@@ -52,9 +55,26 @@ static
 sockaddr_in
 make_sockaddr_in(in_addr_t address, u16 port) noexcept
 {
-  sockaddr_in addr{.sin_family = AF_INET, .sin_port = htons(port), .sin_addr = {.s_addr = address}};
+  sockaddr_in addr{uninitialized<sockaddr_in>()};
   std::fill_n(reinterpret_cast<char*>(&addr), sizeof addr, '\0');
+  addr.sin_family = AF_INET;
+  addr.sin_addr.s_addr = address;
+  addr.sin_port = htons(port);
   return addr;
+}
+
+static
+std::string
+get_ip_port_str(sockaddr_in const &addr)
+{
+  static char ipbuf[INET_ADDRSTRLEN + 1];
+  assert_nonzero(inet_ntop(AF_INET, &addr.sin_addr, static_cast<char*>(ipbuf), INET_ADDRSTRLEN), "inet_ntop failed");
+  ipbuf[INET_ADDRSTRLEN] = '\0';
+  try {
+    return std::string{static_cast<char*>(ipbuf)} + ':' + std::to_string(ntohs(addr.sin_port));
+  } catch (std::exception const &e) {
+    return "[couldn't stringify IP/port: " + std::string{e.what()} + ']';
+  } catch (...) { try { return "[couldn't stringify IP/port or print why]"; } catch (...) { std::terminate(); } }
 }
 
 #define OPEN_UDP_SOCKET socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
@@ -81,7 +101,9 @@ Socket<D, M>::Socket(in_addr_t address, u16 port) noexcept
 : addr{make_sockaddr_in(address, port)}
 {
   if (socketfd < 0) {
-    std::cerr << STRINGIFY(OPEN_UDP_SOCKET) " returned " << std::to_string(socketfd) << ": " << strerror(errno) << " (errno " << errno << ")\n";
+    char buf[256];
+    get_system_error_message(buf);
+    try { std::cerr << STRINGIFY(OPEN_UDP_SOCKET) " returned " << socketfd << " (errno " << errno << ": " << static_cast<char*>(buf) << ")\n"; } catch (...) {/* std::terminate below */}
     std::terminate();
   }
   constexpr int bcast_opt{M == mode::broadcast};
@@ -96,18 +118,21 @@ Socket<D, M>::Socket(in_addr_t address, u16 port) noexcept
     r = bind(socketfd, reinterpret_cast<sockaddr const*>(&from_addr), sizeof from_addr);
   }
   if (r) {
-    std::cerr << (
+    char buf[256];
+    get_system_error_message(buf);
+    try { std::cerr << (
           (D == direction::outgoing) ? "connect" : "bind")
        << "(socket_fd = " << socketfd
-       << ", &addr = &(" << inet_ntoa(addr.sin_addr) << ':' << ntohs(addr.sin_port)
+       << ", &addr = &(" << get_ip_port_str(addr)
        << "), sizeof addr = " << sizeof addr
        << "B) returned " << r
-       << ": " << strerror(errno)
-       << " (errno " << errno << ")\n";
+       << " (errno " << errno
+       << ": " << static_cast<char*>(buf) << ")\n";
+    } catch (...) {}
     std::terminate();
   }
 #if VERBOSE
-  std::cout << "Opened an " << ((D == direction::outgoing) ? "outgoing" : "incoming") << ' ' << ((M == mode::broadcast) ? "broadcast" : "unicast") << " socket " << ((D == direction::incoming) ? "from" : "to") << ' ' << inet_ntoa(addr.sin_addr) << ':' << ntohs(addr.sin_port) << std::endl;
+  std::cout << "Opened an " << ((D == direction::outgoing) ? "outgoing" : "incoming") << ' ' << ((M == mode::broadcast) ? "broadcast" : "unicast") << " socket " << ((D == direction::incoming) ? "from" : "to") << ' ' << get_ip_port_str(addr) << std::endl;
 #endif // VERBOSE
 }
 
@@ -125,12 +150,14 @@ Socket<D, M>::send(T&& data) const
 #define SEND_OP ::send(socketfd, &data, sizeof data, 0)
   decltype(SEND_OP) const r{SEND_OP};
   if (r != sizeof data) {
+    char buf[256];
+    get_system_error_message(buf);
     throw ::msg::error{
           "send(socket_fd = " + std::to_string(socketfd)
         + ", &data = ..., sizeof data = " + std::to_string(sizeof data)
         + "B, 0) returned " + std::to_string(r)
-        + ": " + strerror(errno)
-        + " (errno " + std::to_string(errno) + ')'
+        + " (errno " + std::to_string(errno)
+        + ": " + std::string{static_cast<char*>(buf)} + ')'
     };
   }
 }
@@ -157,20 +184,22 @@ Socket<D, M>::recv() const
 #if defined(PERSNICKETY_IP) && PERSNICKETY_IP
 #if VERBOSE
     if (src.sin_addr.s_addr != addr.sin_addr.s_addr) {
-      std::cout << "Received a message from " << inet_ntoa(src.sin_addr) << ':' << ntohs(src.sin_port) << " instead of " << inet_ntoa(addr.sin_addr) << ':' << ntohs(addr.sin_port) << std::endl;
+      std::cout << "Received a message from " << get_ip_port_str(addr) << " instead of " << get_ip_port_str(addr) << std::endl;
     }
 #endif // VERBOSE
   } while (src.sin_addr.s_addr != addr.sin_addr.s_addr);
 #endif // PERSNICKETY_IP
   if (r != sizeof data) {
+    char buf[256];
+    get_system_error_message(buf);
     throw ::msg::error{
           "recvfrom(socket_fd = " + std::to_string(socketfd)
         + ", &data = ..., sizeof data = " + std::to_string(sizeof data)
-        + "B, 0, &src = &(" + inet_ntoa(src.sin_addr) + ':' + std::to_string(ntohs(src.sin_port))
+        + "B, 0, &src = &(" + get_ip_port_str(addr)
         + "), &src_len = &(" + std::to_string(src_len)
         + ")) returned " + std::to_string(r)
-        + ": " + strerror(errno)
-        + " (errno " + std::to_string(errno) + ')'
+        + " (errno " + std::to_string(errno)
+        + ": " + std::string{static_cast<char*>(buf)} + ')'
     };
   }
   return data;

@@ -59,7 +59,7 @@ clang-tidy --verify-config > /dev/null 2>&1 || clang-tidy --verify-config
 clang-tidy ${SRC} -- -DPLAYER=1 -DCLANG_TIDY -DDEBUG -DVERBOSE -UNDEBUG ${MACROS} ${COMMON} # Goalie
 clang-tidy ${SRC} -- -DPLAYER=2 -DCLANG_TIDY -DDEBUG -DVERBOSE -UNDEBUG ${MACROS} ${COMMON} # Non-goalie? (probably shouldn't run 6 times)
 
-  DEBUG_FLAGS="-Os -fno-omit-frame-pointer -g3 -ffunction-sections -fdata-sections -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common -Wno-unused-functions" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"
+  DEBUG_FLAGS="-Os -fno-omit-frame-pointer -g3 -ffunction-sections -fdata-sections -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common -Wno-unused-function" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"
 RELEASE_FLAGS="-O3 -fomit-frame-pointer -fshort-enums -march=native -mtune=native -mllvm -polly -mllvm -polly-vectorizer=stripmine"
 if [ ${DEBUG} -eq 1 ]; then
     FLAGS=${DEBUG_FLAGS}

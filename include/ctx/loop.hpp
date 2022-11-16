@@ -1,39 +1,22 @@
 #ifndef CTX_LOOP_HPP
 #define CTX_LOOP_HPP
 
-#include "ctx/loop-fwd.hpp"
-
-#include "ctx/context-fwd.hpp"
+#include "ctx/context.hpp"
 #include "msg/io.hpp"
 
-#include <cstddef>     // std::size_t
+#include "config/gamecontroller.hpp"
 
-#if DEBUG || VERBOSE
-#include <iostream> // std::cout
-#endif
+#include "util/jthread.hpp"
+
+#include <cstddef>  // std::size_t
+#include <iostream> // std::cerr
 
 namespace ctx {
 namespace loop {
+namespace internal {
 
-static
-void
-run() noexcept
-{
-#if DEBUG || VERBOSE
-  try { std::cout << "Waiting for a GameController to open communication...\n"; } catch (std::exception const& e) { std::cerr << e.what() << '\n'; } catch (...) { std::terminate(); }
-#endif
-  parse([]{ do { try { return msg::recv_from_gc(); } catch (std::exception const& e) { std::cerr << e.what() << '\n'; } catch (...) { std::terminate(); } } while (true); }());
-
-  // Continue until someone wins the game
-  do {
-    do { try { msg::send_to_gc(); break; } catch (std::exception const& e) { std::cerr << e.what() << '\n'; } catch (...) { std::terminate(); } } while (true);
-    // msg::send_to_team(static_cast<spl::Message>(context));
-    parse(msg::recv_from_gc()); // blocking
-  } while (not ::ctx::done());
-}
-
-INLINE
-void
+pure
+bool
 parse(spl::GameControlData&& from_gc) noexcept
 {
   try {
@@ -41,6 +24,7 @@ parse(spl::GameControlData&& from_gc) noexcept
     and !strncmp(static_cast<char*>(from_gc.header), config::udp::gamecontroller::send::header, sizeof from_gc.header)
     ) {
       ::ctx::parse(std::move(from_gc)); // NOLINT(performance-move-const-arg)
+      return true; // valid packet
   #if DEBUG || VERBOSE
     } else {
       char header[sizeof from_gc.header + 1];
@@ -50,8 +34,96 @@ parse(spl::GameControlData&& from_gc) noexcept
   #endif
     }
   } catch (const std::exception& e) {
-    std::cerr << "Exception in ctx::loop::parse: " << e.what() << '\n';
+    std::cerr << "Exception in ctx::loop::parse: " << e.what() << std::endl;
   } catch (...) { std::terminate(); }
+  return false; // invalid packet
+}
+
+static
+void
+hermeneutics() noexcept // https://youtu.be/rzXPyCY7jbs
+{
+  // Keep slamming our head into a wall until we get a valid packet from the GameController.
+
+  do { // forces exceptions to start over rather than breaking out of the loop
+    try { // msg::recv_from_gc() throws if #bytes received =/= sizeof spl::GameControlData
+      do {} while (!parse(msg::recv_from_gc())); // loop until we get a valid packet or throw
+      break; // and here is the sole exit point
+    } catch (std::exception const& e) { // if we get an exception, try to print it out and try again
+      std::cerr << e.what() << std::endl; // there's a very very minor chance this throws
+    } catch (...) { std::terminate(); } // if we can't print, everything is probably on fire
+  } while (true);
+}
+
+static
+void
+proselytize() noexcept
+{
+  // Yell at everyone until we get our message through to the GC.
+
+  do { // until we successfully send our packets out
+    try { // if sending fails
+      msg::send_to_gc(); // update the GC so the audience can see how fucking cool we are
+      break; // success: break the inner loop (second `do`)
+    } catch (std::exception const& e) { // if sending fails but not horribly
+      std::cerr << e.what() << std::endl;
+    } catch (...) { std::terminate(); } // on fire
+  } while (true); // until we send to GC
+}
+
+// static
+// void
+// dialectics() noexcept
+// {
+//   // Communicate with teammates.
+//   // TODO(wrsturgeon): implement
+// }
+
+// static
+// void
+// prayer() noexcept
+// {
+//   // Send our innermost unclean thoughts to God (i.e. debug info to our laptop).
+//   // TODO(wrsturgeon): implement
+// }
+
+static
+void
+run() noexcept
+{
+  //%%%%%%%%%%%%%%%% Wait for the first valid packet from a GameController
+#if DEBUG || VERBOSE
+  try { std::cout << "Waiting for a GameController to open communication...\n"; } catch (std::exception const& e) { std::cerr << e.what() << std::endl; } catch (...) { std::terminate(); }
+#endif
+  hermeneutics();
+
+  //%%%%%%%%%%%%%%%% Loop until someone wins the game
+  do { // while the game isn't over
+    proselytize(); // -> GC
+    // dialectics(); // <-> teammates
+    // prayer();     // -> laptop
+    hermeneutics(); // <- GC
+  } while (not ::ctx::done()); // the sweet release of death
+}
+
+impure static
+util::we_have_std_jthread_at_home const&
+thread() noexcept
+{
+  static util::we_have_std_jthread_at_home const thread{[]{ run(); }}; // clang hasn't implemented std::jthread
+  return thread;
+}
+
+} // namespace internal
+
+[[gnu::always_inline]] inline static
+void
+victor_frankenstein() noexcept
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-result"
+  internal::thread(); // don't need the return value; it's a static variable in the function we call
+#pragma clang diagnostic pop
 }
 
 } // namespace loop

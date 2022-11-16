@@ -138,6 +138,7 @@ Checks: '*,
 
   -altera-id-dependent-backward-branch,
   -altera-unroll-loops,
+  -bugprone-easily-swappable-parameters,
   -bugprone-infinite-loop,
   -bugprone-reserved-identifier,
   -bugprone-stringview-nullptr,

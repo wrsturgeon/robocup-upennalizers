@@ -78,46 +78,72 @@ inline constexpr u16 update_period_ms{500};
 } // namespace config
 
 //%%%%%%%%%%%%%%%% Useful macros
-#define INLINE_NOATTR inline constexpr
-#define INLINE [[gnu::always_inline]] INLINE_NOATTR
-#define IMPURE_NOATTR inline
-#define impure [[nodiscard]] [[gnu::always_inline]] IMPURE_NOATTR  // not constexpr since std::string for whatever reason isn't
-#define CONST_IF_RELEASE const
-#define NOX noexcept
-#define PURE_NOATTR INLINE_NOATTR
-#define pure [[nodiscard]] PURE_NOATTR
+#define INLINE [[gnu::always_inline]] inline constexpr
+#define pure [[nodiscard]] INLINE
+#define impure [[nodiscard]] [[gnu::always_inline]] inline // not constexpr since std::string for whatever reason isn't
+
+#define PWDINCLUDE "../include/" // NOLINT(cppcoreguidelines-macro-usage)
+
+#include <cerrno>   // errno
+#include <cstring>  // strerror_r
+#include <iostream> // std::cerr
+
+template <std::size_t N>
+static
+void
+get_system_error_message(char (&buf)[N]) noexcept
+{
+  int const orig = errno;
+  int const rtn = strerror_r(orig, static_cast<char*>(buf), N);
+  if (rtn) {
+    try {
+      std::cerr << "strerror_r failed (returned " << rtn << ", errno = " << errno
+                << ") while handling original errno " << orig << std::endl;
+    } catch (...) {/* std::terminate below */}
+    std::terminate();
+  }
+}
 
 #if DEBUG
-#include <iostream>
+#define FAIL_ASSERTION                           \
+  char buf[256];                                 \
+  get_system_error_message(buf);                 \
+  try {                                          \
+    std::cerr << errmsg                          \
+              << " (errno" << errno              \
+              << ": " << static_cast<char*>(buf) \
+              << ")\n";                          \
+  } catch (...) {/* std::terminate below */}     \
+  std::terminate();
+#else // DEBUG
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 #endif // DEBUG
 
 template <typename T>
 INLINE
 void
 assert_zero(T&& expr, char const* const errmsg) noexcept
-requires requires (T&& t) { { t != 0 } -> std::convertible_to<bool>; }
 {
 #if DEBUG
-  if (expr != 0) {
-    try { std::cerr << errmsg << std::endl; } catch (...) {}
-    std::terminate();
-  }
+  if (expr) { FAIL_ASSERTION }
 #endif // DEBUG
 }
 
-template <typename T, std::size_t N>
+template <typename T>
 INLINE
 void
-assert_nonzero(T&& expr, char const (&errmsg)[N]) noexcept
-requires requires (T&& t) { { t == 0 } -> std::convertible_to<bool>; }
+assert_nonzero(T&& expr, char const* const errmsg) noexcept
 {
 #if DEBUG
-  if (expr == 0) {
-    try { std::cerr << errmsg << std::endl; } catch (...) {}
-    std::terminate();
-  }
+  if (!expr) { FAIL_ASSERTION }
 #endif // DEBUG
 }
+
+#if !DEBUG
+#pragma clang diagnostic pop
+#endif // !DEBUG
+#undef FAIL_ASSERTION
 
 //%%%%%%%%%%%%%%%% Stack-allocation without initialization
 
@@ -128,10 +154,5 @@ uninitialized()
   char bytes[sizeof(std::decay_t<T>)];
   return *reinterpret_cast<std::decay_t<T>*>(bytes);
 }
-
-//%%%%%%%%%%%%%%%% Global context manager
-
-// #including this file immediately initializes thread-safe global variables and starts the GC communication thread
-#include "ctx/global-context.hpp"
 
 #endif // PROLOGUE_HPP

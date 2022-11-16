@@ -36,7 +36,7 @@ static
 char const*
 ip()
 {
-  static std::string const ip{util::read_file("../config/runtime/gamecontroller.ip")};
+  static std::string const ip{util::read_file(PWDINCLUDE "config/runtime/gamecontroller.ip")};
   return ip.c_str();
 }
 
