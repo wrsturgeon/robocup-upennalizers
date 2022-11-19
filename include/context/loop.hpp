@@ -28,7 +28,7 @@ noexcept {
     ) {
       ::context::parse(std::move(from_gc)); // NOLINT(performance-move-const-arg)
       return true; // valid packet
-  #if DEBUG || VERBOSE
+  #if DEBUG
     } else {
       char header[sizeof from_gc.header + 1];
       std::copy_n(static_cast<char*>(from_gc.header), sizeof from_gc.header, static_cast<char*>(header));

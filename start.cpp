@@ -12,3 +12,8 @@ noexcept {
   // Exit
   return 0;
 }
+
+#ifdef NDEBUG
+static_assert(noexcept(main()));
+static_assert(std::is_nothrow_invocable_v<decltype(main)>);
+#endif

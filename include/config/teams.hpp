@@ -32,9 +32,9 @@ name(u8 i) {
       std::size_t const eq_idx{line.find('=')};
       if (eq_idx == std::string::npos) { throw std::logic_error{"Invalid line " + std::to_string(line_n) + " in include/ext/GameController/resources/config/spl/teams.cfg (no '=' found)"}; }
       int const team_number{std::stoi(line.substr(0, eq_idx))};
-#if DEBUG || VERBOSE
+#if DEBUG
       if (team_number != most_so_far + 1) { std::cerr << "Suspicious line " << +line_n << " in include/ext/GameController/resources/config/spl/teams.cfg: jumping to team number " << +team_number << " skips at least one\n"; }
-#endif // DEBUG || VERBOSE
+#endif // DEBUG
       if (team_number <= most_so_far) { throw std::logic_error{"Invalid line " + std::to_string(line_n) + " in include/ext/GameController/resources/config/spl/teams.cfg (team number " + std::to_string(team_number) + " not strictly monotonically increasing)"}; }
       if (team_number > 255) { throw std::logic_error{"Invalid line " + std::to_string(line_n) + " in include/ext/GameController/resources/config/spl/teams.cfg (team number " + std::to_string(team_number) + " > 255)"}; }
       most_so_far = static_cast<i16>(team_number);

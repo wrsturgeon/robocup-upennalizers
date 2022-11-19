@@ -9,8 +9,10 @@
 
 namespace concurrency {
 
-template <std::invocable<> auto atentry, std::invocable<> auto atexit = []() noexcept {}>
-requires std::is_nothrow_invocable_v<decltype(atentry)> and std::is_nothrow_invocable_v<decltype(atexit)>
+template <typename F>
+concept threadable = noexcept(std::declval<F>()()) && std::is_nothrow_invocable_v<F>;
+
+template <threadable auto atentry, threadable auto atexit = []() noexcept {}>
 class we_have_std_jthread_at_home {
   std::thread thread;
  public:
@@ -22,8 +24,7 @@ class we_have_std_jthread_at_home {
   ~we_have_std_jthread_at_home();
 };
 
-template <std::invocable<> auto atentry, std::invocable<> auto atexit>
-requires std::is_nothrow_invocable_v<decltype(atentry)> and std::is_nothrow_invocable_v<decltype(atexit)>
+template <threadable auto atentry, threadable auto atexit>
 we_have_std_jthread_at_home<atentry, atexit>::~we_have_std_jthread_at_home() {
   debug_print(std::cout, "jthread dtor: running atexit...");
   atexit();

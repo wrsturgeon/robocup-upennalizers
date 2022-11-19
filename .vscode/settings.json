@@ -22,6 +22,8 @@
     "ios": "cpp",
     "__bit_reference": "cpp",
     "cassert": "cpp",
-    "type_traits": "cpp"
+    "type_traits": "cpp",
+    "cstdint": "cpp",
+    "cstdio": "cpp"
   }
 }

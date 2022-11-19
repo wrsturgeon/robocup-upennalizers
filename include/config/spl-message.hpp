@@ -3,7 +3,7 @@
 
 #include "config/gamecontroller.hpp"
 
-#if DEBUG || VERBOSE
+#if DEBUG
 #include <iostream>
 #endif
 
@@ -15,7 +15,7 @@ namespace spl {
 #pragma clang diagnostic pop
 #undef SPLStandardMessage
 
-#if DEBUG || VERBOSE
+#if DEBUG
 
 // static
 // std::ostream&
@@ -31,7 +31,7 @@ namespace spl {
 //   return os << " + " << +msg.numOfDataBytes << "B data]";
 // }
 
-#endif // DEBUG || VERBOSE
+#endif // DEBUG
 
 } // namespace spl
 

@@ -82,9 +82,9 @@ Socket<D, M>::Socket(in_addr_t address, u16 port) noexcept
     } catch (...) {}
     std::terminate();
   }
-#if VERBOSE
+#if DEBUG
   std::cout << "Opened an " << ((D == direction::outgoing) ? "outgoing" : "incoming") << ' ' << ((M == mode::broadcast) ? "broadcast" : "unicast") << " socket " << ((D == direction::incoming) ? "from" : "to") << ' ' << util::ip::get_ip_port_str(addr) << std::endl;
-#endif // VERBOSE
+#endif // DEBUG
 }
 
 #undef OPEN_UDP_SOCKET
@@ -135,11 +135,11 @@ const {
 #endif // PERSNICKETY_IP
     r = RECV_OP;
 #if defined(PERSNICKETY_IP) && PERSNICKETY_IP
-#if VERBOSE
+#if DEBUG
     if (src.sin_addr.s_addr != addr.sin_addr.s_addr) {
       std::cout << "Received a message from " << get_ip_port_str(addr) << " instead of " << get_ip_port_str(addr) << std::endl;
     }
-#endif // VERBOSE
+#endif // DEBUG
   } while (src.sin_addr.s_addr != addr.sin_addr.s_addr);
 #endif // PERSNICKETY_IP
   if (r != sizeof data) {

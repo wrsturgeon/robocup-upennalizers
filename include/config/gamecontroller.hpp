@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-#if DEBUG || VERBOSE
+#if DEBUG
 #include <bitset>
 #endif
 
@@ -48,7 +48,7 @@ inline constexpr t brown{TEAM_BROWN};
 #undef TEAM_BROWN
 inline constexpr t gray{TEAM_GRAY};
 #undef TEAM_GRAY
-#if DEBUG || VERBOSE
+#if DEBUG
 static
 std::string
 print(t x) {
@@ -77,7 +77,7 @@ inline constexpr t round_robin{COMPETITION_PHASE_ROUNDROBIN};
 #undef COMPETITION_PHASE_ROUNDROBIN
 inline constexpr t playoff{COMPETITION_PHASE_PLAYOFF};
 #undef COMPETITION_PHASE_PLAYOFF
-#if DEBUG || VERBOSE
+#if DEBUG
 static
 std::string
 print(t x)
@@ -101,7 +101,7 @@ inline constexpr t seven_on_seven{COMPETITION_TYPE_7V7};
 #undef COMPETITION_TYPE_7V7
 inline constexpr t dynamic_ball_handling{COMPETITION_TYPE_DYNAMIC_BALL_HANDLING};
 #undef COMPETITION_TYPE_DYNAMIC_BALL_HANDLING
-#if DEBUG || VERBOSE
+#if DEBUG
 static
 std::string
 print(t x)
@@ -130,7 +130,7 @@ inline constexpr t overtime{GAME_PHASE_OVERTIME};
 #undef GAME_PHASE_OVERTIME
 inline constexpr t timeout{GAME_PHASE_TIMEOUT};
 #undef GAME_PHASE_TIMEOUT
-#if DEBUG || VERBOSE
+#if DEBUG
 static
 std::string
 print(t x)
@@ -159,7 +159,7 @@ inline constexpr t playing{STATE_PLAYING};
 #undef STATE_PLAYING
 inline constexpr t finished{STATE_FINISHED};
 #undef STATE_FINISHED
-#if DEBUG || VERBOSE
+#if DEBUG
 static
 std::string
 print(t x)
@@ -190,7 +190,7 @@ inline constexpr t kick_in{SET_PLAY_KICK_IN};
 #undef SET_PLAY_KICK_IN
 inline constexpr t penalty_kick{SET_PLAY_PENALTY_KICK};
 #undef SET_PLAY_PENALTY_KICK
-#if DEBUG || VERBOSE
+#if DEBUG
 static
 std::string
 print(t x)
@@ -234,7 +234,7 @@ inline constexpr t substitute{PENALTY_SUBSTITUTE};
 #undef PENALTY_SUBSTITUTE
 inline constexpr t manual{PENALTY_MANUAL};
 #undef PENALTY_MANUAL
-#if DEBUG || VERBOSE
+#if DEBUG
 static
 std::string
 print(t x)
@@ -286,7 +286,7 @@ noexcept {
     (lhs.teamNumber == rhs.teamNumber));
 }
 
-#if DEBUG || VERBOSE
+#if DEBUG
 
 static
 std::ostream&
@@ -330,7 +330,7 @@ noexcept {
 //   return os << "never seen)]";
 // }
 
-#endif // DEBUG || VERBOSE
+#endif // DEBUG
 
 } // namespace spl
 

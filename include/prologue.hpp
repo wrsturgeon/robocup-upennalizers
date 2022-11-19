@@ -83,6 +83,7 @@ inline constexpr bool debug{DEBUG};
 #define STRINGIFY_(x) #x
 // NOLINTEND(cppcoreguidelines-macro-usage)
 
+#if DEBUG
 #include <cerrno>   // errno
 #include <cstring>  // strerror_r
 #include <iostream> // std::cerr
@@ -103,7 +104,6 @@ noexcept {
   }
 }
 
-#if DEBUG
 #define FAIL_ASSERTION                           \
   char buf[256];                                 \
   get_system_error_message(buf);                 \
@@ -114,6 +114,7 @@ noexcept {
               << ")\n";                          \
   } catch (...) {/* std::terminate below */}     \
   std::terminate();
+
 #else // DEBUG
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
@@ -144,7 +145,7 @@ static
 void
 debug_print(std::ostream& stream, T&&... args)
 noexcept {
-#if DEBUG || VERBOSE
+#if DEBUG
 // NOLINTBEGIN(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
   try {
     (stream << ... << args) << std::endl;
@@ -156,7 +157,7 @@ noexcept {
   }
   std::terminate(); // printing failed
 // NOLINTEND(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-#endif // DEBUG || VERBOSE
+#endif // DEBUG
 }
 
 #if !DEBUG
