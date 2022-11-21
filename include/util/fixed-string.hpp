@@ -99,4 +99,17 @@ inline constexpr FixedString<log10<x> + 1> fixed_itoa{array_itoa<x>()};
 
 } // namespace util
 
+#if DEBUG
+#include <iostream>
+namespace util {
+template <std::size_t N>
+impure static
+std::ostream&
+operator<<(std::ostream& os, FixedString<N> const& fs)
+noexcept {
+  return os << fs.c_str();
+}
+} // namespace util
+#endif // DEBUG
+
 #endif // UTIL_FIXED_STRING_HPP

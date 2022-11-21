@@ -3,12 +3,11 @@
 
 // Not anywhere in the C++ standard since describing its portable behavior would be a nightmare (thanks, Windows!)
 
-#include "concurrency/error.hpp"
 #include "concurrency/jthread.hpp"
 
 extern "C" {
 #include <pthread.h> // pthread_setschedparam, pthread_self, ...
-#include <sched.h>   // sched_param, sched_yield, SCHED_FIFO, ...
+#include <sched.h>   // sched_param, sched_yield, SCHED_RR, ...
 }
 
 namespace concurrency {
@@ -24,7 +23,7 @@ impure static
 int
 min_priority()
 noexcept {
-  static int const value{sched_get_priority_min(SCHED_FIFO)};
+  static int const value{sched_get_priority_min(SCHED_RR)};
   return value;
 }
 
@@ -32,7 +31,7 @@ impure static
 int
 max_priority()
 noexcept {
-  static int const value{sched_get_priority_max(SCHED_FIFO)};
+  static int const value{sched_get_priority_max(SCHED_RR)};
   return value;
 }
 
@@ -41,21 +40,21 @@ void
 prioritize(pthread_t thread, int priority)
 noexcept {
 #if DEBUG
-  assert_eq(0, priority < min_priority(), "Trying to set a thread priority below the system minimum")
-  assert_eq(0, priority > max_priority(), "Trying to set a thread priority above the system maximum")
+  assert_eq(false, priority < min_priority(), "Trying to set a thread priority below the system minimum")
+  assert_eq(false, priority > max_priority(), "Trying to set a thread priority above the system maximum")
 #endif // DEBUG
   sched_param const param{.sched_priority = priority};
-  assert_eq(0, pthread_setschedparam(thread, SCHED_OTHER, &param), "Couldn't set thread priority")
+  assert_eq(0, pthread_setschedparam(thread, SCHED_RR, &param), "Couldn't set thread priority")
 }
 
 // https://man7.org/linux/man-pages/man7/sched.7.html
-template <threadable auto atentry, threadable auto atexit>
+template <util::FixedString Name, threadable auto atentry, threadable auto atexit>
 [[gnu::always_inline]] inline
 void
-we_have_std_jthread_at_home<atentry, atexit>::
+we_have_std_jthread_at_home<Name, atentry, atexit>::
 set_priority(int priority)
 noexcept {
-  prioritize(thread.native_handle(), priority);
+  prioritize(id, priority);
 }
 
 } // namespace concurrency

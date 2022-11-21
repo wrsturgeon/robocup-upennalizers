@@ -13,7 +13,7 @@ noexcept {
   // Instruct the OS to give this process highest priority
   assert_eq(0, ::setpriority(PRIO_PROCESS, 0, -20), "Couldn't set OS priority")
 
-  // Function that starts everything & blocks until the game is over
+  // Start everything & block until the game is over
   context::loop::victor_frankenstein();
 
   // Exit

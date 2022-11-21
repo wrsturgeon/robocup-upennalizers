@@ -143,7 +143,7 @@ noexcept {
 #if DEBUG
 #define debug_print(...) safe_print(__VA_ARGS__) // NOLINT(cppcoreguidelines-macro-usage)
 #else // DEBUG
-#define debug_print(...)
+#define debug_print(...) (void)0 // NOLINT(cppcoreguidelines-macro-usage)
 #pragma clang diagnostic pop
 #endif // !DEBUG
 

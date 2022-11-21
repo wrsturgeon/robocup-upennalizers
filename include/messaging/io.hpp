@@ -3,11 +3,8 @@
 
 // See legacy/Lib/Platform/NaoV4/GameControl/lua_GameControlReceiver.cc
 
+#include "concurrency/thread-priority.hpp"
 #include "messaging/socket.hpp"
-
-#if DEBUG
-#include "messaging/error.hpp"
-#endif // DEBUG
 
 #include "context/packet-conv.hpp"
 
@@ -22,10 +19,8 @@ noexcept {
   static msg::Socket<msg::direction::incoming, msg::mode::unicast> const s{
         util::ip::address_from_string(config::ip::address<"GameController">),
         config::ip::port::from<"GameController">};
-  std::optional<spl::GameControlData> received{s.recv<spl::GameControlData>()};
-  while (not received) {
-    debug_print(std::cout, "Received an invalid packet; trying again...");
-    received = s.recv<spl::GameControlData>(); }
+  std::optional<spl::GameControlData> received{uninitialized<spl::GameControlData>()};
+  while (not (received = s.recv<spl::GameControlData>())) { concurrency::yield(); }
   return *received;
 }
 
@@ -35,7 +30,7 @@ noexcept {
   static msg::Socket<msg::direction::outgoing, msg::mode::unicast> const s{
         util::ip::address_from_string(config::ip::address<"GameController">),
         config::ip::port::to<"GameController">};
-  while (!s.send(context::make_gc_message())) { debug_print(std::cout, "Failed to send a packet; trying again..."); }
+  while (!s.send(context::make_gc_message())) { concurrency::yield(); }
 }
 
 } // namespace msg

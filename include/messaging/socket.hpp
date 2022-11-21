@@ -5,6 +5,7 @@
 
 extern "C" {
 #include <arpa/inet.h>  // inet_pton
+#include <fcntl.h>      // fcntl, O_NONBLOCK
 #include <netinet/in.h> // sockaddr_in
 #include <sys/socket.h> // socket
 #include <sys/types.h>  // in_addr_t
@@ -30,7 +31,7 @@ enum mode {
   broadcast,
 };
 
-#define OPEN_UDP_SOCKET socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+#define OPEN_UDP_SOCKET ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
 
 template <direction D, mode M>
 class Socket {
@@ -52,6 +53,7 @@ template <direction D, mode M>
 Socket<D, M>::Socket(in_addr_t address, u16 port) noexcept
 : addr{util::ip::make_sockaddr_in(address, port)} {
   assert_nonneg(socketfd, "Couldn't open a socket")
+  assert_eq(0, fcntl(socketfd, F_SETFL, O_NONBLOCK), "Couldn't set socket to non-blocking") // NOLINT(cppcoreguidelines-pro-type-vararg)
   constexpr int bcast_opt{M == mode::broadcast};
   setsockopt(socketfd, SOL_SOCKET, SO_BROADCAST, &bcast_opt, sizeof bcast_opt);
   setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &addr, sizeof addr);

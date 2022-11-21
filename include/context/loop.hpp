@@ -86,11 +86,14 @@ noexcept {
   debug_print(std::cout, "Got it!");
 
   //%%%%%%%%%%%%%%%% Start a separate thread to resolve goals with estimated reality
-  debug_print(std::cout, "Kickstarting resolution thread...");
-  concurrency::we_have_std_jthread_at_home<schopenhauer::resolve/*, sit_down_so_we_don't_fall_over*/> const resolve_thread{};
-  debug_print(std::cout, "Resolution thread started!");
+  concurrency::we_have_std_jthread_at_home<"Resolution", schopenhauer::resolve/*, sit_down_so_we_don't_fall_over*/> const resolution{};
 
   //%%%%%%%%%%%%%%%% Lower this thread's priority (since it's now just for communication)
+  // Note that the GameController will occasionally show the robot's communication flickering;
+  //   this means the robot is "thinking hard" on another thread and hasn't checked this one for more than a second.
+  // This shouldn't generally matter, and it buys us time on other, more important threads,
+  //   BUT it also slows our reception of information from the GC, so if we can't detect events, we may be less informed.
+  // If this robot ever _fully disconnects_, we should probably increase the priority below.
   concurrency::prioritize(::pthread_self(), concurrency::min_priority());
 
   //%%%%%%%%%%%%%%%% Loop until someone wins the game
@@ -99,7 +102,7 @@ noexcept {
     // dialectics(); // <-> teammates
     // prayer();     // -> laptop
     hermeneutics(); // <- GC
-  } while (not ::context::gameover()); // the sweet release of death
+  } while (not ::context::game_over()); // the sweet release of death
 }
 
 } // namespace internal

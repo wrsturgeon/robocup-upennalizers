@@ -50,7 +50,7 @@ ATOMIC_VAR(team2, spl::TeamInfo, {})
 
 impure static
 bool
-gameover()
+game_over()
 noexcept {
   return (state() == config::gamecontroller::state::finished) and not first_half();
 }

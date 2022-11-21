@@ -40,7 +40,7 @@ unsigned_atoi(T const (&str)[strlen], std::size_t const i0 = 0, std::size_t cons
 noexcept {
   std::size_t result{0};
   for (std::size_t i{i0}; i < i1; ++i) {
-    assert(static_cast<char>(str[i]) >= '0' && static_cast<char>(str[i]) <= '9');
+    assert(static_cast<char>(str[i]) >= '0' and static_cast<char>(str[i]) <= '9');
     result *= 10;
     result += static_cast<char>(str[i] - '0');
   }
