@@ -1,15 +1,18 @@
 # UPennalizers
 
-Forked from the original (c. 2019, GitLab); iterative improvements.
+Welcome in!
+
+This codebase exists as a shared document, the culmination both of hard work by students at the University of Pennsylvania and of the larger RoboCup community, whom we cannot thank enough for these opportunities.
 
 ## Core Principles
-RoboCup is a competition in the formal sense, but above all it's a community, and anyone who's been to a competition can tell you how friendly, helpful, and driven everyone is. Winning a competition means open-sourcing all of your code and sharing it freely. Smaller universities regularly take down larger ones and laugh about it over drinks in a foreign country. It's not about being smarter or more powerful; it's about asking the right questions. It's not about winning; it's about the chase. In sum, it's about the polar opposite of the University of Pennsylvania undergraduate experience, and we strive to keep a community here who are truly fascinated by this stuff and want to work with, learn with, and hang with other people who are, too.
+RoboCup is a competition in the formal sense, but, above all, it's a community. Winning means open-sourcing all of your code and sharing it freely; smaller universities regularly beat larger ones, and the tangible camaraderie and passion show through in each team's work. The League thrives on contributions from people like you. It's not about being smarter or more powerful; it's about asking the right questions. It's not about winning; it's about the chase. It's practically the opposite of the usual University of Pennsylvania undergraduate experience, and as such, we are a community proud to be truly fascinated by this stuff and want to work with, learn with, and hang with people who are as well.
 
-To that end, we propose a few guiding principles for any iteration of this long-standing team, and they are, in order,
-1. Encourage people to fall in love with robotics.
-   1. Be open to anyone, regardless of major, career interest, or prior competence, without exception.
-   2. Value effort, innovation, and contributions over seniority or prior experience.
-   3. Actively discourage the hive mind. If a humanities student walks in and asks to join the computer vision team, fist _say yes_, and then fight the urge to teach them the methods we use; instead, tell them the problems we're working on, and embrace an open-ended response. Knowing "the way things are done" is a surefire way to be no better than any other team; if you're all working on the same thing, the entire purpose of RoboCup is out the window. Do something stupid while you can. We're in college with tens of thousands of dollars of equipment to fuck around with; why would you take the easy way out?
+### Some Practical Considerations
+Our main goals are, in order,
+1. To encourage falling in love with robotics.
+   1. The team is open to anyone, regardless of major, career interest, or prior competence, without exception.
+   2. We value effort, innovation, and contributions over seniority or prior experience.
+   3. We actively discourage the hive mind. If a humanities student walks in and asks to join the computer vision team, say yes, and actively fight the urge to teach them the methods we use; instead, tell them the problems we're working on, and embrace an open-ended response. Knowing "the way things are done" is a surefire way to be no better than any other team; if we're all working on the same thing, the entire purpose of RoboCup is out the window. Do something stupid while you can: we're in college with tens of thousands of dollars of equipment to fuck around with, so why take the easy way out?
 2. Write code that takes #1 seriously.
    1. Never write something you don't fully understand.
       1. Please never blindly copy from a tutorial or StackOverflow. Not only does it introduce code from many different philosophies, style guides, and libraries, it also renders you perfectly obsolete. Anyone can copy; instead, understand it and write it yourself. Comment the original source for both attribution and explanation, but strive to write code clean enough that no one needs to read the original. Besides, where's the fun in copying? Own what you make and be proud of it.
