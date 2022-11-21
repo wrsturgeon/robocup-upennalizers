@@ -1,39 +1,61 @@
 #ifndef CONCURRENCY_THREAD_PRIORITY_HPP
 #define CONCURRENCY_THREAD_PRIORITY_HPP
 
-// Not anywhere in the C++ standard since describing its portable behavior would be a nightmare
-// Thanks, Microsoft! :D   *jumps out window*
+// Not anywhere in the C++ standard since describing its portable behavior would be a nightmare (thanks, Windows!)
 
 #include "concurrency/error.hpp"
 #include "concurrency/jthread.hpp"
 
 extern "C" {
-#include <pthread.h> // pthread_setschedparam
-#include <sched.h>   // sched_param
+#include <pthread.h> // pthread_setschedparam, pthread_self, ...
+#include <sched.h>   // sched_param, sched_yield, SCHED_FIFO, ...
 }
 
 namespace concurrency {
 
-INLINE void prioritize(pthread_t thread, int priority) noexcept {
-#ifndef NDEBUG
-  if (priority < sched_get_priority_min(SCHED_FIFO) || priority > sched_get_priority_max(SCHED_FIFO)) {
-    throw error{
-      "invalid priority " + std::to_string(priority)
-      + "; this OS supports values on ["
-      + std::to_string(sched_get_priority_min(SCHED_FIFO)) + ".."
-      + std::to_string(sched_get_priority_max(SCHED_FIFO)) + "]"};
-  }
-#endif // NDEBUG
-  sched_param param;
-  param.sched_priority = priority;
-  pthread_setschedparam(thread, SCHED_OTHER, &param);
+[[gnu::always_inline]] inline
+void
+yield()
+noexcept {
+  ::sched_yield();
+}
+
+impure static
+int
+min_priority()
+noexcept {
+  static int const value{sched_get_priority_min(SCHED_FIFO)};
+  return value;
+}
+
+impure static
+int
+max_priority()
+noexcept {
+  static int const value{sched_get_priority_max(SCHED_FIFO)};
+  return value;
+}
+
+[[gnu::always_inline]] inline
+void
+prioritize(pthread_t thread, int priority)
+noexcept {
+#if DEBUG
+  assert_eq(0, priority < min_priority(), "Trying to set a thread priority below the system minimum")
+  assert_eq(0, priority > max_priority(), "Trying to set a thread priority above the system maximum")
+#endif // DEBUG
+  sched_param const param{.sched_priority = priority};
+  assert_eq(0, pthread_setschedparam(thread, SCHED_OTHER, &param), "Couldn't set thread priority")
 }
 
 // https://man7.org/linux/man-pages/man7/sched.7.html
 template <threadable auto atentry, threadable auto atexit>
-void we_have_std_jthread_at_home<atentry, atexit>::set_priority(int priority) noexcept {
-  pthread_setschedparam(thread.native_handle(), SCHED_FIFO, {priority});
-  thread.
+[[gnu::always_inline]] inline
+void
+we_have_std_jthread_at_home<atentry, atexit>::
+set_priority(int priority)
+noexcept {
+  prioritize(thread.native_handle(), priority);
 }
 
 } // namespace concurrency

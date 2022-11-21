@@ -1,9 +1,9 @@
 #ifndef CONCURRENCY_ERROR_HPP
 #define CONCURRENCY_ERROR_HPP
 
-#ifdef NDEBUG && !defined(VSCODE_PARSE)
+#if (!DEBUG) && !defined(VSCODE_PARSE)
 #warning "Can't be throwing concurrency exceptions in release mode :/"
-#else // NDEBUG
+#else // (!DEBUG) && !defined(VSCODE_PARSE)
 
 #include <stdexcept> // std::runtime_error
 
@@ -16,6 +16,6 @@ class error : public std::runtime_error { using std::runtime_error::runtime_erro
 
 } // namespace concurrency
 
-#endif // NDEBUG
+#endif // (!DEBUG) && !defined(VSCODE_PARSE)
 
 #endif // CONCURRENCY_ERROR_HPP

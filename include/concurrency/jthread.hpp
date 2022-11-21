@@ -3,7 +3,6 @@
 
 // clang hasn't implemented std::jthread yet
 
-#include <concepts>    // std::invocable
 #include <thread>      // std::thread
 #include <type_traits> // std::is_nothrow_invocable_v
 
@@ -22,6 +21,7 @@ class we_have_std_jthread_at_home {
   we_have_std_jthread_at_home& operator=(we_have_std_jthread_at_home const&) = delete;
   we_have_std_jthread_at_home& operator=(we_have_std_jthread_at_home&&) = delete;
   ~we_have_std_jthread_at_home();
+  [[gnu::always_inline]] inline void set_priority(int priority) noexcept;
 };
 
 template <threadable auto atentry, threadable auto atexit>

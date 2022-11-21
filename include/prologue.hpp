@@ -1,6 +1,8 @@
 #ifndef PROLOGUE_HPP
 #define PROLOGUE_HPP
 
+#define _GNU_SOURCE // https://man7.org/linux/man-pages/man7/feature_test_macros.7.html
+
 //%%%%%%%%%%%%%%%% Lua
 // extern "C" {
 // #include "ext/lua/lauxlib.h"
@@ -88,58 +90,6 @@ inline constexpr bool debug{DEBUG};
 #include <cstring>  // strerror_r
 #include <iostream> // std::cerr
 
-template <std::size_t N>
-static
-void
-get_system_error_message(char (&buf)[N])
-noexcept {
-  int const orig = errno;
-  int const rtn = strerror_r(orig, static_cast<char*>(buf), N);
-  if (rtn) {
-    try {
-      std::cerr << "strerror_r failed (returned " << rtn << ", errno = " << errno
-                << ") while handling original errno " << orig << std::endl;
-    } catch (...) {/* std::terminate below */}
-    std::terminate();
-  }
-}
-
-#define FAIL_ASSERTION                           \
-  char buf[256];                                 \
-  get_system_error_message(buf);                 \
-  try {                                          \
-    std::cerr << errmsg                          \
-              << " (errno" << errno              \
-              << ": " << static_cast<char*>(buf) \
-              << ")\n";                          \
-  } catch (...) {/* std::terminate below */}     \
-  std::terminate();
-
-#else // DEBUG
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#endif // DEBUG
-
-template <typename T>
-INLINE
-void
-assert_zero(T&& expr, char const* const errmsg)
-noexcept {
-#if DEBUG
-  if (expr) { FAIL_ASSERTION }
-#endif // DEBUG
-}
-
-template <typename T>
-INLINE
-void
-assert_nonzero(T&& expr, char const* const errmsg)
-noexcept {
-#if DEBUG
-  if (!expr) { FAIL_ASSERTION }
-#endif // DEBUG
-}
-
 template <typename... T>
 INLINE static
 void
@@ -158,29 +108,44 @@ noexcept {
   }
 }
 
-template <typename... T>
-INLINE static
+template <std::size_t N>
+static
 void
-debug_print(std::ostream& stream, T&&... args)
+get_system_error_message(char (&buf)[N])
 noexcept {
-#if DEBUG
-  safe_print(stream, std::forward<T>(args)...);
-#endif // DEBUG
+  int const orig = errno;
+  int const rtn = strerror_r(orig, static_cast<char*>(buf), N);
+  if (rtn) {
+    safe_print(std::cerr, "strerror_r failed (returned ", rtn, ", errno = ", errno, ") while handling original errno ", orig);
+    std::terminate();
+  }
 }
 
-template <typename... T>
-INLINE static
-void
-fatal_print(T&&... args)
-noexcept {
-  safe_print(std::cerr, std::forward<T>(args)...);
+// NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
+#define FAIL_ASSERTION(...)                                                                  \
+  char buf[256];                                                                             \
+  get_system_error_message(buf);                                                             \
+  safe_print(std::cerr, __VA_ARGS__, " (errno ", errno, ": ", static_cast<char*>(buf), ')'); \
   std::terminate();
-}
 
-#if !DEBUG
+#else // DEBUG
+#define FAIL_ASSERTION(...) std::terminate();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#endif // DEBUG
+
+// NOLINTBEGIN(cppcoreguidelines-macro-usage)
+#define assert_eq(a, b, ...) if ((a) != (b)) { FAIL_ASSERTION(__VA_ARGS__) }
+#define assert_neq(a, b, ...) if ((a) == (b)) { FAIL_ASSERTION(__VA_ARGS__) }
+#define assert_nonneg(a, ...) if ((a) < 0) { FAIL_ASSERTION(__VA_ARGS__) }
+// NOLINTEND(cppcoreguidelines-macro-usage)
+
+#if DEBUG
+#define debug_print(...) safe_print(__VA_ARGS__) // NOLINT(cppcoreguidelines-macro-usage)
+#else // DEBUG
+#define debug_print(...)
 #pragma clang diagnostic pop
 #endif // !DEBUG
-#undef FAIL_ASSERTION
 
 //%%%%%%%%%%%%%%%% Stack-allocation without initialization
 

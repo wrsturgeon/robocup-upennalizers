@@ -47,25 +47,25 @@ noexcept {
   return result;
 }
 
-template <std::size_t lhs_strlen, std::size_t rhs_strlen, typename T_lhs, typename T_rhs>
+template <bool null_included, std::size_t lhs_strlen, std::size_t rhs_strlen, typename T_lhs, typename T_rhs>
 requires ((sizeof(T_lhs) == 1) and (sizeof(T_rhs) == 1))
 pure static
 bool
 substreq(T_lhs const (&lhs)[lhs_strlen], T_rhs const (&rhs)[rhs_strlen], std::size_t const lhs_start)
 noexcept {
-  for (std::size_t i{0}; i < rhs_strlen; ++i) {
+  for (std::size_t i{0}; i < rhs_strlen - 1 + null_included; ++i) {
     if (static_cast<char>(lhs[lhs_start + i]) != static_cast<char>(rhs[i])) { return false; }
   }
   return true;
 }
 
-template <std::size_t lhs_strlen, std::size_t rhs_strlen, typename T_lhs, typename T_rhs>
+template <bool null_included, std::size_t lhs_strlen, std::size_t rhs_strlen, typename T_lhs, typename T_rhs>
 requires ((sizeof(T_lhs) == 1) and (sizeof(T_rhs) == 1))
 pure static
 bool
 substreq(std::array<T_lhs, lhs_strlen> const& lhs, T_rhs const (&rhs)[rhs_strlen], std::size_t const lhs_start)
 noexcept {
-  for (std::size_t i{0}; i < rhs_strlen; ++i) {
+  for (std::size_t i{0}; i < rhs_strlen - 1 + null_included; ++i) {
     if (static_cast<char>(lhs[lhs_start + i]) != static_cast<char>(rhs[i])) { return false; }
   }
   return true;

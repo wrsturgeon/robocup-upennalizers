@@ -3,7 +3,7 @@
 set -eu
 
 if [ ${#} -lt 3 ]; then
-    echo "Usage: ${0} <source file> [--release/--debug] --player[#]"
+    echo "Usage: ${0} <source file> [--release/--debug] --player[#] [optional: extra compiler arguments...]"
     exit 1
 fi
 
@@ -19,7 +19,7 @@ elif [ ${2} = "--debug" ]; then
     DEBUG=1
 else
     echo "Unrecognized second argument"
-    echo "Usage: ${0} <source file> [--release/--debug] --player[#]"
+    echo "Usage: ${0} <source file> [--release/--debug] --player[#] [optional: extra compiler arguments...]"
     exit 1
 fi
 
@@ -27,7 +27,7 @@ if [ $(echo ${3} | cut -c1-8) = "--player" ]; then
     PLAYER=$(echo ${3} | cut -c9-)
 else
     echo "Unrecognized third argument"
-    echo "Usage: ${0} <source file> [--release/--debug] --player[#]"
+    echo "Usage: ${0} <source file> [--release/--debug] --player[#] [optional: extra compiler arguments...]"
     exit 1
 fi
 
@@ -73,9 +73,8 @@ else
     MACROS="${MACROS} -DDEBUG=0 -DNDEBUG=1"
 fi
 
-# set -x
 echo "Compiling..."
-clang++ ${MACROS} ${COMMON} ${FLAGS}
+clang++ ${@:4} ${MACROS} ${COMMON} ${FLAGS}
 
 # Kill processes on competing ports
 echo "Competing IO processes running:"
