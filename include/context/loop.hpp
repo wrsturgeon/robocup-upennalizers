@@ -107,7 +107,7 @@ noexcept {
 
   //%%%%%%%%%%%%%%%% Start a separate thread to resolve goals with estimated reality
   debug_print(std::cout, "Kickstarting resolution thread...");
-  concurrency::we_have_std_jthread_at_home<schopenhauer::resolve/*, sit_down_so_we_don't_fall_over*/> const resolve_thread;
+  concurrency::we_have_std_jthread_at_home<schopenhauer::resolve/*, sit_down_so_we_don't_fall_over*/> const resolve_thread{};
   debug_print(std::cout, "Resolution thread started!");
 
   //%%%%%%%%%%%%%%%% Loop until someone wins the game

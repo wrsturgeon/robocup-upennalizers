@@ -97,7 +97,6 @@ legacy/Tools/Matlab/*.raw
 legacy/Lib/Modules/Webots/Controller/lua_controller.c
 legacy/Lib/Modules/Webots/Controller/controller_wrap.c
 
-
 # exclude build path
 legacy/Tools/Matlab/logs/
 legacy/Tools/Matlab/colortableFiles/
@@ -105,6 +104,9 @@ legacy/Tools/Matlab/colortableFiles/
 # nohup
 error.txt
 nohup.out
+
+# XXD hexdump headers
+include/xxd
 
 #exclude matlab data --DP
 *.raw

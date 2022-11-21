@@ -24,6 +24,8 @@
     "cassert": "cpp",
     "type_traits": "cpp",
     "cstdint": "cpp",
-    "cstdio": "cpp"
+    "cstdio": "cpp",
+    "*.ip": "cpp",
+    "array": "cpp"
   }
 }

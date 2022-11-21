@@ -15,7 +15,7 @@ namespace context {
 //   spl::Message msg{uninitialized<spl::Message>()};
 //   std::copy_n(config::packet::spl::header, sizeof msg.header, static_cast<char*>(msg.header));
 //   msg.version = config::packet::spl::version;
-//   msg.teamNum = config::gamecontroller::team::upenn_number();
+//   msg.teamNum = config::gamecontroller::team::upenn;
 //   msg.playerNum = config::player::number;
 //   msg.fallen = false;
 //   msg.numOfDataBytes = 0;
@@ -31,7 +31,7 @@ noexcept {
   std::copy_n(config::packet::gc::to::header, sizeof msg.header, static_cast<char*>(msg.header));
   msg.version = config::packet::gc::to::version;
   msg.playerNum = config::player::number;
-  msg.teamNum = config::gamecontroller::team::upenn_number();
+  msg.teamNum = config::gamecontroller::team::upenn;
   msg.fallen = false;
   std::fill_n(static_cast<float*>(msg.pose), sizeof msg.pose, 0.f);
   std::fill_n(static_cast<float*>(msg.ball), sizeof msg.ball, 0.f);

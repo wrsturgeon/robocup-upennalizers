@@ -38,14 +38,32 @@ git submodule update --init --recursive --remote > /dev/null 2>&1 || echo "  Cou
 mkdir -p bin
 EXECNAME=$(basename ${1} | cut -d. -f1)
 MACROS="-DPLAYER=${PLAYER} -DSYSTEM_BITS=32 -DLUA_32BITS"
-COMMON="-o bin/robocup-${EXECNAME} ${1} -std=c++2b -Iinclude -include ./include/prologue.hpp -isystem ./include/ext/GameController/examples/c -Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-exit-time-destructors -Wno-global-constructors -ffast-math -ftemplate-backtrace-limit=0"
+COMMON="-o bin/robocup-${EXECNAME} ${1} -std=c++2b -Iinclude -include ./include/prologue.hpp -isystem ./include/ext/GameController/examples/c -Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-sign-conversion -Wno-exit-time-destructors -Wno-global-constructors -ffast-math -ftemplate-backtrace-limit=0"
+
+echo "Including files at compile time..."
+mkdir -p include/xxd
+cd include/xxd
+rm -rf *
+cd .. # .../include
+# ext/GameController/resources/config/spl/teams.cfg
+echo '#ifndef XXD_GC_TEAM_CFG_HPP' > xxd/gc_team_cfg.hpp
+echo '#define XXD_GC_TEAM_CFG_HPP' >> xxd/gc_team_cfg.hpp
+echo '#define ext_GameController_resources_config_spl_teams_cfg constexpr inline gc_team_cfg' >> xxd/gc_team_cfg.hpp # a dirty lil trick
+echo '#define ext_GameController_resources_config_spl_teams_cfg_len constexpr inline gc_team_cfg_len' >> xxd/gc_team_cfg.hpp
+echo 'namespace xxd {' >> xxd/gc_team_cfg.hpp
+xxd -i ext/GameController/resources/config/spl/teams.cfg >> xxd/gc_team_cfg.hpp
+echo '} // namespace xxd' >> xxd/gc_team_cfg.hpp
+echo '#undef ext_GameController_resources_config_spl_teams_cfg_len' >> xxd/gc_team_cfg.hpp
+echo '#undef ext_GameController_resources_config_spl_teams_cfg' >> xxd/gc_team_cfg.hpp # undoing the low-down dirty rotten no-good trick
+echo '#endif // XXD_GC_TEAM_CFG_HPP' >> xxd/gc_team_cfg.hpp
+cd .. # back to where we were
 
 echo "Running static analysis..."
 clang-tidy --verify-config > /dev/null 2>&1 || clang-tidy --verify-config
 # clang-tidy ${1} --quiet -- -DPLAYER=1 -DCLANG_TIDY -DDEBUG -UNDEBUG ${MACROS} ${COMMON} # Goalie
 clang-tidy ${1} --quiet -- -DPLAYER=2 -DCLANG_TIDY -DDEBUG -UNDEBUG ${MACROS} ${COMMON} # Non-goalie? (probably shouldn't run 6 times)
 
-  DEBUG_FLAGS="-Os -fno-omit-frame-pointer -g3 -ffunction-sections -fdata-sections -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common -Wno-unused-function" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"
+  DEBUG_FLAGS="-Os -fno-omit-frame-pointer -g3 -ffunction-sections -fdata-sections -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common -Wno-unused-function -Wno-unused-template" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"
 RELEASE_FLAGS="-O3 -fomit-frame-pointer -fno-exceptions -fshort-enums -march=native -mtune=native -mllvm -polly -mllvm -polly-vectorizer=stripmine"
 if [ ${DEBUG} -eq 1 ]; then
     FLAGS=${DEBUG_FLAGS}

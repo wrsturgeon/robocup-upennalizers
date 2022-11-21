@@ -141,23 +141,40 @@ noexcept {
 }
 
 template <typename... T>
-static
+INLINE static
+void
+safe_print(std::ostream& stream, T&&... args)
+noexcept {
+  try {
+    (stream << ... << args) << std::endl; // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+  } catch (std::exception const& e) {
+    try {
+      std::cerr << "safe_print failed: " << e.what() << std::endl;
+    } catch (...) { try { std::cerr << "safe_print failed and printing the exception failed\n"; } catch (...) {} }
+    std::terminate();
+  } catch (...) {
+    try { std::cerr << "safe_print failed with an exception not derived from std::exception\n"; } catch (...) {}
+    std::terminate();
+  }
+}
+
+template <typename... T>
+INLINE static
 void
 debug_print(std::ostream& stream, T&&... args)
 noexcept {
 #if DEBUG
-// NOLINTBEGIN(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
-  try {
-    (stream << ... << args) << std::endl;
-    return;
-  } catch (std::exception const& e) {
-    std::cerr << "debug_print failed: " << e.what() << std::endl;
-  } catch (...) {
-    try { std::cerr << "debug_print failed and printing the exception failed\n"; } catch (...) {}
-  }
-  std::terminate(); // printing failed
-// NOLINTEND(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+  safe_print(stream, std::forward<T>(args)...);
 #endif // DEBUG
+}
+
+template <typename... T>
+INLINE static
+void
+fatal_print(T&&... args)
+noexcept {
+  safe_print(std::cerr, std::forward<T>(args)...);
+  std::terminate();
 }
 
 #if !DEBUG

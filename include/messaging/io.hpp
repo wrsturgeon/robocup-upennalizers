@@ -6,8 +6,6 @@
 #include "messaging/error.hpp"
 #include "messaging/socket.hpp"
 
-#include "file/contents.hpp"
-
 #include "context/packet-conv.hpp"
 
 #include "config/ip.hpp"
@@ -18,16 +16,16 @@ impure static
 spl::GameControlData
 recv_from_gc() {
   static msg::Socket<msg::direction::incoming, msg::mode::unicast> const s{
-        config::ip::address<"GameController">(),
-        config::ip::port<"GameController">::from()};
+        util::ip::address_from_string(config::ip::address<"GameController">),
+        config::ip::port::from<"GameController">};
   return s.recv<spl::GameControlData>();
 }
 
 [[gnu::always_inline]] inline static void
 send_to_gc() {
   static msg::Socket<msg::direction::outgoing, msg::mode::unicast> const s{
-        config::ip::address<"GameController">(),
-        config::ip::port<"GameController">::to()};
+        util::ip::address_from_string(config::ip::address<"GameController">),
+        config::ip::port::to<"GameController">};
   s.send(context::make_gc_message());
 }
 

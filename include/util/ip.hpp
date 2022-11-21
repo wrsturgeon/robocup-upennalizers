@@ -4,6 +4,7 @@
 extern "C" {
 #include <arpa/inet.h>  // inet_pton
 #include <netinet/in.h> // sockaddr_in
+#include <sys/types.h>  // in_addr_t
 }
 
 namespace util {

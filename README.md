@@ -44,7 +44,7 @@ Legacy code can be run by `cd`ing to `include/legacy/Player/` and using `./game 
 
 ## Coding Guidelines for Active Contributors
 
-Two unfortunate facts drive every design decision you're about to read: first, robots overheat very easily, and second, large codebases are difficult to maintain.
+Two conflicting facts drive pretty much everything below: first, robots overheat very easily, and second, large codebases are difficult to maintain.
 
 ### C++
 Of the above two facts, C++ is certainly a concession to the former more than the latter, but when used judiciously it's a beautiful and incredibly powerful language.

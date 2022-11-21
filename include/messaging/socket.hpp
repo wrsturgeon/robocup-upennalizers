@@ -15,7 +15,6 @@ extern "C" {
 #include <cerrno>      // errno
 #include <cstddef>     // std::ssize_t
 #include <iostream>    // std::cerr
-#include <string>      // std::string
 #include <type_traits> // std::decay_t
 
 namespace msg {
@@ -99,8 +98,7 @@ const {
   static_assert(D == direction::outgoing);
   static_assert(not std::is_pointer_v<T>);
   static_assert(std::is_trivially_copyable_v<T>);
-#define SEND_OP ::send(socketfd, &data, sizeof data, 0)
-  decltype(SEND_OP) const r{SEND_OP};
+  auto const r = ::send(socketfd, &data, sizeof data, 0);
   if (r != sizeof data) {
     char buf[256];
     get_system_error_message(buf);
@@ -127,21 +125,7 @@ const {
   std::decay_t<T> data{uninitialized<std::decay_t<T>>()};
   sockaddr_in src{uninitialized<sockaddr_in>()};
   socklen_t src_len{uninitialized<socklen_t>()};
-#define RECV_OP recvfrom(socketfd, &data, sizeof data, 0, reinterpret_cast<sockaddr*>(&src), &src_len)
-  using rtn_t = decltype(RECV_OP);
-  rtn_t r;
-#if defined(PERSNICKETY_IP) && PERSNICKETY_IP
-  do { // repeat until we get a message from our expected source
-#endif // PERSNICKETY_IP
-    r = RECV_OP;
-#if defined(PERSNICKETY_IP) && PERSNICKETY_IP
-#if DEBUG
-    if (src.sin_addr.s_addr != addr.sin_addr.s_addr) {
-      std::cout << "Received a message from " << get_ip_port_str(addr) << " instead of " << get_ip_port_str(addr) << std::endl;
-    }
-#endif // DEBUG
-  } while (src.sin_addr.s_addr != addr.sin_addr.s_addr);
-#endif // PERSNICKETY_IP
+  auto const r = ::recvfrom(socketfd, &data, sizeof data, 0, reinterpret_cast<sockaddr*>(&src), &src_len);
   if (r != sizeof data) {
     char buf[256];
     get_system_error_message(buf);
