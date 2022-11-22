@@ -3,6 +3,8 @@
 
 // clang hasn't implemented std::jthread yet
 
+#include "concurrency/threadable.hpp"
+
 #include "util/fixed-string.hpp"
 
 #include <type_traits> // std::is_nothrow_invocable_v
@@ -13,12 +15,9 @@ extern "C" {
 
 namespace concurrency {
 
-template <typename F>
-concept threadable = noexcept(std::declval<F>()()) and std::is_nothrow_invocable_v<F> and std::is_same_v<void, std::invoke_result_t<F>>;
-
 template <util::FixedString Name, threadable auto atentry, threadable auto atexit = []() noexcept {}>
 class we_have_std_jthread_at_home {
-  pthread_t id;
+  pthread_t _id;
  public:
   we_have_std_jthread_at_home() noexcept;
   we_have_std_jthread_at_home(we_have_std_jthread_at_home const&) = delete;
@@ -35,7 +34,7 @@ template <util::FixedString Name, threadable auto atentry, threadable auto atexi
 we_have_std_jthread_at_home<Name, atentry, atexit>::
 we_have_std_jthread_at_home()
 noexcept
-: id{[]{
+: _id{[]{
   pthread_attr_t attr;
   assert_eq(0, pthread_attr_init(&attr), "Couldn't default-initialize thread attributes")
   assert_eq(0, pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE), "Couldn't set thread detach state to joinable")
@@ -58,7 +57,7 @@ noexcept
 template <util::FixedString Name, threadable auto atentry, threadable auto atexit>
 we_have_std_jthread_at_home<Name, atentry, atexit>::~we_have_std_jthread_at_home() {
   debug_print(std::cout, "jthread dtor: joining...");
-  assert_eq(0, pthread_join(id, nullptr), "Couldn't join thread")
+  assert_eq(0, pthread_join(_id, nullptr), "Couldn't join thread")
 }
 
 } // namespace concurrency

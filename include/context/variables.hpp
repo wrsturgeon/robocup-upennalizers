@@ -62,9 +62,9 @@ noexcept {
   // NOLINTBEGIN(cppcoreguidelines-macro-usage)
 #define TYPECHECK(LVALUE, RVALUE) static_assert(std::is_same_v<decltype(LVALUE()), std::decay_t<decltype(msg.RVALUE)>>)
 #if DEBUG
-#define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); if (msg.RVALUE != internal::LVALUE().exchange(std::move(msg.RVALUE), std::memory_order_relaxed)) { debug_print(std::cout, #LVALUE " updated -> ", PRINT(internal::LVALUE().load(std::memory_order_relaxed))); }
+#define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); if (msg.RVALUE != internal::LVALUE().exchange(std::move(msg.RVALUE))) { debug_print(std::cout, #LVALUE " updated -> ", PRINT(internal::LVALUE().load(std::memory_order_relaxed))); }
 #else // DEBUG
-#define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); internal::LVALUE().store(std::move(msg.RVALUE), std::memory_order_relaxed);
+#define UPDATE_ATOMIC(LVALUE, RVALUE, PRINT) TYPECHECK(LVALUE, RVALUE); internal::LVALUE().store(std::move(msg.RVALUE));
 #endif // DEBUG
   // NOLINTEND(cppcoreguidelines-macro-usage)
 

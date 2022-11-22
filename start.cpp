@@ -1,5 +1,7 @@
 // note that prologue.hpp is automatically prepended here
 
+#include "fsm/body.hpp"
+
 #include "context/loop.hpp"
 
 extern "C" {

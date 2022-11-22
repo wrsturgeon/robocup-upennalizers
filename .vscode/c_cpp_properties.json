@@ -7,8 +7,8 @@
             "macFrameworkPath": ["/Library/Developer/CommandLineTools/SDKs/MacOSX12.sdk/System/Library/Frameworks"],
             "forcedInclude": ["${workspaceFolder}/include/prologue.hpp"],
             "compilerPath": "/usr/local/opt/llvm/bin/clang++",
-            "cStandard": "c17",
-            "cppStandard": "c++23",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++23",
             "intelliSenseMode": "macos-clang-x64",
             "configurationProvider": "ms-vscode.makefile-tools"
         }

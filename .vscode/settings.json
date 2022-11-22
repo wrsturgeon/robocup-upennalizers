@@ -26,6 +26,8 @@
     "cstdint": "cpp",
     "cstdio": "cpp",
     "*.ip": "cpp",
-    "array": "cpp"
+    "array": "cpp",
+    "concepts": "cpp",
+    "tuple": "cpp"
   }
 }

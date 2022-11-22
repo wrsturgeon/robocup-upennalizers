@@ -31,39 +31,38 @@ enum mode {
   broadcast,
 };
 
-#define OPEN_UDP_SOCKET ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)
+#define OPEN_UDP_SOCKET 
 
 template <direction D, mode M>
 class Socket {
-  using fd_t = decltype(OPEN_UDP_SOCKET);
-  fd_t const socketfd{OPEN_UDP_SOCKET};
-  sockaddr_in const addr;
+  int const _fd{::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)};
+  sockaddr_in const _addr;
  public:
   Socket(in_addr_t address, u16 port) noexcept;
   Socket(Socket const&) = delete;
   Socket(Socket&&) = delete;
   Socket& operator=(Socket const&) = delete;
   Socket& operator=(Socket&&) = delete;
-  ~Socket() noexcept { assert_eq(0, close(socketfd), "Couldn't close a socket") }
+  ~Socket() noexcept { assert_eq(0, close(_fd), "Couldn't close a socket") }
   template <typename T> [[nodiscard]] bool send(T&& data) const;
   template <typename T> std::optional<std::decay_t<T>> recv() const;
 };
 
 template <direction D, mode M>
 Socket<D, M>::Socket(in_addr_t address, u16 port) noexcept
-: addr{util::ip::make_sockaddr_in(address, port)} {
-  assert_nonneg(socketfd, "Couldn't open a socket")
-  assert_eq(0, fcntl(socketfd, F_SETFL, O_NONBLOCK), "Couldn't set socket to non-blocking") // NOLINT(cppcoreguidelines-pro-type-vararg)
+: _addr{util::ip::make_sockaddr_in(address, port)} {
+  assert_nonneg(_fd, "Couldn't open a socket")
+  assert_eq(0, fcntl(_fd, F_SETFL, O_NONBLOCK), "Couldn't set socket to non-blocking") // NOLINT(cppcoreguidelines-pro-type-vararg)
   constexpr int bcast_opt{M == mode::broadcast};
-  setsockopt(socketfd, SOL_SOCKET, SO_BROADCAST, &bcast_opt, sizeof bcast_opt);
-  setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &addr, sizeof addr);
-  setsockopt(socketfd, SOL_SOCKET, SO_REUSEPORT, &addr, sizeof addr);
+  setsockopt(_fd, SOL_SOCKET, SO_BROADCAST, &bcast_opt, sizeof bcast_opt);
+  setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &_addr, sizeof _addr);
+  setsockopt(_fd, SOL_SOCKET, SO_REUSEPORT, &_addr, sizeof _addr);
   int r; // NOLINT(cppcoreguidelines-init-variables)
   if constexpr (D == direction::outgoing) {
-    r = connect(socketfd, reinterpret_cast<sockaddr const*>(&addr), sizeof addr);
+    r = connect(_fd, reinterpret_cast<sockaddr const*>(&_addr), sizeof _addr);
   } else {
     sockaddr_in from_addr{util::ip::make_sockaddr_in(INADDR_ANY, port)};
-    r = bind(socketfd, reinterpret_cast<sockaddr const*>(&from_addr), sizeof from_addr);
+    r = bind(_fd, reinterpret_cast<sockaddr const*>(&from_addr), sizeof from_addr);
   }
   assert_eq(0, r, (D == direction::outgoing) ? "connect" : "bind")
   // if (r) {
@@ -71,9 +70,9 @@ Socket<D, M>::Socket(in_addr_t address, u16 port) noexcept
   //   get_system_error_message(buf);
   //   try { std::cerr << (
   //         (D == direction::outgoing) ? "connect" : "bind")
-  //      << "(socket_fd = " << socketfd
-  //      << ", &addr = &(" << util::ip::get_ip_port_str(addr)
-  //      << "), sizeof addr = " << sizeof addr
+  //      << "(socket_fd = " << _fd
+  //      << ", &_addr = &(" << util::ip::get_ip_port_str(_addr)
+  //      << "), sizeof _addr = " << sizeof _addr
   //      << "B) returned " << r
   //      << " (errno " << errno
   //      << ": " << static_cast<char*>(buf) << ")\n";
@@ -81,7 +80,7 @@ Socket<D, M>::Socket(in_addr_t address, u16 port) noexcept
   //   std::terminate();
   // }
 #if DEBUG
-  std::cout << "Opened an " << ((D == direction::outgoing) ? "outgoing" : "incoming") << ' ' << ((M == mode::broadcast) ? "broadcast" : "unicast") << " socket " << ((D == direction::incoming) ? "from" : "to") << ' ' << util::ip::get_ip_port_str(addr) << std::endl;
+  std::cout << "Opened an " << ((D == direction::outgoing) ? "outgoing" : "incoming") << ' ' << ((M == mode::broadcast) ? "broadcast" : "unicast") << " socket " << ((D == direction::incoming) ? "from" : "to") << ' ' << util::ip::get_ip_port_str(_addr) << std::endl;
 #endif // DEBUG
 }
 
@@ -97,7 +96,7 @@ const {
   static_assert(D == direction::outgoing);
   static_assert(not std::is_pointer_v<T>);
   static_assert(std::is_trivially_copyable_v<T>);
-  auto const r = ::send(socketfd, &data, sizeof data, 0);
+  auto const r = ::send(_fd, &data, sizeof data, 0);
   return (r == sizeof data);
 }
 
@@ -114,7 +113,7 @@ const {
   std::decay_t<T> data{uninitialized<std::decay_t<T>>()};
   sockaddr_in src{uninitialized<sockaddr_in>()};
   socklen_t src_len{uninitialized<socklen_t>()};
-  auto const r = ::recvfrom(socketfd, &data, sizeof data, 0, reinterpret_cast<sockaddr*>(&src), &src_len);
+  auto const r = ::recvfrom(_fd, &data, sizeof data, 0, reinterpret_cast<sockaddr*>(&src), &src_len);
   return (r == sizeof data) ? std::make_optional(data) : std::nullopt;
 }
 

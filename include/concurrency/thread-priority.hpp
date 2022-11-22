@@ -54,7 +54,7 @@ void
 we_have_std_jthread_at_home<Name, atentry, atexit>::
 set_priority(int priority)
 noexcept {
-  prioritize(id, priority);
+  prioritize(_id, priority);
 }
 
 } // namespace concurrency

@@ -43,10 +43,18 @@ FixedString(char const (&)[N]) -> FixedString<N - 1>;
 template <std::size_t N, std::size_t M>
 pure
 bool
-operator==(FixedString<N> const& lhs, FixedString<M> const& rhs)
+fixed_streq(FixedString<N> const& lhs, FixedString<M> const& rhs)
 noexcept {
   if constexpr (N != M) { return false; }
   return std::equal(lhs.arr.begin(), lhs.arr.end(), rhs.arr.begin());
+}
+
+template <std::size_t N, std::size_t M>
+pure
+bool
+operator==(FixedString<N> const& lhs, FixedString<M> const& rhs)
+noexcept {
+  return fixed_streq(lhs, rhs);
 }
 
 template <std::size_t N, std::size_t M>
@@ -98,6 +106,17 @@ template <std::unsigned_integral auto x>
 inline constexpr FixedString<log10<x> + 1> fixed_itoa{array_itoa<x>()};
 
 } // namespace util
+
+//%%%%%%%%%%%%%%%% concepts & type_traits
+
+namespace internal {
+template <typename T> struct is_fixed_string { static constexpr bool value{false}; };
+template <std::size_t N> struct is_fixed_string<util::FixedString<N>> { static constexpr bool value{true}; };
+} // namespace internal
+template <typename T> inline constexpr bool is_fixed_string{internal::is_fixed_string<T>::value};
+template <typename T> concept fixed_string = is_fixed_string<T>;
+
+//%%%%%%%%%%%%%%%% iostream interface
 
 #if DEBUG
 #include <iostream>
