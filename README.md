@@ -83,7 +83,7 @@ The basic idea is that when we're developing, building to debug should be the de
 - `-DNDEBUG`, which defines the macro `NDEBUG` to 1 and thus tells the compiler to skip `assert` statements (and note that anything inside its parentheses will just be deleted: e.g. `assert(printf...)` won't print anything).
 - `-fno-exceptions`, which disables all exceptions (you'll get a compile-time error if any are even possible).
 
-Best practices: Throw all the exceptions you want in debug builds, but wrap them in `#ifndef NDEBUG ... #endif // NDEBUG` and **make sure they can't happen in-game**. When something goes _fatally_ wrong, use `debug_print(std::cerr, ...); std::terminate();`, which will somewhat gracefully quit the program print in debug builds only. If a release build crashes (which it _shouldn't_—it's really only for in-game—but shit happens), rebuild it with debugging and run it again to reproduce the error.
+Best practices: Throw all the exceptions you want in debug builds, but wrap them in `#ifndef NDEBUG ... #endif // NDEBUG` and **make sure they can't happen in-game**. When something goes _fatally_ wrong, use `print_error(std::cerr, ...); std::terminate();`, which will somewhat gracefully quit the program print in debug builds only. If a release build crashes (which it _shouldn't_—it's really only for in-game—but shit happens), rebuild it with debugging and run it again to reproduce the error.
 
 ### C++ rvalues
 

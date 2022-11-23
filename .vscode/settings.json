@@ -28,6 +28,7 @@
     "*.ip": "cpp",
     "array": "cpp",
     "concepts": "cpp",
-    "tuple": "cpp"
+    "tuple": "cpp",
+    "fixed-string": "cpp"
   }
 }

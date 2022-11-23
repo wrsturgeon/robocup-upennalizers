@@ -42,11 +42,11 @@ noexcept
   assert_eq(0, pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED), "Couldn't set thread scheduling inheritance to explicit")
   pthread_t rtn{};
   assert_eq(0, pthread_create(&rtn, &attr, [](void* arg) -> void* { // NOLINT(misc-unused-parameters)
-    debug_print(std::cout, Name, " thread started; calling atentry");
+    print_concurrency(Name, " thread started; calling atentry");
     atentry();
-    debug_print(std::cout, Name, " thread atentry returned; calling atexit");
+    print_concurrency(Name, " thread atentry returned; calling atexit");
     atexit();
-    debug_print(std::cout, Name, " thread atexit returned; done");
+    print_concurrency(Name, " thread atexit returned; done");
     return nullptr;
   }, nullptr), "Couldn't create thread")
   assert_eq(0, pthread_attr_destroy(&attr), "Couldn't destroy thread attributes")
@@ -56,7 +56,7 @@ noexcept
 
 template <fixed::String Name, threadable auto atentry, threadable auto atexit>
 we_have_std_jthread_at_home<Name, atentry, atexit>::~we_have_std_jthread_at_home() {
-  debug_print(std::cout, "jthread dtor: joining...");
+  print_concurrency(Name, " thread dtor: joining...");
   assert_eq(0, pthread_join(_id, nullptr), "Couldn't join thread")
 }
 

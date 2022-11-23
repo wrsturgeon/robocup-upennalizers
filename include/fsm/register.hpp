@@ -42,21 +42,19 @@ template <> struct ::fsm::internal::state<#GROUP> {              \
 }; ::std::atomic<u8> (::fsm::internal::state<#GROUP>::current){0};
 // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
-#define REGISTER_FSM_TRANSITION_EVENT(GROUP, EVENT, ...) \
-template <>                                              \
-pure                                                     \
-u8                                                       \
-(::fsm::internal::next_state<#GROUP, #EVENT>)(u8 from)   \
-noexcept {                                               \
-  constexpr fixed::String group{#GROUP};                 \
-  switch (from) {                                        \
-    __VA_ARGS__                                          \
-    default:                                             \
-      debug_print(std::cerr,                             \
-            "No transition found; "                      \
-            "returning original state");                 \
-      return from;                                       \
-  }                                                      \
+#define REGISTER_FSM_TRANSITION_EVENT(GROUP, EVENT, ...)            \
+template <>                                                         \
+pure                                                                \
+u8                                                                  \
+(::fsm::internal::next_state<#GROUP, #EVENT>)(u8 from)              \
+noexcept {                                                          \
+  constexpr fixed::String group{#GROUP};                            \
+  switch (from) {                                                   \
+    __VA_ARGS__                                                     \
+    default:                                                        \
+      print_error("No transition found; returning original state"); \
+      return from;                                                  \
+  }                                                                 \
 }
 
 #define TRANSITION(FROM, TO)                        \

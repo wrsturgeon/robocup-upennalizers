@@ -79,9 +79,6 @@ Socket<D, M>::Socket(in_addr_t address, u16 port) noexcept
   //   } catch (...) {}
   //   std::terminate();
   // }
-#if DEBUG
-  std::cout << "Opened an " << ((D == direction::outgoing) ? "outgoing" : "incoming") << ' ' << ((M == mode::broadcast) ? "broadcast" : "unicast") << " socket " << ((D == direction::incoming) ? "from" : "to") << ' ' << util::ip::get_ip_port_str(_addr) << std::endl;
-#endif // DEBUG
 }
 
 #undef OPEN_UDP_SOCKET

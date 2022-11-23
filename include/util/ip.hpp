@@ -37,22 +37,6 @@ noexcept {
   return addr;
 }
 
-#if DEBUG
-static
-std::string
-get_ip_port_str(sockaddr_in const &addr)
-noexcept {
-  static char ipbuf[INET_ADDRSTRLEN + 1];
-  assert_neq(nullptr, inet_ntop(AF_INET, &addr.sin_addr, static_cast<char*>(ipbuf), INET_ADDRSTRLEN), "inet_ntop failed")
-  ipbuf[INET_ADDRSTRLEN] = '\0';
-  try {
-    return std::string{static_cast<char*>(ipbuf)} + ':' + std::to_string(ntohs(addr.sin_port));
-  } catch (std::exception const &e) {
-    try { return "[couldn't stringify IP/port: " + std::string{e.what()} + ']'; } catch (...) { std::terminate(); }
-  } catch (...) { std::terminate(); }
-}
-#endif
-
 } // namespace ip
 } // namespace util
 

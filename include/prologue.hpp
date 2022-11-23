@@ -90,13 +90,23 @@ inline constexpr bool debug{DEBUG};
 #include <cstring>  // strerror_r
 #include <iostream> // std::cerr
 
-template <typename... T>
+#include <fixed-string>
+inline constexpr fixed::String ansi_format_bold_red{"\033[1;31m"};
+inline constexpr fixed::String ansi_format_bold_green{"\033[1;32m"};
+inline constexpr fixed::String ansi_format_bold_yellow{"\033[1;33m"};
+inline constexpr fixed::String ansi_format_bold_blue{"\033[1;34m"};
+inline constexpr fixed::String ansi_format_faint{"\033[2m"};
+inline constexpr fixed::String ansi_format_end{"\033[0m"};
+
+template <fixed::String ansi_format = ansi_format_end, typename... T>
 INLINE static
 void
 safe_print(std::ostream& stream, T&&... args)
 noexcept {
   try {
+    if constexpr (not (ansi_format == ansi_format_end)) { stream << ansi_format; }
     (stream << ... << args) << std::endl; // NOLINT(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
+    if constexpr (not (ansi_format == ansi_format_end)) { stream << ansi_format_end; }
   } catch (std::exception const& e) {
     try {
       std::cerr << "safe_print failed: " << e.what() << std::endl;
@@ -122,30 +132,31 @@ noexcept {
 }
 
 // NOLINTNEXTLINE(cppcoreguidelines-macro-usage)
-#define FAIL_ASSERTION(...)                                                                  \
-  char buf[256];                                                                             \
-  get_system_error_message(buf);                                                             \
-  safe_print(std::cerr, __VA_ARGS__, " (errno ", errno, ": ", static_cast<char*>(buf), ')'); \
-  std::terminate();
-
+#define FAIL_ASSERTION(...)                                                                                        \
+  char buf[256];                                                                                                   \
+  get_system_error_message(buf);                                                                                   \
+  safe_print<ansi_format_bold_red>(std::cerr, __VA_ARGS__, " (errno ", errno, ": ", static_cast<char*>(buf), ')'); \
+  std::terminate()
 #else // DEBUG
-#define FAIL_ASSERTION(...) std::terminate();
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
+#define FAIL_ASSERTION(...) std::terminate()
 #endif // DEBUG
 
 // NOLINTBEGIN(cppcoreguidelines-macro-usage)
-#define assert_eq(a, b, ...) if ((a) != (b)) { FAIL_ASSERTION(__VA_ARGS__) }
-#define assert_neq(a, b, ...) if ((a) == (b)) { FAIL_ASSERTION(__VA_ARGS__) }
-#define assert_nonneg(a, ...) if ((a) < 0) { FAIL_ASSERTION(__VA_ARGS__) }
-// NOLINTEND(cppcoreguidelines-macro-usage)
-
+#define assert_eq(a, b, ...) if ((a) != (b)) { FAIL_ASSERTION(__VA_ARGS__); }
+#define assert_neq(a, b, ...) if ((a) == (b)) { FAIL_ASSERTION(__VA_ARGS__); }
+#define assert_nonneg(a, ...) if ((a) < 0) { FAIL_ASSERTION(__VA_ARGS__); }
 #if DEBUG
-#define debug_print(...) safe_print(__VA_ARGS__) // NOLINT(cppcoreguidelines-macro-usage)
+#define print_error(...) safe_print<ansi_format_bold_red>(std::cerr, __VA_ARGS__)
+#define print_io(...) safe_print<ansi_format_bold_green>(std::cout, __VA_ARGS__)
+#define print_concurrency(...) safe_print<ansi_format_bold_yellow>(std::cout, __VA_ARGS__)
+#define print_context(...) safe_print<ansi_format_faint>(std::cout, __VA_ARGS__)
 #else // DEBUG
-#define debug_print(...) (void)0 // NOLINT(cppcoreguidelines-macro-usage)
-#pragma clang diagnostic pop
+#define print_error(...) static_cast<void>(0)
+#define print_io(...) static_cast<void>(0)
+#define print_concurrency(...) static_cast<void>(0)
+#define print_context(...) static_cast<void>(0)
 #endif // !DEBUG
+// NOLINTEND(cppcoreguidelines-macro-usage)
 
 //%%%%%%%%%%%%%%%% Stack-allocation without initialization
 

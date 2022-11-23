@@ -37,7 +37,7 @@ noexcept {
     char header[sizeof from_gc.header + 1];
     std::copy_n(static_cast<char*>(from_gc.header), sizeof from_gc.header, static_cast<char*>(header));
     header[sizeof from_gc.header] = '\0';
-    debug_print(std::cerr, "Invalid packet received (probably nonsense: version ", +from_gc.version, " (should be ", +config::packet::gc::from::version, "), header \"", static_cast<char*>(header), "\" (should be \"", config::packet::gc::from::header, "\"))");
+    print_error("Invalid packet received (probably nonsense: version ", +from_gc.version, " (should be ", +config::packet::gc::from::version, "), header \"", static_cast<char*>(header), "\" (should be \"", config::packet::gc::from::header, "\"))");
 #endif
   }
   return false; // invalid packet
@@ -81,9 +81,8 @@ void
 run()
 noexcept {
   //%%%%%%%%%%%%%%%% Wait for the first valid packet from a GameController
-  debug_print(std::cout, "Waiting for a GameController to open communication...");
-  hermeneutics(); // Keep trying through any msg::error until a valid packet
-  debug_print(std::cout, "Got it!");
+  print_io("Waiting for communication on port ", config::ip::port::from<"GameController">, "...");
+  hermeneutics(); // Keep trying through any msg::error until we get a valid packet
 
   //%%%%%%%%%%%%%%%% Start a separate thread to resolve goals with estimated reality
   concurrency::we_have_std_jthread_at_home<"Resolution", schopenhauer::resolve/*, sit_down_so_we_don't_fall_over*/> const resolution{}; // NOLINT(cppcoreguidelines-init-variables)
@@ -95,6 +94,9 @@ noexcept {
   //   BUT it also slows our reception of information from the GC, so if we can't detect events, we may be less informed.
   // If this robot ever _fully disconnects_, we should probably increase the priority below.
   concurrency::prioritize(::pthread_self(), concurrency::min_priority());
+
+  //%%%%%%%%%%%%%%%% Just so, if we fucked up the IP, we know
+  print_io("Opening unicast communication to ", config::ip::address<"GameController">, " on port ", config::ip::port::to<"GameController">, "...");
 
   //%%%%%%%%%%%%%%%% Loop until someone wins the game
   do { // while the game isn't over
