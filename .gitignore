@@ -1,119 +1,46 @@
-# Python compiled files and saved data files
-*.pyc
-*.npy
-*.pkl
+################ Shamelessly ripped from https://github.com/github/gitignore/blob/main/C%2B%2B.gitignore
 
-# MATLAB compiled files and saved data files
-*.mexglx
-*.mexa64
-*.mexmaci
-*.mexmaci64
+# Prerequisites
+*.d
 
-# compiled sources
+# Compiled Object files
+*.slo
+*.lo
 *.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
 *.so
 *.dylib
-*.hex
-*.bin
-*.elf
-*.d
-*.signature
-WebotsProj/controllers/ballGPS/ballGPS
+*.dll
 
-# generic log files
-*.log
+# Fortran module files
+*.mod
+*.smod
 
-# Player copy of the compiled libraries
-legacy/Player/Lib/*
-legacy/Player/Lib/NaoGameControl.lua
-legacy/Player/Lib/NaoBody.lua
-legacy/Player/soundLog.txt
-legacy/Player/paramsLog.txt
-# player.lua link in Player
-legacy/Player/player.lua
-legacy/Player/Player
-legacy/Player/Logs
-# Config link file
-legacy/Config.lua
-legacy/Player/Config/Config.lua
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
 
-# auto-generated webots controller wrapper
-legacy/WebotsController/
-legacy/WebotsController/controller_wrap.c
+# Executables
+*.exe
+*.out
+*.app
 
-#controller links
-legacy/WebotsProj/controllers/nao_soccer_supervisor/
-legacy/WebotsProj/controllers/nsl_soccer_supervisor/
-legacy/WebotsProj/controllers/nao_team_0
-legacy/WebotsProj/controllers/nao_team_1
+################ Custom exclusions
 
-#auto-generated webots file
-*.wrl
-*.wbproj
-
-# Temp and Swap files
-*~
-*.swp
-.DS_Store
-
-# Build file with CMAKE
-legacy/build/
-build/
+# Binary executable output folder
 bin/
-
-# Webot World File temp
-*.project
-
-# svn 
-legacy/.svn
-
-# for files in nao bu default
-.bash_history
-.bash_profile
-.gitconfig
-.config/
-.ssh/
-.vim/
-.viminfo
-naoqi/
-remotes/
-
-# ball logs
-legacy/Player/Data/*.txt
-
-# game controller log
-legacy/Tools/GameController2017-GO/logs/*.txt
-legacy/Tools/GameController2017-GO/*.txt
-legacy/Tools/GameController2017-GO/config/TCM.cfg
-
-# screen log
-*screenlog*
-
-# Generated new lut
-*_new.raw
-*_auto.*
-legacy/Tools/Matlab/*.raw
-
-legacy/Lib/Modules/Webots/Controller/lua_controller.c
-legacy/Lib/Modules/Webots/Controller/controller_wrap.c
-
-# exclude build path
-legacy/Tools/Matlab/logs/
-legacy/Tools/Matlab/colortableFiles/
 
 # nohup
 error.txt
 nohup.out
 
 # XXD hexdump headers
-include/xxd
-
-#exclude matlab data --DP
-*.raw
-*.mat
-
-#exclude network weights from torch --DP
-*.net
-
-# IDE settings
-# .vscode/ # actually this could be useful
+include/xxd/

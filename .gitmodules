@@ -7,3 +7,6 @@
 [submodule "fixed-string"]
 	path = include/ext/fixed-string
 	url = https://github.com/wrsturgeon/fixed-string.git
+[submodule "legacy"]
+	path = include/ext/legacy
+	url = https://github.com/wrsturgeon/robocup-legacy.git

@@ -4,6 +4,20 @@ Welcome in!
 
 This codebase exists as a shared document, the culmination both of hard work by students at the University of Pennsylvania and of the larger RoboCup community, whom we cannot thank enough for these opportunities.
 
+## Legacy README:
+
+The project began with the University of Pennsylvania RoboCup code base from
+the 2011 RoboCup season and continues to evolve into an ever more
+generalized and versatile robot software framework.
+
+(Legacy) Documentation:
+  The GitHub Wiki hosts the main source of documentation for this project:
+    - https://github.com/UPenn-RoboCup/UPennalizers/wiki 
+
+Contact Information:
+  UPenn Email:      upennalizers@gmail.com
+  UPenn Website:    https://fling.seas.upenn.edu/~robocup/wiki/
+
 ## Core Principles
 RoboCup is a competition in the formal sense, but, above all, it's a community. Winning means open-sourcing all of your code and sharing it freely; smaller universities regularly beat larger ones, and the tangible camaraderie and passion show through in each team's work. The League thrives on contributions from people like you. It's not about being smarter or more powerful; it's about asking the right questions. It's not about winning; it's about the chase. It's practically the opposite of the usual University of Pennsylvania undergraduate experience, and as such, we are a community proud to be truly fascinated by this stuff and want to work with, learn with, and hang with people who are as well.
 
@@ -23,27 +37,11 @@ Our main goals are, in order,
          2. Anything that _can_ be computed at compile time _should_. `sizeof` above is a perfect example. C++ templates are great.
 3. Make a great product and be proud of it. There aren't many people in the world who can do this; welcome to the club.
 
-## Original README:
-
-The project began with the University of Pennsylvania RoboCup code base from
-the 2011 RoboCup season and continues to evolve into an ever more
-generalized and versatile robot software framework.
-
-(Legacy) Documentation:
-  The GitHub Wiki hosts the main source of documentation for this project:
-    - https://github.com/UPenn-RoboCup/UPennalizers/wiki 
-
-Contact Information:
-  UPenn Email:      upennalizers@gmail.com
-  UPenn Website:    https://fling.seas.upenn.edu/~robocup/wiki/
-
 ## Compiling and Using the Code
 
 New code can be compiled with `./compile [path/to/file] [--release/--debug]`, which creates an executable at `bin/robocup-[file]`. Compile the entire game routine with `./compile start.cpp --release`, which creates `bin/robocup-start`.
 
 When `ssh`'d into a robot, use `nohup bin/robocup-start &` to keep the robot playing when you disconnect. `nohup` tells the process to survive your terminal logout and the ampersand tells the OS to run `robocup-start` in the background; in other words, your robot won't stop it until the GameController says the game is over or you manually lookup the process and kill it with `killall robocup-start`.
-
-Legacy code can be run by `cd`ing to `include/legacy/Player/` and using `./game main`.
 
 ## Coding Guidelines for Active Contributors
 

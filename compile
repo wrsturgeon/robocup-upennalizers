@@ -7,9 +7,9 @@ if [ ${#} -lt 3 ]; then
     exit 1
 fi
 
-# make sure we're in .../robocup-legacy
-if [ $(pwd | rev | cut -d '/' -f1) != "ycagel-pucobor" ]; then
-    echo "Please run this script from the main project directory (.../robocup-legacy)"
+# make sure we're in .../robocup-upennalizers
+if [ $(pwd | rev | cut -d '/' -f1) != "srezilannepu-pucobor" ]; then
+    echo "Please run this script from the main project directory (.../robocup-upennalizers)"
     exit 1
 fi
 
