@@ -34,11 +34,12 @@ template <fixed::String Device> concept registered =
 //%%%%%%%%%%%%%%%% Manually registering devices
 
 // GameController
+#ifndef GAMECONTROLLER_IP
+#error GameController IP not defined; rules require unicast communication, so please pass its IP with -DGAMECONTROLLER_IP=...
+#endif // GAMECONTROLLER_IP
 template <> struct internal::port::from<"GameController">{ static constexpr u16 value{GAMECONTROLLER_DATA_PORT}; };
 template <> struct internal::port::to<"GameController">{ static constexpr u16 value{GAMECONTROLLER_RETURN_PORT}; };
-template <> struct internal::address<"GameController"> { static constexpr fixed::String value{
-  #include "../configuration/gamecontroller.ip" // One-line file: just a string literal
-}; };
+template <> struct internal::address<"GameController"> { static constexpr fixed::String value{STRINGIFY(GAMECONTROLLER_IP)}; };
 #undef GAMECONTROLLER_DATA_PORT
 #undef GAMECONTROLLER_RETURN_PORT
 

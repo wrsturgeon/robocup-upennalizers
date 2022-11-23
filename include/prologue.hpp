@@ -12,7 +12,7 @@
 
 //%%%%%%%%%%%%%%%% Standard integral types
 #ifndef SYSTEM_BITS
-#error "SYSTEM_BITS is not defined; pass -DSYSTEM_BITS=$(getconf LONG_BIT) to the compiler"
+#error SYSTEM_BITS is not defined; pass -DSYSTEM_BITS=$(getconf LONG_BIT) to the compiler
 #endif
 #include <cstddef>
 #include <cstdint>
@@ -60,14 +60,14 @@ namespace build {
 inline constexpr bool debug{DEBUG};
 #if DEBUG
 #ifdef NDEBUG
-#error "DEBUG=1 but NDEBUG is defined (assertions are bypassed)"
+#error DEBUG=1 but NDEBUG is defined (assertions are bypassed)
 #endif // NDEBUG
 #else // DEBUG
 #ifndef NDEBUG
-#warning "DEBUG=0 but NDEBUG is not defined (assertions are checked at runtime)"
+#warning DEBUG=0 but NDEBUG is not defined (assertions are checked at runtime)
 #else // NDEBUG
 #if NDEBUG != 1
-#error "NDEBUG is defined, but not to 1"
+#error NDEBUG is defined, but not to 1
 #endif // NDEBUG != 1
 #endif // NDEBUG
 #endif // DEBUG

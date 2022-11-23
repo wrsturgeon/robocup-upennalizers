@@ -5,13 +5,13 @@
 
 //%%%%%%%%%%%%%%%% Set the player number below (1: goalie; ...; 6: alternate)
 #ifndef PLAYER
-#error "Please pass -DPLAYER=... to the compiler"
+#error Please pass -DPLAYER=... to the compiler
 #endif
 #if PLAYER < 1
-#error "PLAYER must be >= 1"
+#error PLAYER must be >= 1
 #endif
 #if PLAYER > 6
-#error "PLAYER must be <= 6"
+#error PLAYER must be <= 6
 #endif
 
 namespace config {
