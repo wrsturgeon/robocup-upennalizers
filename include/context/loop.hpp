@@ -86,7 +86,7 @@ noexcept {
   debug_print(std::cout, "Got it!");
 
   //%%%%%%%%%%%%%%%% Start a separate thread to resolve goals with estimated reality
-  concurrency::we_have_std_jthread_at_home<"Resolution", schopenhauer::resolve/*, sit_down_so_we_don't_fall_over*/> const resolution{};
+  concurrency::we_have_std_jthread_at_home<"Resolution", schopenhauer::resolve/*, sit_down_so_we_don't_fall_over*/> const resolution{}; // NOLINT(cppcoreguidelines-init-variables)
 
   //%%%%%%%%%%%%%%%% Lower this thread's priority (since it's now just for communication)
   // Note that the GameController will occasionally show the robot's communication flickering;

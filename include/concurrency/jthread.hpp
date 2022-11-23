@@ -5,7 +5,7 @@
 
 #include "concurrency/threadable.hpp"
 
-#include "util/fixed-string.hpp"
+#include <fixed-string>
 
 #include <type_traits> // std::is_nothrow_invocable_v
 
@@ -15,7 +15,7 @@ extern "C" {
 
 namespace concurrency {
 
-template <util::FixedString Name, threadable auto atentry, threadable auto atexit = []() noexcept {}>
+template <fixed::String Name, threadable auto atentry, threadable auto atexit = []() noexcept {}>
 class we_have_std_jthread_at_home {
   pthread_t _id;
  public:
@@ -30,7 +30,7 @@ class we_have_std_jthread_at_home {
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
-template <util::FixedString Name, threadable auto atentry, threadable auto atexit>
+template <fixed::String Name, threadable auto atentry, threadable auto atexit>
 we_have_std_jthread_at_home<Name, atentry, atexit>::
 we_have_std_jthread_at_home()
 noexcept
@@ -54,7 +54,7 @@ noexcept
 }()} {}
 #pragma clang diagnostic pop
 
-template <util::FixedString Name, threadable auto atentry, threadable auto atexit>
+template <fixed::String Name, threadable auto atentry, threadable auto atexit>
 we_have_std_jthread_at_home<Name, atentry, atexit>::~we_have_std_jthread_at_home() {
   debug_print(std::cout, "jthread dtor: joining...");
   assert_eq(0, pthread_join(_id, nullptr), "Couldn't join thread")

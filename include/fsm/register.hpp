@@ -6,7 +6,7 @@
 
 #include "fsm/types.hpp"
 
-#include "util/fixed-string.hpp"
+#include <fixed-string>
 
 namespace fsm {
 namespace internal {
@@ -14,7 +14,7 @@ template <typename... Args>
 pure static
 decltype(auto)
 make_tuple(Args&&... args) {
-  return ::std::make_tuple(util::FixedString{args}...);
+  return ::std::make_tuple(fixed::String{args}...);
 }
 } // namespace internal
 } // namespace fsm
@@ -48,7 +48,7 @@ pure                                                     \
 u8                                                       \
 (::fsm::internal::next_state<#GROUP, #EVENT>)(u8 from)   \
 noexcept {                                               \
-  constexpr util::FixedString group{#GROUP};             \
+  constexpr fixed::String group{#GROUP};                 \
   switch (from) {                                        \
     __VA_ARGS__                                          \
     default:                                             \

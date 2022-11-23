@@ -3,7 +3,7 @@
 
 #include "concurrency/threadable.hpp"
 
-#include "util/fixed-string.hpp"
+#include <fixed-string>
 
 #include <tuple>
 #include <type_traits>
@@ -12,10 +12,10 @@ namespace fsm {
 
 namespace internal {
 
-template <util::FixedString Group> struct event {/* empty */};
-template <util::FixedString Group> struct state {/* empty */};
+template <fixed::String Group> struct event {/* empty */};
+template <fixed::String Group> struct state {/* empty */};
 
-template <util::FixedString Group, util::FixedString State, u8 guess = 0>
+template <fixed::String Group, fixed::String State, u8 guess = 0>
 pure static
 u8
 state_id() {
@@ -25,14 +25,14 @@ state_id() {
   return guess;
 }
 
-template <util::FixedString Group> INLINE static void entry_fn(u8 from) noexcept;
-template <util::FixedString Group> INLINE static void exit_fn(u8 from) noexcept;
+template <fixed::String Group> INLINE static void entry_fn(u8 from) noexcept;
+template <fixed::String Group> INLINE static void exit_fn(u8 from) noexcept;
 
-template <util::FixedString Group, util::FixedString Event> pure static u8 next_state(u8 from) noexcept;
+template <fixed::String Group, fixed::String Event> pure static u8 next_state(u8 from) noexcept;
 
 } // namespace internal
 
-template <util::FixedString Group>
+template <fixed::String Group>
 concept registered_group = requires {
   { internal::event<Group>::all };
   { internal::event<Group>::max } -> std::same_as<u8 const&>;
@@ -40,7 +40,7 @@ concept registered_group = requires {
   { internal::state<Group>::max } -> std::same_as<u8 const&>;
   { internal::state<Group>::current } -> std::same_as<std::atomic<u8>&>;
 };
-template <util::FixedString Group, util::FixedString Event>
+template <fixed::String Group, fixed::String Event>
 requires registered_group<Group>
 INLINE static
 void

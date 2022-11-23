@@ -5,6 +5,8 @@
 
 #include "concurrency/jthread.hpp"
 
+#include <fixed-string>
+
 extern "C" {
 #include <pthread.h> // pthread_setschedparam, pthread_self, ...
 #include <sched.h>   // sched_param, sched_yield, SCHED_RR, ...
@@ -48,7 +50,7 @@ noexcept {
 }
 
 // https://man7.org/linux/man-pages/man7/sched.7.html
-template <util::FixedString Name, threadable auto atentry, threadable auto atexit>
+template <fixed::String Name, threadable auto atentry, threadable auto atexit>
 [[gnu::always_inline]] inline
 void
 we_have_std_jthread_at_home<Name, atentry, atexit>::

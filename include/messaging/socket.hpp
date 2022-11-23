@@ -110,7 +110,7 @@ const {
   static_assert(D == direction::incoming);
   static_assert(not std::is_pointer_v<T>);
   static_assert(std::is_trivially_copyable_v<T>);
-  std::decay_t<T> data{uninitialized<std::decay_t<T>>()};
+  std::decay_t<T> data{uninitialized<std::decay_t<T>>()}; // NOLINT(cppcoreguidelines-init-variables)
   sockaddr_in src{uninitialized<sockaddr_in>()};
   socklen_t src_len{uninitialized<socklen_t>()};
   auto const r = ::recvfrom(_fd, &data, sizeof data, 0, reinterpret_cast<sockaddr*>(&src), &src_len);
