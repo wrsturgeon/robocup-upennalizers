@@ -4,3 +4,6 @@
 [submodule "GameController"]
 	path = include/ext/GameController
 	url = https://github.com/RoboCup-SPL/GameController.git
+[submodule "fixed-string"]
+	path = include/ext/fixed-string
+	url = https://github.com/wrsturgeon/fixed-string.git
