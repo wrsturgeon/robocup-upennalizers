@@ -12,7 +12,7 @@ jobs:
     - name: checks
       run: |
         sudo apt-get update
-        sudo apt-get install -y llvm-14 libclang-14-dev
+        sudo apt-get install -y llvm-13 libclang-13-dev
         source ~/.bashrc
         export CC=$(which clang)
         export CXX=$(which clang++)
