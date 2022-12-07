@@ -28,6 +28,10 @@ fi
 echo "Updating submodules..."
 git submodule update --init --recursive --remote > /dev/null 2>&1 || echo "  Couldn't; maybe no Internet? Proceeding..."
 
+ls .
+ls ext
+ls ext/iwyu
+
 echo "Building IWYU..."
 cd ext/iwyu
 if [ ! -d build ]; then
