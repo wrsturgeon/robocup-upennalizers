@@ -26,7 +26,8 @@ fi
 
 # Get latest submodule commits
 echo "Updating submodules..."
-git submodule update --init --recursive --remote > /dev/null 2>&1 || echo "  Couldn't; maybe no Internet? Proceeding..."
+# git submodule update --init --recursive --remote > /dev/null 2>&1 || echo "  Couldn't; maybe no Internet? Proceeding..."
+git submodule foreach git pull > /dev/null 2>&1 || echo "  Couldn't; maybe no Internet? Proceeding..."
 
 echo 'ls .'
 ls .
