@@ -2,7 +2,7 @@
     "configurations": [
         {
             "name": "Mac",
-            "includePath": ["${workspaceFolder}/include", "${workspaceFolder}/ext/fixed-string/include", "${workspaceFolder}/ext/GameController/examples/c", "${workspaceFolder}/ext/lua", "/usr/local/include"],
+            "includePath": ["${workspaceFolder}/include", "${workspaceFolder}/ext/fixed-string/include", "${workspaceFolder}/ext/fixed-point/include", "${workspaceFolder}/ext/GameController/examples/c", "${workspaceFolder}/ext/lua", "/usr/local/include"],
             "defines": ["VSCODE_PARSE=1", "PLAYER=2", "GAMECONTROLLER_IP=10.0.0.0", "SYSTEM_BITS=32", "DEBUG=0", "NDEBUG=1"],
             "macFrameworkPath": ["/Library/Developer/CommandLineTools/SDKs/MacOSX12.sdk/System/Library/Frameworks"],
             "forcedInclude": ["${workspaceFolder}/include/prologue.hpp"],
