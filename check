@@ -44,15 +44,17 @@ git submodule update --init --recursive --remote > /dev/null 2>&1 || echo "  Cou
 
 echo "Building IWYU..."
 cd ext/iwyu
-if [ ${CLANG_VERSION} -ne 0 ]; then
-    git fetch --all
-    git checkout clang_${CLANG_VERSION}
-    git pull
-fi
 if [ ! -d build ]; then
     mkdir build
     cd build
-    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+    if [ ${CLANG_VERSION} -ne 0 ]; then
+        git fetch --all
+        git checkout clang_${CLANG_VERSION}
+        git pull
+        cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DLLVM_VERSION=${CLANG_VERSION} ..
+    else
+        cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+    fi
     make
 else
     cd build
