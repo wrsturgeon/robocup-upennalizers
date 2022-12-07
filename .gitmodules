@@ -13,3 +13,6 @@
 [submodule "iwyu"]
 	path = ext/iwyu
 	url = https://github.com/include-what-you-use/include-what-you-use.git
+[submodule "fixed-point"]
+	path = ext/fixed-point
+	url = https://github.com/wrsturgeon/fixed-point.git
