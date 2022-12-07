@@ -4,9 +4,8 @@
 // this DOES NOT introduce any string processing at runtime
 // we use compile-time strings to stand in for events/states that are then entirely optimized away
 
-#include "fsm/types.hpp"
-
-#include <fixed-string>
+#include <fixed-string>  // for fixed::String
+#include <tuple>         // for std::make_tuple
 
 namespace fsm {
 namespace internal {

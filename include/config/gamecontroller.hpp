@@ -1,12 +1,16 @@
 #ifndef CONFIG_GAMECONTROLLER_HPP
 #define CONFIG_GAMECONTROLLER_HPP
 
-#include "config/teams.hpp"
+#include <algorithm>                 // for std::equal
+#include <exception>                 // for std::terminate
+#include <iterator>                  // for std::__1::begin, std::__1::end
 
-#include <algorithm>
+#include "config/teams.hpp"          // for config::gamecontroller::team::name
 
 #if DEBUG
-#include <bitset>
+#include <bitset>                    // for std::bitset
+#include <ostream>                   // for std::__1::operator<<, std::string, std::basic_ostream, std::ostream
+#include <string>                    // for std::allocator, std::char_traits, std::operator+, std::to_string
 #endif
 
 namespace spl {
@@ -14,7 +18,8 @@ namespace spl {
 #define RoboCupGameControlReturnData GameControlReturnData
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Weverything" // Ignore any errors from SPL code
-#include <RoboCupGameControlData.h> // check compilation args: -isystem so clang-tidy will stfu
+#include <RoboCupGameControlData.h>  // for spl::TeamInfo, spl::RobotInfo, COMPETITION_PHASE_PLAYOFF, COMPETITION_PHASE_ROUNDROBIN, COMPETITION_TYPE_7V7, COMPETITION_TYPE_CHALLENGE_SHIELD, COMPETITION_TYPE_DYNAMIC_BALL_HANDLING, COMPETITION_TYPE_NORMAL, GAME_PHASE_NORMAL, GAME_PHASE_OVERTIME, GAME_PHASE_PENALTYSHOOT, GAME_PHASE_TIMEOUT, MAX_NUM_PLAYERS, PENALTY_MANUAL, PENALTY_NONE, PENALTY_SPL_ILLEGAL_BALL_CONTACT, PENALTY_SPL_ILLEGAL_MOTION_IN_SET, PENALTY_SPL_ILLEGAL_POSITION, PENALTY_SPL_ILLEGAL_POSITION_IN_SET, PENALTY_SPL_INACTIVE_PLAYER, PENALTY_SPL_LEAVING_THE_FIELD, PENALTY_SPL_LOCAL_GAME_STUCK, PENALTY_SPL_PLAYER_PUSHING, PENALTY_SPL_REQUEST_FOR_PICKUP, PENALTY_SUBSTITUTE, SET_PLAY_CORNER_KICK, SET_PLAY_GOAL_KICK, SET_PLAY_KICK_IN, SET_PLAY_NONE, SET_PLAY_PENALTY_KICK, SET_PLAY_PUSHING_FREE_KICK, STATE_FINISHED, STATE_INITIAL, STATE_PLAYING, STATE_READY, STATE_SET, TEAM_BLACK, TEAM_BLUE, TEAM_BROWN, TEAM_GRAY, TEAM_GREEN, TEAM_ORANGE, TEAM_PURPLE, TEAM_RED, TEAM_WHITE, TEAM_YELLOW
+
 #pragma clang diagnostic pop
 #undef RoboCupGameControlReturnData
 #undef RoboCupGameControlData

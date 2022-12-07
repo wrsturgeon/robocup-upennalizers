@@ -1,21 +1,23 @@
 #ifndef CONTEXT_LOOP_HPP
 #define CONTEXT_LOOP_HPP
 
-#include "messaging/io.hpp"
-#include "schopenhauer/resolve.hpp"
+#include <algorithm>                        // for std::copy_n
+#include <exception>                        // for std::exception
+#include <fixed-string>                     // for fixed::String
+#include <utility>                          // for std::move
 
-#include "context/variables.hpp"
-
-#include "concurrency/jthread.hpp"
-#include "concurrency/thread-priority.hpp"
-
-#include "config/gamecontroller.hpp"
-
-#include <cstddef>  // std::size_t
-#include <iostream> // std::cerr
+#include "concurrency/jthread.hpp"          // for concurrency::we_have_std_jthread_at_home
+#include "concurrency/thread-priority.hpp"  // for concurrency::min_priority, concurrency::prioritize
+#include "config/gamecontroller.hpp"        // for spl::GameControlData
+#include "config/ip.hpp"                    // for config::ip::address, config::ip::port::from, config::ip::port::to
+#include "config/packet.hpp"                // for config::packet::gc::from::header, config::packet::gc::from::version
+#include "context/variables.hpp"            // for context::game_over, context::parse
+#include "messaging/io.hpp"                 // for msg::recv_from_gc, msg::send_to_gc
+#include "schopenhauer/resolve.hpp"         // for schopenhauer::resolve
 
 extern "C" {
-#include <pthread.h> // pthread_self
+#include <pthread.h>                        // for pthread_self
+#include <string.h>                         // for strncmp
 }
 
 namespace context {

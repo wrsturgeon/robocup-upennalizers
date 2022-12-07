@@ -1,16 +1,13 @@
 #ifndef UTIL_IP_HPP
 #define UTIL_IP_HPP
 
-#include <algorithm>    // std::fill_n
-
-#if DEBUG
-#include <string>       // std::string
-#endif // DEBUG
+#include <algorithm>                // for std::fill_n
 
 extern "C" {
-#include <arpa/inet.h>  // inet_pton
-#include <netinet/in.h> // sockaddr_in
-#include <sys/types.h>  // in_addr_t
+#include <arpa/inet.h>              // for inet_pton, htons
+#include <netinet/in.h>             // for sockaddr_in, in_addr
+#include <sys/_types/_in_addr_t.h>  // for in_addr_t
+#include <sys/socket.h>             // for AF_INET
 }
 
 namespace util {

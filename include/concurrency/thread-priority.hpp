@@ -3,13 +3,13 @@
 
 // Not anywhere in the C++ standard since describing its portable behavior would be a nightmare (thanks, Windows!)
 
-#include "concurrency/jthread.hpp"
+#include <fixed-string>             // for fixed::String
 
-#include <fixed-string>
+#include "concurrency/jthread.hpp"  // for concurrency::we_have_std_jthread_at_home
 
 extern "C" {
-#include <pthread.h> // pthread_setschedparam, pthread_self, ...
-#include <sched.h>   // sched_param, sched_yield, SCHED_RR, ...
+#include <pthread.h>                // for SCHED_RR, pthread_setschedparam, pthread_t
+#include <sched.h>                  // for sched_get_priority_max, sched_get_priority_min, sched_yield, sched_param
 }
 
 namespace concurrency {

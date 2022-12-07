@@ -1,13 +1,12 @@
 #ifndef CONFIG_IP_HPP
 #define CONFIG_IP_HPP
 
-#include "config/gamecontroller.hpp"
+#include <concepts>                   // for std::same_as
+#include <fixed-string>               // for fixed::operator+, fixed::String, fixed::itoa
 
-#include "util/ip.hpp"
-
-#include <fixed-string>
-
-#include <concepts> // std::same_as
+#include "config/gamecontroller.hpp"  // for GAMECONTROLLER_DATA_PORT, GAMECONTROLLER_RETURN_PORT
+#include "config/player-number.hpp"   // for config::player::number
+#include "config/teams.hpp"           // for config::gamecontroller::team::upenn
 
 namespace config {
 namespace ip {

@@ -1,12 +1,15 @@
 [submodule "lua"]
-	path = include/ext/lua
+	path = ext/lua
 	url = https://github.com/lua/lua.git
 [submodule "GameController"]
-	path = include/ext/GameController
+	path = ext/GameController
 	url = https://github.com/RoboCup-SPL/GameController.git
 [submodule "legacy"]
-	path = include/ext/legacy
+	path = ext/legacy
 	url = https://github.com/wrsturgeon/robocup-legacy.git
 [submodule "fixed-string"]
-	path = include/ext/fixed-string
+	path = ext/fixed-string
 	url = https://github.com/wrsturgeon/fixed-string.git
+[submodule "iwyu"]
+	path = ext/iwyu
+	url = https://github.com/include-what-you-use/include-what-you-use.git

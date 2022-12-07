@@ -1,12 +1,9 @@
 #ifndef FSM_TYPES_HPP
 #define FSM_TYPES_HPP
 
-#include "concurrency/threadable.hpp"
-
-#include <fixed-string>
-
-#include <tuple>
-#include <type_traits>
+#include <atomic>        // for std::memory_order_relaxed, std::atomic
+#include <concepts>      // for std::same_as
+#include <fixed-string>  // for fixed::String
 
 namespace fsm {
 

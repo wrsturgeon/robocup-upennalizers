@@ -4,20 +4,16 @@
 // Parse the GameController's source code at compile time
 // specifically, ext/GameController/resources/config/spl/teams.cfg
 
-#include "xxd/gc_team_cfg.hpp"
+#include <algorithm>            // for std::min, std::copy_n
+#include <array>                // for std::array
+#include <cstddef>              // for std::size_t, size_t
 
-#include "util/cxstr.hpp"
-
-#include <algorithm>   // std::copy_n, std::min
-#include <array>       // std::array
-#include <cassert>     // assert
-#include <cstddef>     // std::size_t
-#include <iostream>    // std::cerr
-#include <utility>     // std::pair
-#include <vector>      // std::vector
+#include "util/cxstr.hpp"       // for cx::strchr, cx::strchrrev, cx::unsigned_atoi, cx::substreq
+#include "xxd/gc_team_cfg.hpp"  // for xxd::gc_team_cfg
 
 extern "C" {
-#include <sys/types.h> // ssize_t
+#include <assert.h>             // for assert
+#include <sys/types.h>          // for ssize_t, size_t
 }
 
 namespace config {

@@ -1,8 +1,8 @@
 #ifndef CONFIG_PACKET_HPP
 #define CONFIG_PACKET_HPP
 
-#include "config/gamecontroller.hpp"
-#include "config/spl-message.hpp"
+#include "config/gamecontroller.hpp"  // for GAMECONTROLLER_RETURN_STRUCT_HEADER, GAMECONTROLLER_RETURN_STRUCT_VERSION, GAMECONTROLLER_STRUCT_HEADER, GAMECONTROLLER_STRUCT_VERSION
+#include "config/spl-message.hpp"     // for SPL_STANDARD_MESSAGE_DATA_SIZE, SPL_STANDARD_MESSAGE_STRUCT_HEADER, SPL_STANDARD_MESSAGE_STRUCT_VERSION
 
 namespace config {
 namespace packet {

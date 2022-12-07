@@ -1,23 +1,18 @@
 #ifndef MESSAGING_SOCKET_HPP
 #define MESSAGING_SOCKET_HPP
 
-#include "util/ip.hpp"
+#include "util/ip.hpp"              // for util::ip::make_sockaddr_in
 
 extern "C" {
-#include <arpa/inet.h>  // inet_pton
-#include <fcntl.h>      // fcntl, O_NONBLOCK
-#include <netinet/in.h> // sockaddr_in
-#include <sys/socket.h> // socket
-#include <sys/types.h>  // in_addr_t
-#include <unistd.h>     // close
+#include <netinet/in.h>             // for sockaddr_in, INADDR_ANY, IPPROTO_UDP
+#include <sys/_types/_in_addr_t.h>  // for in_addr_t
+#include <sys/fcntl.h>              // for fcntl, F_SETFL, O_NONBLOCK
+#include <sys/socket.h>             // for setsockopt, socket, SOL_SOCKET, bind, connect, recvfrom, send, sockaddr, socklen_t, AF_INET, SOCK_DGRAM, SO_BROADCAST, SO_REUSEADDR, SO_REUSEPORT
+#include <unistd.h>                 // for close
 }
 
-#include <algorithm>   // std::fill_n
-#include <cerrno>      // errno
-#include <cstddef>     // std::ssize_t
-#include <iostream>    // std::cerr
-#include <optional>    // std::optional
-#include <type_traits> // std::decay_t
+#include <optional>                 // for std::optional, std::make_optional, std::nullopt
+#include <type_traits>              // for std::decay_t
 
 namespace msg {
 

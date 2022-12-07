@@ -1,12 +1,5 @@
-// note that prologue.hpp is automatically prepended here
-
-#include "fsm/body.hpp"
-
-#include "context/loop.hpp"
-
-extern "C" {
-#include <sys/resource.h> // setpriority
-}
+#include "context/loop.hpp"  // for context::loop::victor_frankenstein
+#include <sys/resource.h>    // for setpriority, PRIO_PROCESS
 
 int
 main()
