@@ -10,9 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: prereqs
-      run: sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+      run: sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)" && export CC=$(which clang) && export CXX=$(which clang++)
     - name: check
-      run: ls /usr/lib/llvm-15/lib && ./check
+      run: ./check
     - name: debug-build
       run: ./compile --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d\  -f2)
     - name: release-build
