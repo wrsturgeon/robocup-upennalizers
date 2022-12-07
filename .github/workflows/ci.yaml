@@ -11,7 +11,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: checks
       run: |
-        sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
         sudo apt-get update
         sudo apt-get install -y llvm-14 libclang-14-dev
         export CC=$(which clang) && export CXX=$(which clang++)
