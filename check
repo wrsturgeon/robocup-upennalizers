@@ -2,20 +2,34 @@
 
 set -eu
 
-if [ ${#} -gt 1 ]; then
-  echo "Usage: ${0} [--fix]" >&2
-  exit 1
+if [ ${#} -gt 2 ]; then
+    echo "Usage: ${0} --[no]fix [--clang-version=...]" >&2
+    exit 1
 fi
 
-if [ ${#} -eq 1 ]; then
-  if [ ${1} = "--fix" ]; then
-    FIX=1
-  else
-    echo "Unrecognized argument ${1}" >&2
-    usage
-  fi
+if [ ${#} -gt 0 ]; then
+    if [ ${1} = "--fix" ]; then
+        FIX=1
+    elif [ ${1} = "--nofix" ]; then
+        FIX=0
+    else
+        echo "Unrecognized argument ${1}" >&2
+        usage
+    fi
+    if [ ${#} -gt 1 ]; then
+        if [ $(echo ${2} | cut -d= -f1) = "--clang-version" ]; then
+            CLANG_VERSION=$(echo ${2} | cut -d= -f2)
+        else
+            echo "Unrecognized argument ${2}" >&2
+            usage
+        fi
+        if [ ${#} -gt 2 ]; then usage; fi
+    else
+        CLANG_VERSION=0
+    fi
 else
-  FIX=0
+    FIX=0
+    CLANG_VERSION=0
 fi
 
 # make sure we're in .../robocup-upennalizers
@@ -30,6 +44,9 @@ git submodule update --init --recursive --remote > /dev/null 2>&1 || echo "  Cou
 
 echo "Building IWYU..."
 cd ext/iwyu
+if [ ${CLANG_VERSION} -ne 0 ]; then
+    git checkout "clang_${CLANG_VERSION}"
+fi
 if [ ! -d build ]; then
     mkdir build
     cd build
