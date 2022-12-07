@@ -13,10 +13,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y llvm-14 llvm-14-dev llvm-14-runtime llvm-14-tools clang-14 libclang-14-dev
-        cd ext/iwyu
-        git fetch --all
-        git checkout clang_14
-        cd ../..
+        git submodule set-branch --branch clang_14 -- ext/iwyu
+        git submodule update --init --recursive
         ./check
         ./compile --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d\  -f2)
         ./compile --release --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d\  -f2)
