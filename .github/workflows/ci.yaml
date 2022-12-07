@@ -13,7 +13,7 @@ jobs:
       run: |
         sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
         sudo apt-get update
-        sudo apt-get install -y libc++abi-dev llvm clang libclang-dev libclang-cpp-dev
+        sudo apt-get install -y llvm-14 libclang-14-dev
         export CC=$(which clang) && export CXX=$(which clang++)
         ./check
         ./compile --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d\  -f2)
