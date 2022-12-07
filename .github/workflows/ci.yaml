@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: prereqs
+      run: sh -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
     - name: check
       run: ./check
     - name: debug-build
