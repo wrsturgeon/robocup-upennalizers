@@ -51,7 +51,7 @@ if [ ! -d build ]; then
         git fetch --all
         git checkout clang_${CLANG_VERSION}
         git pull origin clang_${CLANG_VERSION}
-        cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DLLVM_VERSION=${CLANG_VERSION} ..
+        cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/lib/llvm-${CLANG_VERSION} ..
     else
         cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
     fi
