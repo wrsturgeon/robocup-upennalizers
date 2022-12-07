@@ -10,8 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: checks
-    - run: sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
-    - run: export CC=$(which clang) && export CXX=$(which clang++)
-    - run: ./check
-    - run: ./compile --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d\  -f2)
-    - run: ./compile --release --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d\  -f2)
+      run: |
+        sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+        export CC=$(which clang) && export CXX=$(which clang++)
+        ./check
+        ./compile --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d\  -f2)
+        ./compile --release --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d\  -f2)
