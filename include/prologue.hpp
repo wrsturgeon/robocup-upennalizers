@@ -1,3 +1,5 @@
+// IWYU pragma: private
+
 #ifndef PROLOGUE_HPP
 #define PROLOGUE_HPP
 

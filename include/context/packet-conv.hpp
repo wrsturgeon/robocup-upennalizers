@@ -1,8 +1,12 @@
 #ifndef CONTEXT_PACKET_CONV_HPP
 #define CONTEXT_PACKET_CONV_HPP
 
-#include "config/packet.hpp"
-#include "config/player-number.hpp"
+#include <algorithm>                  // for std::fill_n, std::copy_n
+
+#include "config/gamecontroller.hpp"  // for spl::GameControlReturnData
+#include "config/packet.hpp"          // for config::packet::gc::to::header, config::packet::gc::to::version
+#include "config/player-number.hpp"   // for config::player::number
+#include "config/teams.hpp"           // for config::gamecontroller::team::upenn
 
 namespace context {
 

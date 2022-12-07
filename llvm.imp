@@ -1,0 +1,13 @@
+# Include-what-you-use file bindings for clang, not gcc
+[
+  {
+    # There must be a better way to do this shit ("@<$1>" doesn't work)
+    include: ["@<__algorithm/.*>", "private", "<algorithm>", "public"],
+    include: ["@<__concepts/.*>", "private", "<concepts>", "public"],
+    include: ["@<__functional/.*>", "private", "<functional>", "public"],
+    include: ["@<__iterator/.*>", "private", "<iterator>", "public"],
+    include: ["@<__type_traits/.*>", "private", "<type_traits>", "public"],
+    include: ["@<__utility/.*>", "private", "<utility>", "public"],
+    include: ["@<.*pthread/.*>", "private", "<pthread.h>", "public"],
+  }
+]

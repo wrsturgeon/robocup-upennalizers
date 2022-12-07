@@ -1,7 +1,7 @@
 #ifndef SCHOPENHAUER_RESOLVE_HPP
 #define SCHOPENHAUER_RESOLVE_HPP
 
-#include "context/variables.hpp"
+#include <iostream>  // for std::__1::operator<<, std::cout, std::ostream
 
 namespace schopenhauer {
 

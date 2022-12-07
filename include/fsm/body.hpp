@@ -3,7 +3,10 @@
 
 // See legacy/Player/BodyFSM/BodyFSM.lua
 
-#include "fsm/register.hpp"
+#include <fixed-string>      // for fixed::String
+
+#include "fsm/register.hpp"  // for TRANSITION, REGISTER_FSM_TRANSITION_EVENT, fsm::internal::make_tuple, REGISTER_FSM_EVENTS, REGISTER_FSM_STATES, VERIFY_FSM_REGISTRATION
+#include "fsm/types.hpp"     // IWYU pragma: keep
 
 REGISTER_FSM_EVENTS(Body,
   "coach",

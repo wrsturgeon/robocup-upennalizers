@@ -1,9 +1,15 @@
 #ifndef CONTEXT_VARIABLES_HPP
 #define CONTEXT_VARIABLES_HPP
 
-#include <algorithm> // std::copy_n
-#include <atomic>    // std::atomic
-#include <cassert>   // assert
+#include <atomic>                     // for std::atomic, std::memory_order_relaxed
+#include <cassert>                    // for assert
+#include <string>                     // for std::basic_string, std::operator+, std::to_string, std::allocator, std::char_traits
+#include <type_traits>                // for std::decay_t, std::is_same_v
+#include <utility>                    // for std::move
+
+#include "config/gamecontroller.hpp"  // for spl::GameControlData, spl::TeamInfo, config::gamecontroller::competition::phase::t, config::gamecontroller::competition::type::t, config::gamecontroller::game::phase::t, config::gamecontroller::set_play::t, config::gamecontroller::state::t, spl::operator==, config::gamecontroller::competition::phase::print, config::gamecontroller::competition::type::print, config::gamecontroller::game::phase::print, config::gamecontroller::set_play::print, config::gamecontroller::state::print, config::gamecontroller::color::blue, config::gamecontroller::competition::phase::playoff, config::gamecontroller::competition::type::normal, config::gamecontroller::game::phase::normal, config::gamecontroller::set_play::none, config::gamecontroller::state::finished, config::gamecontroller::state::initial
+#include "config/player-number.hpp"   // for config::player::per_team
+#include "config/teams.hpp"           // for config::gamecontroller::team::name
 
 namespace context {
 
@@ -30,9 +36,6 @@ namespace context {
   {                                                          \
     return internal::NAME().load(std::memory_order_relaxed); \
   }
-
-#if DEBUG
-#endif // DEBUG
 ATOMIC_VAR(competition_phase, config::gamecontroller::competition::phase::t, config::gamecontroller::competition::phase::playoff) // better safe than sorry ig
 ATOMIC_VAR(competition_type, config::gamecontroller::competition::type::t, config::gamecontroller::competition::type::normal)
 ATOMIC_VAR(game_phase, config::gamecontroller::game::phase::t, config::gamecontroller::game::phase::normal)
@@ -44,8 +47,6 @@ ATOMIC_VAR(secs_remaining, i16, -1)
 ATOMIC_VAR(secondary_time, i16, 0)
 ATOMIC_VAR(team1, spl::TeamInfo, {})
 ATOMIC_VAR(team2, spl::TeamInfo, {})
-#if DEBUG
-#endif // DEBUG
 #undef ATOMIC_VAR
 
 impure static

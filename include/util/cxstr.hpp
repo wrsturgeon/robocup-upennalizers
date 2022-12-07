@@ -1,10 +1,13 @@
 #ifndef UTIL_CXSTR_HPP
 #define UTIL_CXSTR_HPP
 
-#include <array>       // std::array
-#include <cassert>     // assert
-#include <cstddef>     // std::size_t
-#include <sys/types.h> // ssize_t
+#include <array>         // for std::array
+#include <cassert>       // for assert
+#include <cstddef>       // for size_t, std::size_t
+
+extern "C" {
+#include <sys/types.h>   // for ssize_t
+}
 
 namespace cx {
 

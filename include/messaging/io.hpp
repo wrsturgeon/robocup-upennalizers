@@ -3,12 +3,15 @@
 
 // See legacy/Lib/Platform/NaoV4/GameControl/lua_GameControlReceiver.cc
 
-#include "concurrency/thread-priority.hpp"
-#include "messaging/socket.hpp"
+#include <fixed-string>                     // for fixed::String
+#include <optional>                         // for std::optional
 
-#include "context/packet-conv.hpp"
-
-#include "config/ip.hpp"
+#include "concurrency/thread-priority.hpp"  // for concurrency::yield
+#include "config/gamecontroller.hpp"        // for spl::GameControlData, spl::GameControlReturnData
+#include "config/ip.hpp"                    // for config::ip::address, config::ip::port::from, config::ip::port::to
+#include "context/packet-conv.hpp"          // for context::make_gc_message
+#include "messaging/socket.hpp"             // for msg::direction, msg::mode, msg::Socket
+#include "util/ip.hpp"                      // for util::ip::address_from_string
 
 namespace msg {
 
@@ -19,7 +22,7 @@ noexcept {
   static msg::Socket<msg::direction::incoming, msg::mode::unicast> const s{
         util::ip::address_from_string(config::ip::address<"GameController">),
         config::ip::port::from<"GameController">};
-  std::optional<spl::GameControlData> received{uninitialized<spl::GameControlData>()};
+  std::optional<spl::GameControlData> received{uninitialized<std::optional<spl::GameControlData>>()};
   while (not (received = s.recv<spl::GameControlData>())) { concurrency::yield(); }
   return *received;
 }
