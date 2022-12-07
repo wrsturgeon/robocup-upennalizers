@@ -12,7 +12,7 @@ jobs:
     - name: checks
       run: |
         sudo apt-get update
-        sudo apt-get install -y libclang-14-dev
+        sudo apt-get install -y llvm-14 llvm-14-dev llvm-14-runtime llvm-14-tools clang-14 libclang-14-dev
         git submodule set-branch -b clang_14 -- ext/iwyu
         ./check
         ./compile --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d\  -f2)
