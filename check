@@ -45,7 +45,9 @@ git submodule update --init --recursive --remote > /dev/null 2>&1 || echo "  Cou
 echo "Building IWYU..."
 cd ext/iwyu
 if [ ${CLANG_VERSION} -ne 0 ]; then
-    git checkout "clang_${CLANG_VERSION}"
+    git fetch --all
+    git checkout clang_${CLANG_VERSION}
+    git pull
 fi
 if [ ! -d build ]; then
     mkdir build
