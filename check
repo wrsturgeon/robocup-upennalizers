@@ -29,13 +29,11 @@ echo "Updating submodules..."
 git submodule update --init --recursive --remote > /dev/null 2>&1 || echo "  Couldn't; maybe no Internet? Proceeding..."
 
 echo "Building IWYU..."
-LLVMLIBDIR=$(llvm-config --libdir)
 cd ext/iwyu
 if [ ! -d build ]; then
     mkdir build
     cd build
-    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=${LLVMLIBDIR} ..
-    ln -s ${LLVMLIBDIR} ./lib
+    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
     make
 else
     cd build
