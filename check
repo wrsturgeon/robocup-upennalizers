@@ -82,16 +82,16 @@ for i in $(find ./include -name '*.*pp' ! -name 'prologue.hpp'); do
     -Xiwyu --update_comments \
     -Xiwyu --verbose=3 \
     ${SYSTEM_INCLUDES} \
-    ${MACROS} -DDEBUG ${COMMON} ${i} 2>&1 | grep -v 'prologue.hpp' > /tmp/iwyu.out
-    RETVAL=${?}
+    ${MACROS} -DDEBUG ${COMMON} ${i} 2>/tmp/iwyu.out
+    cat /tmp/iwyu.out
     set -e # now go back to exiting on failure
-    if [ ! -z "$(cat /tmp/iwyu.out | grep -v 'note: used here.' | sed -n '/^$/q;p')" ]; then
+    if [ ! -z "$(cat /tmp/iwyu.out | grep -v 'prologue.hpp' | grep -v 'note: used here.' | sed -n '/^$/q;p')" ]; then
         echo "\033[0;31m$(cat /tmp/iwyu.out)\033[0m" >&2
         if [ ${FIX} -eq 0 ]; then exit 1; fi
     fi
-    if [ ${RETVAL} -ne 0 ]; then exit 1; fi
     if [ ${FIX} -eq 1 ]; then
         echo "  Fixing..."
+        echo /tmp/iwyu.out | grep -v 'prologue.hpp' > /tmp/iwyu.out
         python ext/iwyu/fix_includes.py --blank_lines --comments --update_comments --nosafe_headers --reorder --separate_project_includes=$(pwd) < /tmp/iwyu.out > /dev/null
     fi
     # LAST_QUOTE_INCLUDE_LINE=$(grep -n '#include "' ${i} | tail -n 1 | cut -d: -f1)
