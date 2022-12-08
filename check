@@ -1,0 +1,106 @@
+#!/bin/sh
+
+set -eu
+
+if [ ${#} -gt 2 ]; then
+    echo "Usage: ${0} --[no]fix [--clang-version=...]" >&2
+    exit 1
+fi
+
+if [ ${#} -gt 0 ]; then
+    if [ ${1} = "--fix" ]; then
+        FIX=1
+    elif [ ${1} = "--nofix" ]; then
+        FIX=0
+    else
+        echo "Unrecognized argument ${1}" >&2
+        usage
+    fi
+    if [ ${#} -gt 1 ]; then
+        if [ $(echo ${2} | cut -d= -f1) = "--clang-version" ]; then
+            CLANG_VERSION=$(echo ${2} | cut -d= -f2)
+        else
+            echo "Unrecognized argument ${2}" >&2
+            usage
+        fi
+        if [ ${#} -gt 2 ]; then usage; fi
+    else
+        CLANG_VERSION=0
+    fi
+else
+    FIX=0
+    CLANG_VERSION=0
+fi
+
+# make sure we're in .../robocup-upennalizers
+if [ $(pwd | rev | cut -d '/' -f1) != "srezilannepu-pucobor" ]; then
+    echo "Please run this script from the main project directory (.../robocup-upennalizers)" >&2
+    exit 1
+fi
+
+# Get latest submodule commits
+echo "Updating submodules..."
+git submodule update --init --recursive --remote > /dev/null 2>&1 || echo "  Couldn't; maybe no Internet? Proceeding..."
+
+echo "Building IWYU..."
+cd ext/iwyu
+if [ ! -d build ]; then
+    mkdir build
+    cd build
+    if [ ${CLANG_VERSION} -ne 0 ]; then
+        git fetch --all
+        git checkout clang_${CLANG_VERSION}
+        CMAKE_FLAGS="-DCMAKE_PREFIX_PATH=/usr/lib/llvm-${CLANG_VERSION}"
+    else CMAKE_FLAGS=""; fi
+    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ${CMAKE_FLAGS} ..
+    make
+else
+    cd build
+    make > /dev/null 2>&1 || make
+fi
+cd ../../.. # all the way back out
+
+set -- --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127\.0\.0\.1' | head -n 1 | cut -d 't' -f 2 | cut -d ' ' -f 2) # Pass on arguments
+. ./flags
+
+echo "Running dependency graph analysis..."
+SYSTEM_INCLUDES=$(clang++ -v -E -x c++ /dev/null 2>&1 | sed -n '/#include <...> search starts here:/,/End of search list./p' | sed '1d;$d' | sed 's/^ *//g' | sed 's/ *$//g' | sed 's/ / -isystem /g' | sed 's/^/-isystem /g')
+if [ ${CLANG_VERSION} -eq 0 ]; then IWYU_COMMENT_ARG="-Xiwyu --comment_style=long"; else IWYU_COMMENT_ARG=""; fi
+for i in $(find ./include -name '*.*pp' ! -name 'prologue.hpp'); do
+    echo ${i}
+    set +e # don't immediately exit if the next command fails
+    ext/iwyu/build/bin/include-what-you-use \
+    ${IWYU_COMMENT_ARG} \
+    -Xiwyu --cxx17ns \
+    -Xiwyu --error=1 \
+    -Xiwyu --mapping_file=llvm.imp \
+    -Xiwyu --max_line_length=999 \
+    -Xiwyu --no_fwd_decls \
+    -Xiwyu --prefix_header_includes=add \
+    -Xiwyu --quoted_includes_first \
+    -Xiwyu --update_comments \
+    -Xiwyu --verbose=3 \
+    ${SYSTEM_INCLUDES} \
+    ${MACROS} -DDEBUG ${COMMON} ${i} 2>/tmp/iwyu.out
+    set -e # now go back to exiting on failure
+    if [ ! -z "$(cat /tmp/iwyu.out | grep -v 'prologue.hpp' | grep -v 'note: used here.' | sed -n '/^$/q;p')" ]; then
+        echo "\033[0;31m$(cat /tmp/iwyu.out | grep -v '#include "prologue.hpp"')\033[0m" >&2
+        if [ ${FIX} -eq 0 ]; then exit 1; fi
+    fi
+    if [ ${FIX} -eq 1 ]; then
+        echo "  Fixing..."
+        echo /tmp/iwyu.out | grep -v 'prologue.hpp' > /tmp/iwyu.out
+        python ext/iwyu/fix_includes.py --blank_lines --comments --update_comments --nosafe_headers --reorder --separate_project_includes=$(pwd) < /tmp/iwyu.out > /dev/null
+    fi
+    # LAST_QUOTE_INCLUDE_LINE=$(grep -n '#include "' ${i} | tail -n 1 | cut -d: -f1)
+    # FRST_ANGLE_INCLUDE_LINE=$(grep -n '#include <' ${i} | head -n 1 | cut -d: -f1)
+    # if [ -n "${LAST_QUOTE_INCLUDE_LINE}" ] && [ -n "${FRST_ANGLE_INCLUDE_LINE}" ] && [ ${LAST_QUOTE_INCLUDE_LINE} -gt ${FRST_ANGLE_INCLUDE_LINE} ]; then
+    #     echo "  ERROR: #include \"\"s after #include <>s (${i}:${LAST_QUOTE_INCLUDE_LINE} vs. ${i}:${FRST_ANGLE_INCLUDE_LINE})"
+    #     exit 1
+    # fi
+done
+
+echo "Running static analysis..."
+clang-tidy start.cpp --quiet -- -DCLANG_TIDY -DDEBUG -UNDEBUG ${MACROS} ${COMMON} ${WARNINGS}
+
+echo "All checks passed!"
