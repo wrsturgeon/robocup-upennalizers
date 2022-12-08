@@ -62,7 +62,7 @@ else
 fi
 cd ../../.. # all the way back out
 
-source flags --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d\  -f2)
+. flags --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d\  -f2)
 
 echo "Running dependency graph analysis..."
 SYSTEM_INCLUDES=$(clang++ -v -E -x c++ /dev/null 2>&1 | sed -n '/#include <...> search starts here:/,/End of search list./p' | sed '1d;$d' | sed 's/^ *//g' | sed 's/ *$//g' | sed 's/ / -isystem /g' | sed 's/^/-isystem /g')
