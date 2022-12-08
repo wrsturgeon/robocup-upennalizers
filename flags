@@ -51,6 +51,11 @@ WARNINGS="-Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat 
 DEBUG_FLAGS="-Os -fno-omit-frame-pointer -g3 -ffunction-sections -fdata-sections -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"
 RELEASE_FLAGS="-O3 -fomit-frame-pointer -fno-exceptions -fshort-enums -mtune=native -mllvm -polly -mllvm -polly-vectorizer=stripmine -DFS_NOASSERT -DFS_DISABLE_IO -DFP_NOSTR"
 
+set +e
+clang++ include/portability/atomic-test.cpp
+if [ ${?} -ne 0 ]; then MACROS="${MACROS} -latomic"; fi # fucking GNU (thanks for all the free software tho)
+set -e
+
 if [ ${DEBUG} -eq 1 ]; then
     FLAGS=${DEBUG_FLAGS}
     MACROS="${MACROS} -DDEBUG=1"
