@@ -1,7 +1,9 @@
-// IWYU pragma: private
-
 #ifndef PROLOGUE_HPP
 #define PROLOGUE_HPP
+
+// IWYU pragma: private
+
+#define _GNU_SOURCE 0
 
 //%%%%%%%%%%%%%%%% Lua
 // extern "C" {

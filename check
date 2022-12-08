@@ -83,7 +83,6 @@ for i in $(find ./include -name '*.*pp' ! -name 'prologue.hpp'); do
     -Xiwyu --verbose=3 \
     ${SYSTEM_INCLUDES} \
     ${MACROS} -DDEBUG ${COMMON} ${i} 2>/tmp/iwyu.out
-    cat /tmp/iwyu.out
     set -e # now go back to exiting on failure
     if [ ! -z "$(cat /tmp/iwyu.out | grep -v 'prologue.hpp' | grep -v 'note: used here.' | sed -n '/^$/q;p')" ]; then
         echo "\033[0;31m$(cat /tmp/iwyu.out)\033[0m" >&2
