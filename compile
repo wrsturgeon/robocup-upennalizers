@@ -2,7 +2,7 @@
 
 set -eu
 
-. ./flags ${@:1}
+. ./flags
 
 # "Include" GameController source code as a C header with `xxd`
 mkdir -p include/xxd
