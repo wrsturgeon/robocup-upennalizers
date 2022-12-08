@@ -100,7 +100,6 @@ for i in $(find ./include -name '*.*pp' ! -name 'prologue.hpp'); do
 done
 
 echo "Running static analysis..."
-clang-tidy --verify-config > /dev/null 2>&1 || clang-tidy --verify-config
 clang-tidy start.cpp --quiet -- -DCLANG_TIDY -DDEBUG -UNDEBUG ${MACROS} ${COMMON} ${WARNINGS}
 
 echo "All checks passed!"
