@@ -10,7 +10,7 @@ usage() {
 if [ ${#} -lt 2 ]; then
     usage
 elif [ ${#} -lt 3 ]; then
-    echo "Note: your IP address is $(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | head -n1 | cut -dt -f2 | cut -d' '  -f2)"
+    echo "Note: your IP address is $(ifconfig | grep 'inet ' | grep -v '127\.0\.0\.1' | head -n 1 | cut -d t -f 2 | cut -d ' ' -f 2)"
     usage
 fi
 

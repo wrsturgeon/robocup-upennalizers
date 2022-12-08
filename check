@@ -61,11 +61,7 @@ fi
 cd ../../.. # all the way back out
 
 # for some reason piping these all together gets confused
-IP=$(ifconfig | grep 'inet')
-IP=$(echo ${IP} | grep -v '127.0.0.1')
-IP=$(echo ${IP} | cut -dt -f2)
-IP=$(echo ${IP} | cut -d' ' -f2)
-set -- --debug --player2 --gc${IP} # Pass on arguments
+set -- --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127\.0\.0\.1' | head -n 1 | cut -d t -f 2 | cut -d ' ' -f 2) # Pass on arguments
 . ./flags
 
 echo "Running dependency graph analysis..."
