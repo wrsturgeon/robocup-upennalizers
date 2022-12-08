@@ -137,6 +137,7 @@ Checks: '*,
   -readability-*,
 
   -altera-id-dependent-backward-branch,
+  -altera-struct-pack-align,
   -altera-unroll-loops,
   -bugprone-easily-swappable-parameters,
   -bugprone-infinite-loop,
