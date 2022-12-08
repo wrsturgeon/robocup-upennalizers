@@ -46,10 +46,17 @@ fi
 mkdir -p bin
 EXECNAME=start # $(basename ${1} | cut -d. -f1)
 MACROS="-DPLAYER=${PLAYER} -DGAMECONTROLLER_IP=${GAMECONTROLLER_IP} -DSYSTEM_BITS=32 -DLUA_32BITS"
-COMMON="-std=c++2b -stdlib=libc++ -I ./include -include ./include/prologue.hpp -isystem ./ext/fixed-string/include -isystem ./ext/GameController/examples/c -isystem ./ext/lua -ffast-math -ftemplate-backtrace-limit=0 -march=native"
+COMMON="-std=c++2b -I ./include -include ./include/prologue.hpp -isystem ./ext/fixed-string/include -isystem ./ext/GameController/examples/c -isystem ./ext/lua -ffast-math -ftemplate-backtrace-limit=0 -march=native"
 WARNINGS="-Wall -Wextra -Weverything -Werror -pedantic-errors -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-padded -Wno-sign-conversion -Wno-exit-time-destructors -Wno-global-constructors"
 DEBUG_FLAGS="-Os -fno-omit-frame-pointer -g3 -ffunction-sections -fdata-sections -ftrapv -fstack-check -fno-optimize-sibling-calls -fno-common" #-fsanitize=address -fsanitize-address-use-after-scope -fsanitize-address-use-after-return=always"
 RELEASE_FLAGS="-O3 -fomit-frame-pointer -fno-exceptions -fshort-enums -mtune=native -mllvm -polly -mllvm -polly-vectorizer=stripmine -DFS_NOASSERT -DFS_DISABLE_IO -DFP_NOSTR"
+
+set +e
+echo "int main() {}" | clang++ -x c++ -latomic - -o /dev/null 2> /dev/null
+if [ ${?} -eq 0 ]; then
+    COMMON="${COMMON} -latomic"
+fi
+set -e
 
 if [ ${DEBUG} -eq 1 ]; then
     FLAGS=${DEBUG_FLAGS}
