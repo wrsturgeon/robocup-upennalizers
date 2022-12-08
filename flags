@@ -3,7 +3,7 @@
 set -eu
 
 usage() {
-    echo "Usage: ${0} [--release/--debug] --player[#] --gc[GameController IP] [optional: extra compiler arguments...]" >&2
+    echo "Usage: ${0} [--release/--debug] --player[#] --gc[GameController IP]" >&2
     exit 1
 }
 
