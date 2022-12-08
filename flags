@@ -52,8 +52,10 @@ DEBUG_FLAGS="-Os -fno-omit-frame-pointer -g3 -ffunction-sections -fdata-sections
 RELEASE_FLAGS="-O3 -fomit-frame-pointer -fno-exceptions -fshort-enums -mtune=native -mllvm -polly -mllvm -polly-vectorizer=stripmine -DFS_NOASSERT -DFS_DISABLE_IO -DFP_NOSTR"
 
 set +e
+set -x
 clang++ include/portability/atomic-test.cpp
-if [ ${?} -ne 0 ]; then MACROS="${MACROS} -latomic"; fi # fucking GNU (thanks for all the free software tho)
+if [ ${?} -ne 0 ]; then COMMON="${COMMON} -latomic"; fi # fucking GNU (thanks for all the free software tho)
+set +x
 set -e
 
 if [ ${DEBUG} -eq 1 ]; then
