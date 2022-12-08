@@ -13,6 +13,6 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y llvm-14-dev libclang-14-dev clang-14
-        ./check --nofix --clang-version=14
         ./compile --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127\.0\.0\.1' | head -n 1 | cut -d 't' -f 2 | cut -d ' ' -f 2)
         ./compile --release --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127\.0\.0\.1' | head -n 1 | cut -d 't' -f 2 | cut -d ' ' -f 2)
+        ./check --nofix --clang-version=14
