@@ -61,7 +61,7 @@ fi
 cd ../../.. # all the way back out
 
 # for some reason piping these all together gets confused
-set -- --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127\.0\.0\.1' | head -n 1 | cut -d t -f 2 | cut -d ' ' -f 2) # Pass on arguments
+set -- --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127\.0\.0\.1' | head -n 1 | cut -d 't' -f 2 | cut -d ' ' -f 2) # Pass on arguments
 . ./flags
 
 echo "Running dependency graph analysis..."
