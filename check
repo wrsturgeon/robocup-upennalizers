@@ -66,11 +66,12 @@ set -- --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127\.0\.0\.1' 
 
 echo "Running dependency graph analysis..."
 SYSTEM_INCLUDES=$(clang++ -v -E -x c++ /dev/null 2>&1 | sed -n '/#include <...> search starts here:/,/End of search list./p' | sed '1d;$d' | sed 's/^ *//g' | sed 's/ *$//g' | sed 's/ / -isystem /g' | sed 's/^/-isystem /g')
+if [ ${CLANG_VERSION} -eq 0 ]; then IWYU_COMMENT_ARG="-Xiwyu --comment_style=long"; else IWYU_COMMENT_ARG=""; fi
 for i in $(find ./include -name '*.*pp' ! -name 'prologue.hpp'); do
     echo ${i}
     set +e # don't immediately exit if the next command fails
     ext/iwyu/build/bin/include-what-you-use \
-    -Xiwyu --comment_style=long \
+    ${IWYU_COMMENT_ARG} \
     -Xiwyu --cxx17ns \
     -Xiwyu --error=1 \
     -Xiwyu --mapping_file=llvm.imp \
