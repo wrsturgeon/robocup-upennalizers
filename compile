@@ -28,4 +28,4 @@ echo '#pragma clang diagnostic pop' >> xxd/gc_team_cfg.hpp
 echo '#endif // XXD_GC_TEAM_CFG_HPP' >> xxd/gc_team_cfg.hpp
 cd .. # back to where we were
 
-clang++ -o bin/robocup-${EXECNAME} start.cpp ${@:5} ${MACROS} ${COMMON} ${WARNINGS} ${FLAGS}
+clang++ -o bin/robocup-${EXECNAME} start.cpp ${MACROS} ${COMMON} ${WARNINGS} ${FLAGS}
