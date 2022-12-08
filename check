@@ -86,7 +86,7 @@ for i in $(find ./include -name '*.*pp' ! -name 'prologue.hpp'); do
     SUCCEEDED=${?}
     set -e # now go back to exiting on failure
     IWYU_STDOUT=$(cat /tmp/iwyu.out | grep -v 'note: used here.' | sed -n '/^$/q;p')
-    if [ ! -z "${IWYU_STDOUT}" ]; then echo "\033[0;31m${IWYU_STDOUT}\033[0m" >&2; if [ ${FIX} -eq 0]; then exit 1; fi; fi
+    if [ ! -z "${IWYU_STDOUT}" ]; then echo "\033[0;31m${IWYU_STDOUT}\033[0m" >&2; if [ ${FIX} -eq 0 ]; then exit 1; fi; fi
     if [ ${SUCCEEDED} -ne 0 ]; then exit 1; fi
     if [ ${FIX} -eq 1 ]; then
         echo "  Fixing..."

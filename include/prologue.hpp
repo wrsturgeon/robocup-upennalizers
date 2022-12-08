@@ -3,8 +3,6 @@
 #ifndef PROLOGUE_HPP
 #define PROLOGUE_HPP
 
-#define _GNU_SOURCE // https://man7.org/linux/man-pages/man7/feature_test_macros.7.html
-
 //%%%%%%%%%%%%%%%% Lua
 // extern "C" {
 // #include "ext/lua/lauxlib.h"
