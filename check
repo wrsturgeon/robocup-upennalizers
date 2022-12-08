@@ -83,11 +83,13 @@ for i in $(find ./include -name '*.*pp' ! -name 'prologue.hpp'); do
     -Xiwyu --verbose=3 \
     ${SYSTEM_INCLUDES} \
     ${MACROS} -DDEBUG ${COMMON} ${i} 2>&1 | grep -v 'prologue.hpp' > /tmp/iwyu.out
-    SUCCEEDED=${?}
+    RETVAL=${?}
     set -e # now go back to exiting on failure
-    IWYU_STDOUT=$(cat /tmp/iwyu.out | grep -v 'note: used here.' | sed -n '/^$/q;p')
-    if [ ! -z "${IWYU_STDOUT}" ]; then echo "\033[0;31m${IWYU_STDOUT}\033[0m" >&2; if [ ${FIX} -eq 0 ]; then exit 1; fi; fi
-    if [ ${SUCCEEDED} -ne 0 ]; then exit 1; fi
+    if [ ! -z "$(cat /tmp/iwyu.out | grep -v 'note: used here.' | sed -n '/^$/q;p')" ]; then
+        echo "\033[0;31m$(cat /tmp/iwyu.out)\033[0m" >&2
+        if [ ${FIX} -eq 0 ]; then exit 1; fi
+    fi
+    if [ ${RETVAL} -ne 0 ]; then exit 1; fi
     if [ ${FIX} -eq 1 ]; then
         echo "  Fixing..."
         python ext/iwyu/fix_includes.py --blank_lines --comments --update_comments --nosafe_headers --reorder --separate_project_includes=$(pwd) < /tmp/iwyu.out > /dev/null
