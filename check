@@ -60,7 +60,6 @@ else
 fi
 cd ../../.. # all the way back out
 
-# for some reason piping these all together gets confused
 set -- --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127\.0\.0\.1' | head -n 1 | cut -d 't' -f 2 | cut -d ' ' -f 2) # Pass on arguments
 . ./flags
 
@@ -85,7 +84,7 @@ for i in $(find ./include -name '*.*pp' ! -name 'prologue.hpp'); do
     ${MACROS} -DDEBUG ${COMMON} ${i} 2>/tmp/iwyu.out
     set -e # now go back to exiting on failure
     if [ ! -z "$(cat /tmp/iwyu.out | grep -v 'prologue.hpp' | grep -v 'note: used here.' | sed -n '/^$/q;p')" ]; then
-        echo "\033[0;31m$(cat /tmp/iwyu.out)\033[0m" >&2
+        echo "\033[0;31m$(cat /tmp/iwyu.out | grep -v '#include "prologue.hpp"')\033[0m" >&2
         if [ ${FIX} -eq 0 ]; then exit 1; fi
     fi
     if [ ${FIX} -eq 1 ]; then
