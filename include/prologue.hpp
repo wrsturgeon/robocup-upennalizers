@@ -3,8 +3,6 @@
 
 // IWYU pragma: private
 
-#define _GNU_SOURCE 0
-
 //%%%%%%%%%%%%%%%% Lua
 // extern "C" {
 // #include "ext/lua/lauxlib.h"
@@ -126,8 +124,13 @@ void
 get_system_error_message(char (&buf)[N])
 noexcept {
   int const orig = errno;
-  int const rtn = strerror_r(orig, static_cast<char*>(buf), N);
-  if (rtn) {
+  // Fucking GNU requires their own non-portable extensions just to compile C++
+  // So the return type of strerror_r is irrevocably different if you compile with GCC or anything else
+  #define STRERROR_CALL strerror_r(orig, static_cast<char*>(buf), N)
+  using strerror_rtn_t = decltype(STRERROR_CALL);
+  static constexpr bool strerror_succeed = std::is_same_v<strerror_rtn_t, char*> ? true : false;
+  strerror_rtn_t const rtn = STRERROR_CALL;
+  if (static_cast<bool>(rtn) != strerror_succeed) {
     safe_print(std::cerr, "strerror_r failed (returned ", rtn, ", errno = ", errno, ") while handling original errno ", orig);
     std::terminate();
   }
