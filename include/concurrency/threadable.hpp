@@ -1,8 +1,8 @@
 #ifndef CONCURRENCY_THREADABLE_HPP
 #define CONCURRENCY_THREADABLE_HPP
 
-#include <functional>  // for std::invoke_result_t
-#include <utility>     // for std::declval
+#include <type_traits>  // for std::invoke_result_t
+#include <utility>      // for std::declval
 
 template <typename F>
 concept threadable = (noexcept(std::declval<F>()())

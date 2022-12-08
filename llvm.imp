@@ -9,6 +9,8 @@
     include: ["@<__type_traits/.*>", "private", "<type_traits>", "public"],
     include: ["@<__utility/.*>", "private", "<utility>", "public"],
     include: ["@<.*pthread/.*>", "private", "<pthread.h>", "public"],
-    include: ["<sys/_types/_in_addr_t.h>", "private", "<netinet/in.h>", "public"]
+    include: ["<sys/_types/_in_addr_t.h>", "private", "<netinet/in.h>", "public"],
+    symbol: ["std::declval", "private", "<utility>", "public"],
+    symbol: ["std::invoke_result_t", "private", "<type_traits>", "public"],
   }
 ]
