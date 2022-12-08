@@ -1,18 +1,17 @@
 #ifndef MESSAGING_SOCKET_HPP
 #define MESSAGING_SOCKET_HPP
 
-#include "util/ip.hpp"              // for util::ip::make_sockaddr_in
+#include "util/ip.hpp"   // for util::ip::make_sockaddr_in
 
 extern "C" {
-#include <netinet/in.h>             // for sockaddr_in, INADDR_ANY, IPPROTO_UDP
-#include <sys/_types/_in_addr_t.h>  // for in_addr_t
-#include <sys/fcntl.h>              // for fcntl, F_SETFL, O_NONBLOCK
-#include <sys/socket.h>             // for setsockopt, socket, SOL_SOCKET, bind, connect, recvfrom, send, sockaddr, socklen_t, AF_INET, SOCK_DGRAM, SO_BROADCAST, SO_REUSEADDR, SO_REUSEPORT
-#include <unistd.h>                 // for close
+#include <netinet/in.h>  // for sockaddr_in, in_addr_t, INADDR_ANY, IPPROTO_UDP
+#include <sys/fcntl.h>   // for fcntl, F_SETFL, O_NONBLOCK
+#include <sys/socket.h>  // for setsockopt, socket, SOL_SOCKET, bind, connect, recvfrom, send, sockaddr, socklen_t, AF_INET, SOCK_DGRAM, SO_BROADCAST, SO_REUSEADDR, SO_REUSEPORT
+#include <unistd.h>      // for close
 }
 
-#include <optional>                 // for std::optional, std::make_optional, std::nullopt
-#include <type_traits>              // for std::decay_t
+#include <optional>      // for std::optional, std::make_optional, std::nullopt
+#include <type_traits>   // for std::decay_t
 
 namespace msg {
 

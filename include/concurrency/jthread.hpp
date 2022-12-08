@@ -35,9 +35,12 @@ noexcept
 : _id{[]{
   pthread_attr_t attr;
   assert_eq(0, pthread_attr_init(&attr), "Couldn't default-initialize thread attributes")
-  assert_eq(0, pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE), "Couldn't set thread detach state to joinable")
   assert_eq(0, pthread_attr_setschedpolicy(&attr, SCHED_RR), "Couldn't set thread scheduling policy to round-robin")
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
+  assert_eq(0, pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE), "Couldn't set thread detach state to joinable")
   assert_eq(0, pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED), "Couldn't set thread scheduling inheritance to explicit")
+#pragma clang diagnostic pop
   pthread_t rtn{};
   assert_eq(0, pthread_create(&rtn, &attr, [](void* arg) -> void* { // NOLINT(misc-unused-parameters)
     print_concurrency(Name, " thread started; calling atentry");
