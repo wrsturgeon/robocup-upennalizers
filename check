@@ -47,14 +47,8 @@ cd ext/iwyu
 if [ ! -d build ]; then
     mkdir build
     cd build
-    if [ ${CLANG_VERSION} -ne 0 ]; then
-        git fetch --all
-        git checkout clang_${CLANG_VERSION}
-        git pull origin clang_${CLANG_VERSION}
-        cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/lib/llvm-${CLANG_VERSION} ..
-    else
-        cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-    fi
+    if [ ${CLANG_VERSION} -ne 0 ]; then CMAKE_FLAGS="-DCMAKE_PREFIX_PATH=/usr/lib/llvm-${CLANG_VERSION}"; else CMAKE_FLAGS=""; fi
+    cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ${CMAKE_FLAGS} ..
     make
 else
     cd build
@@ -62,10 +56,12 @@ else
 fi
 cd ../../.. # all the way back out
 
-set -- --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d' ' -f2)
-echo "\$1 is ${1}"
-echo "\$2 is ${2}"
-echo "\$3 is ${3}"
+# for some reason piping these all together gets confused
+IP=$(ifconfig | grep 'inet')
+IP=$(echo ${IP} | grep -v '127.0.0.1')
+IP=$(echo ${IP} | cut -dt -f2)
+IP=$(echo ${IP} | cut -d' ' -f2)
+set -- --debug --player2 --gc${IP} # Pass on arguments
 . ./flags
 
 echo "Running dependency graph analysis..."
