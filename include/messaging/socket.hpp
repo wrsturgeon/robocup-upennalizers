@@ -5,7 +5,7 @@
 
 extern "C" {
 #include <netinet/in.h>  // for sockaddr_in, in_addr_t, INADDR_ANY, IPPROTO_UDP
-#include <sys/fcntl.h>   // for fcntl, F_SETFL, O_NONBLOCK
+#include <fcntl.h>       // for fcntl, F_SETFL, O_NONBLOCK
 #include <sys/socket.h>  // for setsockopt, socket, SOL_SOCKET, bind, connect, recvfrom, send, sockaddr, socklen_t, AF_INET, SOCK_DGRAM, SO_BROADCAST, SO_REUSEADDR, SO_REUSEPORT
 #include <unistd.h>      // for close
 }
