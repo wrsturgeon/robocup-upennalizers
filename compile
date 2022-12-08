@@ -4,6 +4,9 @@ set -eu
 
 . ./flags
 
+# Initialize submodules if not already (but don't update)
+git submodule update --init --recursive
+
 # "Include" GameController source code as a C header with `xxd`
 mkdir -p include/xxd
 cd include/xxd
