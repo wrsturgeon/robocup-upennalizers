@@ -3,12 +3,13 @@
 
 // clang hasn't implemented std::jthread yet
 
-#include <fixed-string>  // for fixed::String
-
 #include "concurrency/threadable.hpp" // IWYU pragma: keep
 
+#include <fixed-string>  // for fixed::String
+
 extern "C" {
-#include <pthread.h>     // for pthread_attr_destroy, pthread_attr_init, pthread_attr_setdetachstate, pthread_attr_setinheritsched, pthread_attr_setschedpolicy, pthread_join, pthread_t, PTHREAD_CREATE_JOINABLE, PTHREAD_EXPLICIT_SCHED, SCHED_RR, pthread_attr_t, pthread_create
+#include <pthread.h>     // for pthread_attr_destroy, pthread_attr_init, pthread_attr_setdetachstate, pthread_attr_setinheritsched, pthread_attr_setschedpolicy, pthread_join, pthread_t, PTHREAD_CREATE_JOINABLE, PTHREAD_EXPLICIT_SCHED, pthread_attr_t, pthread_create
+#include <sched.h>       // for SCHED_RR
 }
 
 namespace concurrency {
