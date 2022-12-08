@@ -6,7 +6,10 @@ main()
 noexcept {
 
   // Instruct the OS to give this process highest priority
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdisabled-macro-expansion"
   assert_eq(0, ::setpriority(PRIO_PROCESS, 0, -20), "Couldn't set OS priority")
+#pragma clang diagnostic pop
 
   // Start everything & block until the game is over
   context::loop::victor_frankenstein();
