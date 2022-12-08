@@ -47,7 +47,11 @@ cd ext/iwyu
 if [ ! -d build ]; then
     mkdir build
     cd build
-    if [ ${CLANG_VERSION} -ne 0 ]; then CMAKE_FLAGS="-DCMAKE_PREFIX_PATH=/usr/lib/llvm-${CLANG_VERSION}"; else CMAKE_FLAGS=""; fi
+    if [ ${CLANG_VERSION} -ne 0 ]; then
+        git fetch --all
+        git checkout clang_${CLANG_VERSION}
+        CMAKE_FLAGS="-DCMAKE_PREFIX_PATH=/usr/lib/llvm-${CLANG_VERSION}"
+    else CMAKE_FLAGS=""; fi
     cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ${CMAKE_FLAGS} ..
     make
 else
