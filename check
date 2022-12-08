@@ -62,7 +62,11 @@ else
 fi
 cd ../../.. # all the way back out
 
-. ./flags --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d\  -f2)
+set -- --debug --player2 --gc$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | cut -dt -f2 | cut -d' ' -f2)
+echo "\$1 is ${1}"
+echo "\$2 is ${2}"
+echo "\$3 is ${3}"
+. ./flags
 
 echo "Running dependency graph analysis..."
 SYSTEM_INCLUDES=$(clang++ -v -E -x c++ /dev/null 2>&1 | sed -n '/#include <...> search starts here:/,/End of search list./p' | sed '1d;$d' | sed 's/^ *//g' | sed 's/ *$//g' | sed 's/ / -isystem /g' | sed 's/^/-isystem /g')
@@ -81,7 +85,7 @@ for i in $(find ./include -name '*.*pp' ! -name 'prologue.hpp'); do
     -Xiwyu --update_comments \
     -Xiwyu --verbose=3 \
     ${SYSTEM_INCLUDES} \
-    ${@:5} ${MACROS} -DDEBUG ${COMMON} ${i} 2>&1 | grep -v 'prologue.hpp' > /tmp/iwyu.out
+    ${MACROS} -DDEBUG ${COMMON} ${i} 2>&1 | grep -v 'prologue.hpp' > /tmp/iwyu.out
     SUCCEEDED=${?}
     set -e # now go back to exiting on failure
     IWYU_STDOUT=$(cat /tmp/iwyu.out | grep -v 'note: used here.' | sed -n '/^$/q;p')
@@ -98,10 +102,9 @@ for i in $(find ./include -name '*.*pp' ! -name 'prologue.hpp'); do
     #     exit 1
     # fi
 done
-# clang-tidy ${1} $(find include -name '*.*pp') --checks='-*,llvm-include-order' --fix --quiet --warnings-as-errors='-*' -- -DDEBUG -UNDEBUG ${@:5} ${MACROS} ${COMMON}
 
 echo "Running static analysis..."
 clang-tidy --verify-config > /dev/null 2>&1 || clang-tidy --verify-config
-clang-tidy start.cpp --quiet -- -DCLANG_TIDY -DDEBUG -UNDEBUG ${@:5} ${MACROS} ${COMMON} ${WARNINGS}
+clang-tidy start.cpp --quiet -- -DCLANG_TIDY -DDEBUG -UNDEBUG ${MACROS} ${COMMON} ${WARNINGS}
 
 echo "All checks passed!"
